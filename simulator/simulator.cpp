@@ -5,32 +5,53 @@
 #include <cstdint>
 #include <cstdarg>
 #include "simulator.hpp"
-//#include "D:\IITTP\Risc_V_Dual_core_simulator\Dual-Core-RISCV-Simulator\data_files\test.s"
+#include <sstream>
+
 using namespace std;
 using vs = vector<string>;
+using vss = vector<vector<string>>;
 using vi = vector<int>;
 
- 
-int main ()
+vector<string> split_string(const string &line)
 {
-   // const string file_name = "test.s";
-    const string file_path = "D:\IITTP\Risc_V_Dual_core_simulator\Dual-Core-RISCV-Simulator\data_files\test.s" ;
-    cout<<file_path<<endl;
-    ifstream instructions(file_path);
-    if(!instructions.is_open())
+    istringstream iss(line);
+    vector<string> words;
+
+    string word;
+    while (getline(iss, word, ' '))
     {
-        cout<<"Error in opening the file"<<endl;
+        words.push_back(word);
+    }
+
+    return words;
+}
+
+int main()
+{
+    // const string file_name = "test.s";
+    const string file_path = "..\\data_files\\test.s";
+    // cout << file_path << endl;
+    ifstream instructions_prog_1(file_path);
+    if (!instructions_prog_1.is_open())
+    {
+        cout << "Error in opening the file" << endl;
         return 0;
     }
-    vs lines;
-    string line;
-    while(getline(instructions,line))
+    vs lines_prog_1;
+    string line_prog_1;
+    while (getline(instructions_prog_1, line_prog_1))
     {
-        lines.push_back(line);
+        lines_prog_1.push_back(line_prog_1);
     }
-    instructions.close();
-    for(string s :lines) 
+    instructions_prog_1.close();
+    vss program_1;
+    program_1.push_back(split_string(lines_prog_1[0]));
+    int encode[4]={0,0,0,0}; // used to store intructions in numerical form.
+    for (int i = 0; i < program_1[0].size(); i++)
     {
-      cout<<s<<endl;
-    } 
+        RISCV::reg r = static_cast<RISCV::reg>(i);
+        //  std::cout << "Register " << regToString(r) << " value: " << (sizeof(r)) << std::endl;
+        encode[i]=r;
+        cout<<encode[i]<<endl;
+    }
 }

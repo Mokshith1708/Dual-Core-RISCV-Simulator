@@ -4,11 +4,11 @@
 
 #include "memory.hpp"
 
-uint32_t memory::read(uint32_t address) const
+uint32_t memory::read(uint32_t address, uint32_t arr[]) const
 {
     if (address < MEMORY_SIZE)
     {
-        return memory[address];
+        return arr[address];
     }
     else
     {
@@ -16,11 +16,11 @@ uint32_t memory::read(uint32_t address) const
     }
 }
 
-void memory::write(uint32_t address, uint32_t data)
+void memory::write(uint32_t address, uint32_t data, uint32_t arr[])
 {
     if (address < MEMORY_SIZE)
     {
-        memory[address] = data;
+        arr[address] = data;
     }
     else
     {
