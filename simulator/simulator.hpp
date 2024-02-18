@@ -181,24 +181,30 @@ std::string regToString(RISCV::reg r)
         return "Unknown";
     }
 }
-bool isBranch(int i) {
-  if (i == 3 || i == 4 || i == 5 || i == 6 ||
-      i == 7 || i == 8) {
-    return true;
-  }
-  return false;
+bool isBranch(int i)
+{
+    if (i == 3 || i == 4 || i == 5 || i == 6 ||
+        i == 7 || i == 8)
+    {
+        return true;
+    }
+    return false;
 }
 
-bool isJump(int i) {
-  if (i == 1 || i == 2) {
-    return true;
-  }
-  return false;
+bool isJump(int i)
+{
+    if (i == 1 || i == 2)
+    {
+        return true;
+    }
+    return false;
 }
 
-bool isReadMem(int i) {
-  if (i == 10 || i ==12 || i == 18  || i == 19 ) {
-    return true;
-  }
-  return false;
+bool isReadMem(int i)
+{
+    if (i == 10 || i == 12 || i == 18 || i == 19)
+    {
+        return true;
+    }
+    return false;
 }
