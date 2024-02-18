@@ -1,14 +1,13 @@
 #pragma once
-#include<iostream>
+#include <iostream>
 #include <cstdint>
-#include<vector>
+#include <vector>
 using namespace std;
 class ALU
 {
-  private:
-    int pc=0;
-    vector<string>program;
-  public:
-    
-    
+private:
+  int pc = 0;
+  vector<string> program;
+
+public:
 };
