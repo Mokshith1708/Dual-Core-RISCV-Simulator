@@ -136,7 +136,7 @@ void collectLabels(const vs &lines, map<string, int> &labelMap)
 }
 
 // Second Pass: Generate Machine Code
-void generateMachineCode( vs &lines,  map<string, int> &labelMap, memory &m)
+void generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m)
 {
     int address = 0;
     for (const string &line : lines)
@@ -145,21 +145,37 @@ void generateMachineCode( vs &lines,  map<string, int> &labelMap, memory &m)
         int encode[4] = {0, 0, 0, 0}; // Used to store instructions in numerical form.
         if (!words.empty() && words[0].back() == ':')
         {
-            
-         string label = words[0].substr(0, words[0].size() - 1);
-         encode[0] = labelMap[label];
+            string label = words[0].substr(0, words[0].size() - 1);
+            encode[0] = labelMap[label];
             continue;
         }
-
-       
 
         for (int i = 0; i < words.size(); i++)
         {
             if (i == 0)
             {
                 // Handle instruction
-                RISCV::Inst inst = stringToInst(words[0]);
-                encode[0] = inst;
+                if (words[i] == "beq" || words[i] == "bne" || words[i] == "blt" || words[i] == "bge" || words[i] == "bltu" || words[i] == "begu")
+                {
+                    // label cases
+                    encode[0] = stringToInst(words[i]);
+                    encode[1] = stringToReg(words[i + 1]);
+                    encode[2] = stringToReg(words[i + 2]);
+                    if (labelMap.find(words[i + 3]) != labelMap.end())
+                    {
+                        encode[3] = labelMap.at(words[i + 3]) - address - 1;
+                    }
+                    else
+                    {
+                        throw std::invalid_argument("Label not found: " + words[i + 3]);
+                    }
+                    i += 3;                                              // Skip label and operands
+                }
+                else
+                {
+                    RISCV::Inst inst = stringToInst(words[i]);
+                    encode[0] = inst;
+                }
             }
             else
             {
@@ -199,10 +215,10 @@ int main()
 
     // Second pass to generate machine code
     generateMachineCode(lines_prog_1, labelMap, m);
-      vi vvv = m.read_instruction(3,1);
-            for(auto i:vvv)
-            {
-                cout<<i<<endl;
-            }
+    vi vvv = m.read_instruction(3, 1);
+    for (auto i : vvv)
+    {
+        cout << i << endl;
+    }
     return 0;
 }
