@@ -7,6 +7,7 @@
 #include "simulator.hpp"
 #include <sstream>
 #include "memory.hpp"
+#include <memory.cpp>
 using namespace std;
 using vs = vector<string>;
 using vss = vector<vector<string>>;
