@@ -13,6 +13,7 @@ using namespace std;
 using vs = vector<string>;
 using vss = vector<vector<string>>;
 using vi = vector<int>;
+
 RISCV::Inst stringToInst(const std::string &s)
 {
     static const std::map<std::string, RISCV::Inst> instMap = {
@@ -112,61 +113,96 @@ vector<string> split_string(const string &line)
     return words;
 }
 
+// First Pass: Collect Labels and Addresses
+void collectLabels(const vs &lines, map<string, int> &labelMap)
+{
+    int address = 0;
+    for (const string &line : lines)
+    {
+        vs words = split_string(line);
+        if (!words.empty() && words[0].back() == ':')
+        {
+            // Found a label
+            string label = words[0].substr(0, words[0].size() - 1);
+            labelMap[label] = address;
+            address++;
+        }
+        else
+        {
+            // Increment address for non-label lines
+            address++;
+        }
+    }
+}
+
+// Second Pass: Generate Machine Code
+void generateMachineCode( vs &lines,  map<string, int> &labelMap, memory &m)
+{
+    int address = 0;
+    for (const string &line : lines)
+    {
+        vs words = split_string(line);
+        int encode[4] = {0, 0, 0, 0}; // Used to store instructions in numerical form.
+        if (!words.empty() && words[0].back() == ':')
+        {
+            
+         string label = words[0].substr(0, words[0].size() - 1);
+         encode[0] = labelMap[label];
+            continue;
+        }
+
+       
+
+        for (int i = 0; i < words.size(); i++)
+        {
+            if (i == 0)
+            {
+                // Handle instruction
+                RISCV::Inst inst = stringToInst(words[0]);
+                encode[0] = inst;
+            }
+            else
+            {
+                // Handle registers
+                RISCV::reg r = stringToReg(words[i]);
+                encode[i] = r;
+            }
+        }
+
+        m.write_instruction(address, encode, 1);
+        address++;
+    }
+}
+
 int main()
 {
-    // const string file_name = "test.s";
     const string file_path = "..\\simulator\\test.s";
-    // cout << file_path << endl;
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
     {
         cout << "Error in opening the file" << endl;
         return 0;
     }
+
     vs lines_prog_1;
     string line_prog_1;
-    int address_1 = 0;
-    memory m;
     while (getline(instructions_prog_1, line_prog_1))
     {
         lines_prog_1.push_back(line_prog_1);
     }
     instructions_prog_1.close();
-    for (int k = 0; k < lines_prog_1.size(); k++)
-    {
-        vss lines_program_1;
-        lines_program_1.push_back(split_string(lines_prog_1[k]));
-        // cout<<lines_prog_1[k]<<endl;
-        // cout<<lines_program_1[0][1]<<endl;
-        int encode[4] = {0, 0, 0, 0}; // used to store intructions in numerical form.
-        for (int i = 0; i < lines_program_1[0].size(); i++)
-        {
-            if (i == 0)
+
+    map<string, int> labelMap;
+    collectLabels(lines_prog_1, labelMap);
+
+    memory m;
+
+    // Second pass to generate machine code
+    generateMachineCode(lines_prog_1, labelMap, m);
+      vi vvv = m.read_instruction(3,1);
+            for(auto i:vvv)
             {
-                RISCV::Inst inst;
-                string ss = lines_program_1[0][0];
-                inst = stringToInst(ss);
-                encode[0] = inst;
-                // cout << encode[i] << endl;
+                cout<<i<<endl;
             }
-            else
-            {
-                RISCV::reg r;
-                //  std::cout << "Register " << regToString(r) << " value: " << (sizeof(r)) << std::endl;
-                string sss = lines_program_1[0][i];
-                r = stringToReg(sss);
-                encode[i] = r;
-                // cout << encode[i] << endl;
-            }
-            
-        }
-        m.write_instruction(address_1, encode, 1);
-           address_1++;
-    }
-    //  vi vvv = m.read_instruction(1,1);
-    //         for(auto i:vvv)
-    //         {
-    //             cout<<i<<endl;
-    //         }
     return 0;
 }
