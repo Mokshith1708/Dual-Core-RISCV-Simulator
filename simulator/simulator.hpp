@@ -63,6 +63,7 @@ namespace RISCV
         ecall = 17,
         lbu = 18,
         lwu = 19,
+        j = 20,
 
     };
 }
