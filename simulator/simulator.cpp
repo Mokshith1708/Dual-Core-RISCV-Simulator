@@ -114,23 +114,47 @@ vector<string> split_string(const string &line)
 }
 
 // First Pass: Collect Labels and Addresses
-void collectLabels(const vs &lines, map<string, int> &labelMap)
+void collectLabels(const vs &lines, map<string, int> &labelMap, map<string, int> &dataSizes)
 {
     int address = 0;
+    bool inDataSection = false;
     for (const string &line : lines)
     {
         vs words = split_string(line);
-        if (!words.empty() && words[0].back() == ':')
+        if (!words.empty() && words[0] == ".data")
         {
-            // Found a label
-            string label = words[0].substr(0, words[0].size() - 1);
-            labelMap[label] = address;
-            address++;
+            inDataSection = true;
+            continue;
+        }
+        if (inDataSection)
+        {
+            if (!words.empty() && words[0].back() == ':')
+            {
+                string label = words[0].substr(0, words[0].size() - 1);
+                labelMap[label] = address;
+                dataSizes[label] = words.size() - 1;
+                address++;
+            }
+            else if (!words.empty() && words[0] == ".text")
+            {
+                // End of .data
+                inDataSection = false;
+                address++;
+            }
         }
         else
         {
-            // Increment address for non-label lines
-            address++;
+            if (!words.empty() && words[0].back() == ':')
+            {
+                string label = words[0].substr(0, words[0].size() - 1);
+                labelMap[label] = address;
+                address++;
+            }
+            else
+            {
+                // Increment address for non-label lines
+                address++;
+            }
         }
     }
 }
@@ -266,7 +290,8 @@ int main()
     instructions_prog_1.close();
 
     map<string, int> labelMap;
-    collectLabels(lines_prog_1, labelMap);
+    map<string, int> dataSizes;
+    collectLabels(lines_prog_1, labelMap, dataSizes);
 
     memory m;
 
