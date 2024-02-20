@@ -209,12 +209,24 @@ void generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m)
                     encode[0] = stringToInst(words[i]);
                     encode[1] = stringToReg(words[i + 1]);
                     encode[2] = stringToReg(words[i + 2]);
-                    encode[3]=stoi(words[i+3]);
+                    encode[3] = stoi(words[i + 3]);
                     i += 3; // Skip label and operands
                     break;
                 case RISCV::ecall:
-                    encode[i]= stringToInst(words[i]);
-                    i+=3;
+                    encode[i] = stringToInst(words[i]);
+                    i += 3;
+                    break;
+                case RISCV::lw:
+                case RISCV::sw:
+                case RISCV::lwu:
+                case RISCV::lbu:
+                case RISCV::lb:
+                case RISCV::sb:
+                    encode[0] = stringToInst(words[i]);
+                    encode[1] = stringToReg(words[i + 1]);
+                    encode[2] = stoi(words[2].substr(0, words[2].find('(')));
+                    encode[3] = stringToReg(words[2].substr(words[2].find('(') + 1, words[2].find(')') - words[2].find('(') - 1));
+                    i = i + 3;
                     break;
                 default:
                     // Handle non-branch instructions
@@ -260,7 +272,7 @@ int main()
 
     // Second pass to generate machine code
     generateMachineCode(lines_prog_1, labelMap, m);
-    vi vvv = m.read_instruction(1, 1);
+    vi vvv = m.read_instruction(5, 1);
     for (auto i : vvv)
     {
         cout << i << endl;
