@@ -4,7 +4,7 @@
 
 #include "registers.hpp"
 
-uint32_t registers::read(uint32_t address) const
+int32_t registers::read(int32_t address) const
 {
     if (address < MAX_REG)
     {
@@ -16,7 +16,7 @@ uint32_t registers::read(uint32_t address) const
     }
 }
 
-void registers::write(uint32_t address, uint32_t data)
+void registers::write(int32_t address, int32_t data)
 {
     if (address < MAX_REG)
     {

@@ -1,10 +1,10 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
-
+#include <bits/stdc++.h>
 #include "memory.hpp"
 
-uint32_t memory::read_memory(uint32_t address, int core) const
+int32_t memory::read_memory(int32_t address, int core) const
 {
     if (core == 1)
     {
@@ -30,7 +30,7 @@ uint32_t memory::read_memory(uint32_t address, int core) const
     }
 }
 
-void memory::write_memory(uint32_t address, uint32_t data, int core)
+void memory::write_memory(int32_t address, int32_t data, int core)
 {
     if (core == 1)
     {
@@ -55,7 +55,7 @@ void memory::write_memory(uint32_t address, uint32_t data, int core)
         }
     }
 }
-vector<int> memory::read_instruction(uint32_t address, int core)
+vector<int> memory::read_instruction(int32_t address, int core)
 {
     if (core == 1)
     {
@@ -90,7 +90,7 @@ vector<int> memory::read_instruction(uint32_t address, int core)
         }
     }
 }
-void memory::write_instruction(uint32_t address, int encode[], int core)
+void memory::write_instruction(int32_t address, int encode[], int core)
 {
     if (core == 1)
     {
@@ -119,5 +119,19 @@ void memory::write_instruction(uint32_t address, int encode[], int core)
         {
             throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
+    }
+}
+void memory::write_str(string s1, string s2,int address_str,int core)
+{
+    pair<string,string> p;
+    p.first=s1;
+    p.second=s2;
+    if (core == 1)
+    {  
+       strmap_1[p]=address_str;
+    }
+    else if (core==2)
+    {
+       strmap_2[p]=address_str;
     }
 }

@@ -1,6 +1,8 @@
-addi x3 x0 x1
-loop:
-add x2 x1 x3
-sub x4 x3 x9
-beq x1 x2 loop
-lw x1 0(x2)
+.data
+srr: .word 1 2 3 4 5 6 7 8 9 10 11
+base: .word 0x10000000
+str1: .string "initial array : "
+w1: .string " "
+nl: .string "\nFinal array : "
+.text
+lw x6 0(x1)
