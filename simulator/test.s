@@ -5,4 +5,5 @@ str1: .string "initial array : "
 w1: .string " "
 nl: .string "\nFinal array : "
 .text
-lw x6 0(x1)
+addi x1 x2 1
+add x1 x1 x1

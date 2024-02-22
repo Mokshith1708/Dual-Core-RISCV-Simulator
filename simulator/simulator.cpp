@@ -8,15 +8,19 @@
 #include <sstream>
 #include "memory.hpp"
 #include "memory.cpp"
+#include "cores.cpp"
+#include "cores.hpp"
 #include <bits/stdc++.h>
+#include "registers.hpp"
+#include "registers.cpp"
 using namespace std;
 using vs = vector<string>;
 using vss = vector<vector<string>>;
 using vi = vector<int>;
 
-RISCV::Inst stringToInst(const std::string &s)
+RISCV::Inst stringToInst(const string &s)
 {
-    static const std::map<std::string, RISCV::Inst> instMap = {
+    static const map<string, RISCV::Inst> instMap = {
         {"jal", RISCV::jal},
         {"jalr", RISCV::jalr},
         {"beq", RISCV::beq},
@@ -50,9 +54,9 @@ RISCV::Inst stringToInst(const std::string &s)
 }
 
 // Function to convert a string to the corresponding RISCV::reg value
-RISCV::reg stringToReg(const std::string &s)
+RISCV::reg stringToReg(const string &s)
 {
-    static const std::map<std::string, RISCV::reg> regMap = {
+    static const map<string, RISCV::reg> regMap = {
         {"x0", RISCV::x0},
         {"x1", RISCV::x1},
         {"x2", RISCV::x2},
@@ -163,7 +167,7 @@ void collectLabels(const vs &lines, map<string, int> &labelMap, map<string, int>
 }
 
 // Second Pass: Generate Machine Code
-void generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<int, int> &p)
+int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<int, int> &p)
 {
     int address = 0;
     int address_str = 0;
@@ -253,7 +257,7 @@ void generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<
                         }
                         else
                         {
-                            throw std::invalid_argument("Label not found: " + words[i + 3]);
+                            throw invalid_argument("Label not found: " + words[i + 3]);
                         }
                         i += 3; // Skip label and operands
                         break;
@@ -265,7 +269,7 @@ void generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<
                         }
                         else
                         {
-                            throw std::invalid_argument("Label not found: " + words[i + 1]);
+                            throw invalid_argument("Label not found: " + words[i + 1]);
                         }
                         i += 3;
                         break;
@@ -278,7 +282,7 @@ void generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<
                         }
                         else
                         {
-                            throw std::invalid_argument("Label not found: " + words[i + 2]);
+                            throw invalid_argument("Label not found: " + words[i + 2]);
                         }
                         i += 3; // Skip label and operands
                         break;
@@ -306,6 +310,13 @@ void generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<
                         encode[3] = stringToReg(words[2].substr(words[2].find('(') + 1, words[2].find(')') - words[2].find('(') - 1));
                         i = i + 3;
                         break;
+                    case RISCV::addi:
+                        encode[0]=stringToInst(words[i]);
+                        encode[1] = stringToReg(words[i + 1]);
+                        encode[2] = stringToReg(words[i + 2]);
+                        encode[3]=stoi(words[i+3]);
+                        i+=3;
+                        break;
                     default:
                         // Handle non-branch instructions
                         encode[0] = stringToInst(words[i]);
@@ -324,7 +335,17 @@ void generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<
         m.write_instruction(address, encode, 1);
         address++;
     }
+    return address;
 }
+
+// void printRegisterTable(int registers[]) {
+//     std::cout << "Register Table:" << std::endl;
+//     std::cout << "===============" << std::endl;
+//     for (int i = 0; i < 32; ++i) {
+//         std::cout << "x" << i << ": " << registers[i] << std::endl;
+//     }
+//     std::cout << "===============" << std::endl;
+// }
 
 int main()
 {
@@ -348,22 +369,32 @@ int main()
     map<string, int> labelMap;
     map<string, int> dataSizes;
     pair<int, int> p;
+    registers r1,r2;
+
     collectLabels(lines_prog_1, labelMap, dataSizes, p);
     memory m;
     // Second pass to generate machine code
-    generateMachineCode(lines_prog_1, labelMap, m, p);
+   int no_inst= generateMachineCode(lines_prog_1, labelMap, m, p);
     // vi vvv = m.read_instruction(5, 1);
     // for (auto i : vvv)
     // {
     //     cout << i << endl;
     // }
-    for(int i=0;i<512;i++)
-    {
-        for(int j=0;j<4;j++)
-        {
-            cout<<m.instructions_1[i][j]<<" ";
-        }
-      cout<<endl;
+    // cout<<p.first<<" "<<p.second<<endl;
+    // for(int i=0;i<512;i++)
+    // {
+    //     for(int j=0;j<4;j++)
+    //     {
+    //         cout<<m.instructions_1[i][j]<<" ";
+    //     }
+    //   cout<<endl;
+    // }
+    ALU alui(p,no_inst,m,r1,1);
+    std::cout << "Register Table:" << std::endl;
+    std::cout << "===============" << std::endl;
+    for (int i = 0; i < 32; ++i) {
+        std::cout << "x" << i << ": " << r1.read(i) << std::endl;
     }
+    std::cout << "===============" << std::endl;
     return 0;
 }

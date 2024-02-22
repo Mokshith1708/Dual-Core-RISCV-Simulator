@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 #include "memory.hpp"
 
-int32_t memory::read_memory(int32_t address, int core) const
+int32_t memory::read_memory(int32_t address, int core)
 {
     if (core == 1)
     {
@@ -14,7 +14,7 @@ int32_t memory::read_memory(int32_t address, int core) const
         }
         else
         {
-            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
     if (core == 2)
@@ -25,7 +25,7 @@ int32_t memory::read_memory(int32_t address, int core) const
         }
         else
         {
-            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
 }
@@ -40,7 +40,7 @@ void memory::write_memory(int32_t address, int32_t data, int core)
         }
         else
         {
-            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
     if (core == 2)
@@ -51,7 +51,7 @@ void memory::write_memory(int32_t address, int32_t data, int core)
         }
         else
         {
-            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
 }
@@ -70,7 +70,7 @@ vector<int> memory::read_instruction(int32_t address, int core)
         }
         else
         {
-            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
     if (core == 2)
@@ -86,7 +86,7 @@ vector<int> memory::read_instruction(int32_t address, int core)
         }
         else
         {
-            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
 }
@@ -103,7 +103,7 @@ void memory::write_instruction(int32_t address, int encode[], int core)
         }
         else
         {
-            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
     if (core == 2)
@@ -117,7 +117,7 @@ void memory::write_instruction(int32_t address, int encode[], int core)
         }
         else
         {
-            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
 }
