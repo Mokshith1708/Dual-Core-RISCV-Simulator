@@ -2,10 +2,9 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
-
 #include "registers.hpp"
-
-int32_t registers::read(int32_t address) 
+using namespace std;
+int32_t registers::read(int32_t address)
 {
     if (address < MAX_REG)
     {

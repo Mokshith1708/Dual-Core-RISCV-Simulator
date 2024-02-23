@@ -121,17 +121,17 @@ void memory::write_instruction(int32_t address, int encode[], int core)
         }
     }
 }
-void memory::write_str(string s1, string s2,int address_str,int core)
+void memory::write_str(string s1, string s2, int address_str, int core)
 {
-    pair<string,string> p;
-    p.first=s1;
-    p.second=s2;
+    pair<string, string> p;
+    p.first = s1;
+    p.second = s2;
     if (core == 1)
-    {  
-       strmap_1[p]=address_str;
-    }
-    else if (core==2)
     {
-       strmap_2[p]=address_str;
+        strmap_1[p] = address_str;
+    }
+    else if (core == 2)
+    {
+        strmap_2[p] = address_str;
     }
 }

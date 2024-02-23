@@ -45,25 +45,25 @@ namespace RISCV
 
     enum Inst
     {
-        jal = 1,
-        jalr = 2,
-        beq = 3,
-        bne = 4,
-        blt = 5,
-        bge = 6,
+        jal = 1,  //
+        jalr = 2, //
+        beq = 3,  //
+        bne = 4,  //
+        blt = 5,  //
+        bge = 6,  //
         bltu = 7,
         begu = 8,
         lb = 10,
-        lw = 11,
+        lw = 11, //
         sb = 12,
-        sw = 13,
-        addi = 14,
-        add = 15,
-        sub = 16,
+        sw = 13,   //
+        addi = 14, //
+        add = 15,  //
+        sub = 16,  //
         ecall = 17,
         lbu = 18,
         lwu = 19,
-        j = 20,
+        j = 20, //
 
     };
 }

@@ -311,11 +311,11 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         i = i + 3;
                         break;
                     case RISCV::addi:
-                        encode[0]=stringToInst(words[i]);
+                        encode[0] = stringToInst(words[i]);
                         encode[1] = stringToReg(words[i + 1]);
                         encode[2] = stringToReg(words[i + 2]);
-                        encode[3]=stoi(words[i+3]);
-                        i+=3;
+                        encode[3] = stoi(words[i + 3]);
+                        i += 3;
                         break;
                     default:
                         // Handle non-branch instructions
@@ -369,12 +369,12 @@ int main()
     map<string, int> labelMap;
     map<string, int> dataSizes;
     pair<int, int> p;
-    registers r1,r2;
+    registers r1, r2;
 
     collectLabels(lines_prog_1, labelMap, dataSizes, p);
     memory m;
     // Second pass to generate machine code
-   int no_inst= generateMachineCode(lines_prog_1, labelMap, m, p);
+    int no_inst = generateMachineCode(lines_prog_1, labelMap, m, p);
     // vi vvv = m.read_instruction(5, 1);
     // for (auto i : vvv)
     // {
@@ -389,10 +389,11 @@ int main()
     //     }
     //   cout<<endl;
     // }
-    ALU alui(p,no_inst,m,r1,1);
+    ALU alui(p, no_inst, m, r1, 1);
     std::cout << "Register Table:" << std::endl;
     std::cout << "===============" << std::endl;
-    for (int i = 0; i < 32; ++i) {
+    for (int i = 0; i < 32; ++i)
+    {
         std::cout << "x" << i << ": " << r1.read(i) << std::endl;
     }
     std::cout << "===============" << std::endl;

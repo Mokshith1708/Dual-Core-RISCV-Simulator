@@ -17,7 +17,7 @@ public:
     int32_t instructions_2[MEMORY_SIZE][4];
 
 public:
-    int32_t read_memory(int32_t address, int core) ;
+    int32_t read_memory(int32_t address, int core);
     void write_memory(int32_t address, int32_t data, int core);
     vector<int> read_instruction(int32_t address, int core);
     void write_instruction(int32_t address, int encode[], int core);
