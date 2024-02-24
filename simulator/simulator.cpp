@@ -358,7 +358,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
 
 int main()
 {
-    const string file_path = "..\\simulator\\test.s";
+    const string file_path = "..\\simulator\\test_2.s";
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
     {
@@ -410,7 +410,7 @@ int main()
     //     std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
     // } // labels
     std::cout << "==============" << std::endl;
-    for (int i = 0; i < 15; ++i)
+    for (int i = 0; i < 30; ++i)
     {
         std::cout << "Address " << i << ": " << m.read_memory(i, 1) << std::endl;
     }

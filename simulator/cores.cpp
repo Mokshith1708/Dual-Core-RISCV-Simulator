@@ -140,7 +140,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r1, 
         pc = rd;
         break;
     }
-    case RISCV::sw:
+    case RISCV::lw:
     {
         int rd = instruction[1];
         int rs1 = r1.read(instruction[3]);
@@ -149,12 +149,12 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r1, 
         pc++;
         break;
     }
-    case RISCV::lw:
+    case RISCV::sw:
     {
         int rs1 = instruction[1];
         int rd = r1.read(instruction[3]);
         int offset = instruction[2];
-        m.write_memory(rd + offset, rs1, core);
+        m.write_memory(rd + offset, r1.read(rs1), core);
         pc++;
         break;
     }
