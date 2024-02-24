@@ -7,10 +7,10 @@ using namespace std;
 ALU::ALU(pair<int, int> &p, int no_inst, memory &m, registers &r1, int core)
 {
     pc = p.second;
-    cout << pc << endl;
+    //cout << pc << endl;
     while (pc < no_inst)
     {
-        cout << no_inst << endl;
+        // cout << no_inst << endl;
         executeInstruction(m.read_instruction(pc, core), m, r1, core);
         //  pc++;
     };
@@ -64,9 +64,9 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r1, 
         int rs1 = r1.read(instruction[2]);
         int offset = instruction[3];
         r1.write(rd, pc + 1);
-        cout << rs1 << endl;
-        pc = rs1 + offset;
-        cout << pc << endl;
+      //  cout << rs1 << endl;
+        pc = rs1 + offset-1;
+      //  cout << pc << endl;
         break;
     }
     case RISCV::beq:
@@ -74,7 +74,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r1, 
         int rs1 = instruction[1];
         int rs2 = instruction[2];
         int rd = instruction[3];
-        if (rs1 == rs2)
+        if (r1.read(rs1) == r1.read(rs2))
         {
             pc = rd;
             break;
@@ -90,7 +90,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r1, 
         int rs1 = instruction[1];
         int rs2 = instruction[2];
         int rd = instruction[3];
-        if (rs1 != rs2)
+        if (r1.read(rs1) != r1.read(rs2))
         {
             pc = rd;
             break;
@@ -106,7 +106,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r1, 
         int rs1 = instruction[1];
         int rs2 = instruction[2];
         int rd = instruction[3];
-        if (rs1 < rs2)
+        if (r1.read(rs1) < r1.read(rs2))
         {
             pc = rd;
             break;
@@ -122,7 +122,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r1, 
         int rs1 = instruction[1];
         int rs2 = instruction[2];
         int rd = instruction[3];
-        if (rs1 >= rs2)
+        if (r1.read(rs1) >= r1.read(rs2))
         {
             pc = rd;
             break;
@@ -136,23 +136,26 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r1, 
     case RISCV::j:
     {
         int rd = instruction[1];
+        cout<<rd<<endl;
         pc = rd;
-        break;
-    }
-    case RISCV::lw:
-    {
-        int rd = instruction[1];
-        int rs1 = r1.read(instruction[2]);
-        int offset = instruction[3];
-        r1.write(rd, m.read_memory(rs1 + offset, core));
         break;
     }
     case RISCV::sw:
     {
+        int rd = instruction[1];
+        int rs1 = r1.read(instruction[3]);
+        int offset = instruction[2];
+        r1.write(rd, m.read_memory(rs1 + offset, core));
+        pc++;
+        break;
+    }
+    case RISCV::lw:
+    {
         int rs1 = instruction[1];
-        int rd = r1.read(instruction[2]);
-        int offset = instruction[3];
+        int rd = r1.read(instruction[3]);
+        int offset = instruction[2];
         m.write_memory(rd + offset, rs1, core);
+        pc++;
         break;
     }
     default:

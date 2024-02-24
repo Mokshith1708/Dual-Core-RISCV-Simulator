@@ -39,6 +39,7 @@ RISCV::Inst stringToInst(const string &s)
         {"ecall", RISCV::ecall},
         {"lbu", RISCV::lbu},
         {"lwu", RISCV::lwu},
+        {"j", RISCV::j},
     };
 
     auto it = instMap.find(s);
@@ -204,15 +205,21 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                 }
                 else if (words[1] == ".string")
                 {
+                    string str;
+                    for (size_t i = 2; i < words.size(); ++i)
+                    {
+                        str += words[i];
+                        if (i != words.size() - 1)
+                            str += " ";
+                    }
+                    m.write_str(words[0].substr(0, words[0].size() - 1), str, address_str, 1);
+                    encode[0] = -1;
+                    encode[1] = address_str;
+                    address_str++;
+                    m.write_instruction(address, encode, 1);
+                    address++;
+                    continue;
                 }
-                string label = words[0].substr(0, words[0].size() - 1);
-                m.write_str(label, words[2], address_str, 1);
-                encode[0] = -1;
-                encode[1] = address_str;
-                address_str++;
-                m.write_instruction(address, encode, 1);
-                address++;
-                continue;
             }
         }
         if (address >= p.second)
@@ -263,6 +270,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         break;
                     case RISCV::j:
                         encode[0] = stringToInst(words[i]);
+                       
                         if (labelMap.find(words[i + 1]) != labelMap.end())
                         {
                             encode[1] = labelMap[words[i + 1]] + 1;
@@ -271,6 +279,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         {
                             throw invalid_argument("Label not found: " + words[i + 1]);
                         }
+                        // cout<<encode[0]<<" "<<encode[1]<<endl;
                         i += 3;
                         break;
                     case RISCV::jal:
@@ -397,5 +406,21 @@ int main()
         std::cout << "x" << i << ": " << r1.read(i) << std::endl;
     }
     std::cout << "===============" << std::endl;
+    // for (const auto& pair : labelMap) {
+    //     std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+    // } // labels
+    std::cout << "==============" << std::endl;
+    for (int i = 0; i < 15; ++i)
+    {
+        std::cout << "Address " << i << ": " << m.read_memory(i, 1) << std::endl;
+    }
+    std::cout << "==============" << std::endl;
+    std::cout << "String Map:" << std::endl;
+    std::cout << "===========" << std::endl;
+    for (const auto& pair : m.strmap_1)
+    {
+        std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
+    }
+    std::cout << "===========" << std::endl;
     return 0;
 }
