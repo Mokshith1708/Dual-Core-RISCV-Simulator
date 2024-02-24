@@ -3,7 +3,7 @@
 #include "memory.hpp"
 #include "registers.hpp"
 using namespace std;
-ALU::ALU(pair<int, int> &p1,pair<int, int> &p2, int no_inst_1,int no_inst_2,memory &m1,memory &m2, registers &r1,registers &r2, int core1, int core2)
+ALU::ALU(pair<int, int> &p1,pair<int, int> &p2, int no_inst_1,int no_inst_2,memory &m, registers &r1,registers &r2, int core1, int core2)
 {
     pc1 = p1.second;
     pc2 = p2.second;
@@ -14,11 +14,11 @@ ALU::ALU(pair<int, int> &p1,pair<int, int> &p2, int no_inst_1,int no_inst_2,memo
         // cout << no_inst << endl;
         if(pc1<no_inst_1)
         {
-            executeInstruction(m1.read_instruction(pc1, core1), m1, r1, core1,pc1);
+            executeInstruction(m.read_instruction(pc1, core1), m, r1, core1,pc1);
         }
         if(pc2<no_inst_2)
         {
-        executeInstruction(m2.read_instruction(pc2, core2), m2, r2, core2,pc2);
+        executeInstruction(m.read_instruction(pc2, core2), m, r2, core2,pc2);
         }//  pc++;
     };
 }

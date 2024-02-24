@@ -168,7 +168,7 @@ void collectLabels(const vs &lines, map<string, int> &labelMap, map<string, int>
 }
 
 // Second Pass: Generate Machine Code
-int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<int, int> &p)
+int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<int, int> &p,int core)
 {
     int address = 0;
     int address_str = 0;
@@ -182,7 +182,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
         {
             if (words[0] == ".data")
             {
-                m.write_instruction(address, encode, 1);
+                m.write_instruction(address, encode, core);
                 address++;
                 continue;
             }
@@ -196,10 +196,10 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                     encode[0] = -2;
                     for (int i = 2; i < words.size(); i++)
                     {
-                        m.write_memory(address_memory, stoi(words[i]), 1);
+                        m.write_memory(address_memory, stoi(words[i]), core);
                         address_memory++;
                     }
-                    m.write_instruction(address, encode, 1);
+                    m.write_instruction(address, encode, core);
                     address++;
                     continue;
                 }
@@ -216,7 +216,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                     encode[0] = -1;
                     encode[1] = address_str;
                     address_str++;
-                    m.write_instruction(address, encode, 1);
+                    m.write_instruction(address, encode, core);
                     address++;
                     continue;
                 }
@@ -228,7 +228,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
             // Used to store instructions in numerical form.
             if (words[0] == ".text")
             {
-                m.write_instruction(address, encode, 1);
+                m.write_instruction(address, encode, core);
                 address++;
                 continue;
             }
@@ -236,7 +236,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
             {
                 string label = words[0].substr(0, words[0].size() - 1);
                 encode[0] = labelMap[label];
-                m.write_instruction(address, encode, 1);
+                m.write_instruction(address, encode, core);
                 address++;
                 continue;
             }
@@ -341,7 +341,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
             }
         }
 
-        m.write_instruction(address, encode, 1);
+        m.write_instruction(address, encode, core);
         address++;
     }
     return address;
@@ -361,7 +361,7 @@ int main()
     map<string, int> dataSizes_1,dataSizes_2;
     pair<int, int> p1,p2;
     registers r1, r2;
-    memory m1,m2;
+    memory m;
 
 
     // for first file.
@@ -381,7 +381,7 @@ int main()
 
     instructions_prog_1.close();
     collectLabels(lines_prog_1, labelMap_1, dataSizes_1, p1);
-    int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m1, p1);
+    int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m, p1,1);
 
 
     // for second file
@@ -402,11 +402,11 @@ int main()
 
     instructions_prog_2.close();
     collectLabels(lines_prog_2, labelMap_2, dataSizes_2, p2);
-    int no_inst_2 = generateMachineCode(lines_prog_2, labelMap_2, m2, p2);
+    int no_inst_2 = generateMachineCode(lines_prog_2, labelMap_2, m, p2,2);
 
 /// #### ///
 
-    ALU alui(p2,p1,no_inst_2,no_inst_1, m2,m1, r2,r1, 1,1);
+    ALU alui(p1,p2,no_inst_1,no_inst_2, m, r1,r2, 1,2);
 
     std::cout << "Register Table:" << std::endl;
     std::cout << "===============" << std::endl;
@@ -421,12 +421,12 @@ int main()
     std::cout << "==============" << std::endl;
     for (int i = 0; i < 30; ++i)
     {
-        std::cout << "Address " << i << ": " << m1.read_memory(i, 1) << std::endl;
+        std::cout << "Address " << i << ": " << m.read_memory(i, 1) << std::endl;
     }
     std::cout << "==============" << std::endl;
     std::cout << "String Map:" << std::endl;
     std::cout << "===========" << std::endl;
-    for (const auto& pair : m1.strmap_1)
+    for (const auto& pair : m.strmap_1)
     {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
     }
@@ -448,12 +448,12 @@ int main()
     std::cout << "==============" << std::endl;
     for (int i = 0; i < 30; ++i)
     {
-        std::cout << "Address " << i << ": " << m2.read_memory(i, 1) << std::endl;
+        std::cout << "Address " << i << ": " << m.read_memory(i, 2) << std::endl;
     }
     std::cout << "==============" << std::endl;
     std::cout << "String Map:" << std::endl;
     std::cout << "===========" << std::endl;
-    for (const auto& pair : m2.strmap_2)
+    for (const auto& pair : m.strmap_2)
     {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
     }
