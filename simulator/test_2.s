@@ -1,5 +1,5 @@
 .data
-arr: .word 4 3 21 1 9 5 6 6 -1
+arr: .word 9 8 7 6 5 4 3 2 1
 .text
 add x5 x0 x0
 add x6 x5 x0 

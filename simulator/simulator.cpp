@@ -357,15 +357,21 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
 // }
 
 int main()
-{
-    const string file_path = "..\\simulator\\test_2.s";
+{   map<string, int> labelMap_1,labelMap_2;
+    map<string, int> dataSizes_1,dataSizes_2;
+    pair<int, int> p1,p2;
+    registers r1, r2;
+    memory m1,m2;
+
+
+    // for first file.
+    const string file_path = "..\\simulator\\test.s";
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
     {
-        cout << "Error in opening the file" << endl;
+        cout << "Error in opening the file 1" << endl;
         return 0;
     }
-
     vs lines_prog_1;
     string line_prog_1;
     while (getline(instructions_prog_1, line_prog_1))
@@ -374,31 +380,34 @@ int main()
     }
 
     instructions_prog_1.close();
+    collectLabels(lines_prog_1, labelMap_1, dataSizes_1, p1);
+    int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m1, p1);
 
-    map<string, int> labelMap;
-    map<string, int> dataSizes;
-    pair<int, int> p;
-    registers r1, r2;
 
-    collectLabels(lines_prog_1, labelMap, dataSizes, p);
-    memory m;
-    // Second pass to generate machine code
-    int no_inst = generateMachineCode(lines_prog_1, labelMap, m, p);
-    // vi vvv = m.read_instruction(5, 1);
-    // for (auto i : vvv)
-    // {
-    //     cout << i << endl;
-    // }
-    // cout<<p.first<<" "<<p.second<<endl;
-    // for(int i=0;i<512;i++)
-    // {
-    //     for(int j=0;j<4;j++)
-    //     {
-    //         cout<<m.instructions_1[i][j]<<" ";
-    //     }
-    //   cout<<endl;
-    // }
-    ALU alui(p, no_inst, m, r1, 1);
+    // for second file
+    const string file_path_2 = "..\\simulator\\test_2.s";
+    ifstream instructions_prog_2(file_path_2);
+    if (!instructions_prog_2.is_open())
+    {
+        cout << "Error in opening the file 2" << endl;
+        return 0;
+    }
+
+    vs lines_prog_2;
+    string line_prog_2;
+    while (getline(instructions_prog_2, line_prog_2))
+    {
+        lines_prog_2.push_back(line_prog_2);
+    }
+
+    instructions_prog_2.close();
+    collectLabels(lines_prog_2, labelMap_2, dataSizes_2, p2);
+    int no_inst_2 = generateMachineCode(lines_prog_2, labelMap_2, m2, p2);
+
+/// #### ///
+
+    ALU alui(p2,p1,no_inst_2,no_inst_1, m2,m1, r2,r1, 1,1);
+
     std::cout << "Register Table:" << std::endl;
     std::cout << "===============" << std::endl;
     for (int i = 0; i < 32; ++i)
@@ -412,12 +421,39 @@ int main()
     std::cout << "==============" << std::endl;
     for (int i = 0; i < 30; ++i)
     {
-        std::cout << "Address " << i << ": " << m.read_memory(i, 1) << std::endl;
+        std::cout << "Address " << i << ": " << m1.read_memory(i, 1) << std::endl;
     }
     std::cout << "==============" << std::endl;
     std::cout << "String Map:" << std::endl;
     std::cout << "===========" << std::endl;
-    for (const auto& pair : m.strmap_1)
+    for (const auto& pair : m1.strmap_1)
+    {
+        std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
+    }
+    std::cout << "===========" << std::endl;
+
+
+
+
+     std::cout << "Register Table 2 :" << std::endl;
+    std::cout << "===============" << std::endl;
+    for (int i = 0; i < 32; ++i)
+    {
+        std::cout << "x" << i << ": " << r2.read(i) << std::endl;
+    }
+    std::cout << "===============" << std::endl;
+    // for (const auto& pair : labelMap) {
+    //     std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+    // } // labels
+    std::cout << "==============" << std::endl;
+    for (int i = 0; i < 30; ++i)
+    {
+        std::cout << "Address " << i << ": " << m2.read_memory(i, 1) << std::endl;
+    }
+    std::cout << "==============" << std::endl;
+    std::cout << "String Map:" << std::endl;
+    std::cout << "===========" << std::endl;
+    for (const auto& pair : m2.strmap_2)
     {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
     }

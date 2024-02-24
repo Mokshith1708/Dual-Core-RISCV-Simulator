@@ -1,32 +1,25 @@
 .data
-srr: .word 1 2 3 4 5 6 7 8 9 10 11
-base: .word 0x10000000
-str1: .string "initial array : "
-w1: .string " "
-nl: .string "\nFinal array : "
+arr: .word 4 3 21 1 9 5 6 6 -1
 .text
-addi x5 x0 10
-jalr x3 x5 0
-addi x31 x0 1
-addi x1 x2 1
-add x1 x1 x1
-add x2 x1 x1
-addi x3 x0 5
-addi x21 x0 100
-j loop
-addi x31 x0 100
-loop:
-add x7 x7 x31
-addi x6 x6 4
-addi x3 x3 -1
-bne x3 x0 loop
-addi x0 x0 0
-addi x20 x0 1
-addi x15 x0 20
-lw x20 0(x15)
-sw x29 0(x15)
-blt x30 x29 l2
-addi x24 x0 5
-l2:
-addi x25 x0 213
-sw x23 1(x0)
+add x5 x0 x0
+add x6 x5 x0 
+addi x7 x0 9 
+addi x8 x0 8 
+loop1:
+beq x0 x7 exit
+addi x7 x7 -1
+loop2:
+addi x1 x1 1
+lw x4 0(x5)
+lw x9 1(x5)
+blt x4 x9 noswap 
+sw x4 1(x5)
+sw x9 0(x5)
+noswap:
+addi x5 x5 1
+bne x1 x8 loop2
+add x1 x0 x0
+add x5 x6 x0
+j loop1
+exit:
+add x0 x0 x0
