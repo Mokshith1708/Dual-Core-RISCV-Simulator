@@ -23,7 +23,16 @@ ALU::ALU(pair<int, int> &p1,pair<int, int> &p2, int no_inst_1,int no_inst_2,memo
     };
 }
 void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, int core,int &pc)
-{
+{  if(instruction[1]==0 && instruction[2]==0 && instruction[3]==0)
+    {
+     pc++;
+    return;
+    }
+    if(instruction[0]==-1 || instruction[0]==-2 )
+    {
+     pc++;
+    return;
+    }
     RISCV::Inst opcode = static_cast<RISCV::Inst>(instruction[0]);
     switch (opcode)
     {
@@ -171,7 +180,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rd = instruction[1];
         int rs1 = r.read(instruction[3]);
         int offset = instruction[2];
-        r.write(rd, m.read_memory((rs1 + offset)/4, core));
+        r.write(rd, m.read_memory((rs1 + offset), core));
         pc++;
         break;
     }
@@ -180,7 +189,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rs1 = instruction[1];
         int rd = r.read(instruction[3]);
         int offset = instruction[2];
-        m.write_memory((rd + offset)/4, r.read(rs1), core);
+        m.write_memory((rd + offset), r.read(rs1), core);
         pc++;
         break;
     }
@@ -190,6 +199,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         vector<int>v =  m.read_instruction(instruction[2],core);
         int rs1 = v[1];
         r.write(rd,rs1);
+        cout<<rs1<<endl;
         pc++;
         break;
     }
