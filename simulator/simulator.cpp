@@ -11,10 +11,26 @@
 #include "memory.cpp"
 #include "cores.cpp"
 #include "cores.hpp"
-#include <bits/stdc++.h>
 #include "registers.hpp"
 #include "registers.cpp"
-using namespace std;
+
+using std::string;
+using std::ifstream;
+using std::ofstream;
+using std::vector;
+using std::map;
+using std::pair;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::invalid_argument;
+using std::istringstream;
+using std::replace;
+using std::find_if_not;
+using std::isspace;
+using std::stoi;
+using std::streambuf;
+
 using vs = vector<string>;
 using vss = vector<vector<string>>;
 using vi = vector<int>;
