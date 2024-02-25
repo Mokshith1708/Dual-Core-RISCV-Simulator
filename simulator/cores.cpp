@@ -180,7 +180,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rd = instruction[1];
         int rs1 = r.read(instruction[3]);
         int offset = instruction[2];
-        r.write(rd, m.read_memory((rs1 + offset), core));
+        r.write(rd, m.read_memory((rs1 + offset)/4, core));
         pc++;
         break;
     }
@@ -189,7 +189,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rs1 = instruction[1];
         int rd = r.read(instruction[3]);
         int offset = instruction[2];
-        m.write_memory((rd + offset), r.read(rs1), core);
+        m.write_memory((rd + offset)/4, r.read(rs1), core);
         pc++;
         break;
     }
