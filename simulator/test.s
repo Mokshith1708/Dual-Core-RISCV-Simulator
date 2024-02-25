@@ -1,10 +1,11 @@
 .data
-arr: .word 40000 3 2100 1 90 5 6000 6 -100 500 300 200 
+    arr: .word 40000 3 2100 1 90 5 6000 6 -100 500 300 200 
+    str: .string "nibib,bububu"
 #ninin guug ig
 .text
 la x5 arr
 add x6 x5 x0 
-addi x7 x0 12
+ addi x7 x0 12
 addi x8 x0 11
 loop1:
 beq x0 x7 exit

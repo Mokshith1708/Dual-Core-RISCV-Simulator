@@ -1,14 +1,14 @@
 .data
-base: .word 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+     base: .word 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
 .text
 start:
-li x1 0
+    li x1 0
 li x2 0
 li x3 18
-li x19 19
+    li x19 19
 li x18 20
-la x16 base
-la x17 base
+la,x16, base
+la,x17,base
 la x21 base
 la x20 base
 loop:
@@ -17,7 +17,7 @@ addi x16 x20 0
 addi x15 x20 4
 loop1:
 beq x18 x2 exit
-lw x5 0(x16)
+lw,x5,0(x16)
 lw x6 0(x15)
 blt x5 x6 exit2
 sw x5 0(x15)

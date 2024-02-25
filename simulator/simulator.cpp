@@ -109,31 +109,60 @@ RISCV::reg stringToReg(const string &s)
     }
 }
 
+// vector<string> split_string(const string &line)
+// {
+//     istringstream iss(line);
+//     vector<string> words;
+
+//     string word;
+//     while (getline(iss, word, ' '))
+//     {
+//         words.push_back(word);
+//     }
+
+//     return words;
+// }
 vector<string> split_string(const string &line)
 {
     istringstream iss(line);
     vector<string> words;
 
     string word;
-    while (getline(iss, word, ' '))
+    while (iss >> word)
     {
-        words.push_back(word);
+        // Remove leading and trailing whitespaces
+        word.erase(0, word.find_first_not_of(" \t\n\r\f\v"));
+        word.erase(word.find_last_not_of(" \t\n\r\f\v") + 1);
+
+        // Split the word by comma if present
+        size_t pos;
+        while ((pos = word.find(',')) != string::npos) {
+            if (pos > 0) {
+                words.push_back(word.substr(0, pos));
+            }
+            word.erase(0, pos + 1);
+        }
+        if (!word.empty()) {
+            words.push_back(word);
+        }
     }
 
     return words;
 }
 
-// First Pass: Collect Labels and Addresses
+
+// First Pass Collect Labels and Addresses
 void collectLabels(vs &lines, map<string, int> &labelMap, map<string, int> &dataSizes, pair<int, int> &p)
 {
     int address = 0;
     bool inDataSection = false;
     for (string &line : lines)
-    {      if(line.empty())
-            {
-                address++;
-                continue;
-            }
+    {
+        if (line.empty())
+        {
+            address++;
+            continue;
+        }
         vs words = split_string(line);
         if (!words.empty() && words[0] == ".data")
         {
@@ -156,10 +185,10 @@ void collectLabels(vs &lines, map<string, int> &labelMap, map<string, int> &data
                 string label = words[0].substr(0, words[0].size() - 1);
                 labelMap[label] = address;
                 dataSizes[label] = words.size() - 2;
-               // cout<<dataSizes[label]<<endl;
+                // cout<<dataSizes[label]<<endl;
                 address++;
             }
-           
+
             // else if (!words.empty() && words[0] == ".text")
             // {
             //     // End of .data
@@ -186,7 +215,7 @@ void collectLabels(vs &lines, map<string, int> &labelMap, map<string, int> &data
 }
 
 // Second Pass: Generate Machine Code
-int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<int, int> &p,int core)
+int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<int, int> &p, int core)
 {
     int address = 0;
     int address_str = 0;
@@ -195,8 +224,8 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
     {
         vs words = split_string(line);
         int encode[4] = {0, 0, 0, 0};
-        if(line.empty() || line[0]=='#')
-        {    
+        if (line.empty() || line[0] == '#')
+        {
             m.write_instruction(address, encode, core);
             address++;
             continue;
@@ -229,7 +258,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                 else if (words[1] == ".string")
                 {
                     string str;
-                    for (size_t j = 2; j< words.size(); ++j)
+                    for (size_t j = 2; j < words.size(); ++j)
                     {
                         str += words[j];
                         if (j != words.size() - 1)
@@ -272,15 +301,15 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                     switch (stringToInst(words[i]))
                     {
                     case RISCV::la:
-                         encode[0] = stringToInst(words[i]);
-                         encode[1] = stringToReg(words[i+1]);
-                         encode[2] = labelMap[words[i+2]];
+                        encode[0] = stringToInst(words[i]);
+                        encode[1] = stringToReg(words[i + 1]);
+                        encode[2] = labelMap[words[i + 2]];
                         i += 3; // Skip label and operands
                         break;
                     case RISCV::li:
-                         encode[0] = stringToInst(words[i]);
-                         encode[1] = stringToReg(words[i+1]);
-                         encode[2] = stoi(words[i+2]);
+                        encode[0] = stringToInst(words[i]);
+                        encode[1] = stringToReg(words[i + 1]);
+                        encode[2] = stoi(words[i + 2]);
                         i += 3; // Skip label and operands
                         break;
                     case RISCV::beq:
@@ -305,7 +334,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         break;
                     case RISCV::j:
                         encode[0] = stringToInst(words[i]);
-                       
+
                         if (labelMap.find(words[i + 1]) != labelMap.end())
                         {
                             encode[1] = labelMap[words[i + 1]] + 1;
@@ -399,12 +428,12 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
 // }
 
 int main()
-{   map<string, int> labelMap_1,labelMap_2;
-    map<string, int> dataSizes_1,dataSizes_2;
-    pair<int, int> p1,p2;
+{
+    map<string, int> labelMap_1, labelMap_2;
+    map<string, int> dataSizes_1, dataSizes_2;
+    pair<int, int> p1, p2;
     registers r1, r2;
     memory m;
-
 
     // for first file.
     const string file_path = "..\\simulator\\test.s";
@@ -418,13 +447,14 @@ int main()
     string line_prog_1;
     while (getline(instructions_prog_1, line_prog_1))
     {
-        lines_prog_1.push_back(line_prog_1);
+        auto it = std::find_if_not(line_prog_1.begin(), line_prog_1.end(), [](unsigned char c) { return std::isspace(c); });
+        std::string trimmedInput(it, line_prog_1.end());
+        lines_prog_1.push_back(trimmedInput);
     }
 
     instructions_prog_1.close();
     collectLabels(lines_prog_1, labelMap_1, dataSizes_1, p1);
-    int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m, p1,1);
-
+    int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m, p1, 1);
 
     // for second file
     const string file_path_2 = "..\\simulator\\test_2.s";
@@ -439,16 +469,23 @@ int main()
     string line_prog_2;
     while (getline(instructions_prog_2, line_prog_2))
     {
-        lines_prog_2.push_back(line_prog_2);
+        auto it2 = std::find_if_not(line_prog_2.begin(), line_prog_2.end(), [](unsigned char c) { return std::isspace(c); });
+        std::string trimmedInput(it2, line_prog_2.end());
+        if (trimmedInput.find(".string") == string::npos)
+        {
+        }
+        else
+            replace(trimmedInput.begin(), trimmedInput.end(), ',', ' ');
+        lines_prog_2.push_back(trimmedInput);
     }
 
     instructions_prog_2.close();
     collectLabels(lines_prog_2, labelMap_2, dataSizes_2, p2);
-    int no_inst_2 = generateMachineCode(lines_prog_2, labelMap_2, m, p2,2);
+    int no_inst_2 = generateMachineCode(lines_prog_2, labelMap_2, m, p2, 2);
 
-/// #### ///
+    /// #### ///
 
-    ALU alui(p1,p2,no_inst_1,no_inst_2, m, r1,r2, 1,2);
+    ALU alui(p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2);
 
     std::cout << "Register Table:" << std::endl;
     std::cout << "===============" << std::endl;
@@ -468,16 +505,13 @@ int main()
     std::cout << "==============" << std::endl;
     std::cout << "String Map:" << std::endl;
     std::cout << "===========" << std::endl;
-    for (const auto& pair : m.strmap_1)
+    for (const auto &pair : m.strmap_1)
     {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
     }
     std::cout << "===========" << std::endl;
 
-
-
-
-     std::cout << "Register Table 2 :" << std::endl;
+    std::cout << "Register Table 2 :" << std::endl;
     std::cout << "===============" << std::endl;
     for (int i = 0; i < 32; ++i)
     {
@@ -495,17 +529,16 @@ int main()
     std::cout << "==============" << std::endl;
     std::cout << "String Map:" << std::endl;
     std::cout << "===========" << std::endl;
-    for (const auto& pair : m.strmap_2)
+    for (const auto &pair : m.strmap_2)
     {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
     }
     std::cout << "===========" << std::endl;
 
-    for(int i=0;i<30;i++)
+    for (int i = 0; i < 30; i++)
     {
-        cout<<m.instructions_1[i][0]<<" "<<m.instructions_1[i][1]<<" "<<m.instructions_1[i][2]<<" "<<m.instructions_1[i][3]<<" "<<endl;
+        cout << m.instructions_1[i][0] << " " << m.instructions_1[i][1] << " " << m.instructions_1[i][2] << " " << m.instructions_1[i][3] << " " << endl;
     }
-
 
     return 0;
 }
