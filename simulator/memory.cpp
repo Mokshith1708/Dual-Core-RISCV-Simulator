@@ -135,3 +135,37 @@ void memory::write_str(string s1, string s2, int address_str, int core)
         strmap_2[p] = address_str;
     }
 }
+string memory::read_str(int32_t address, int core)
+{
+    pair<string, string> p;
+    string result = "";  // Initialize an empty string to store the result
+
+    if (core == 1)
+    {
+        // Search for the string in strmap_1 using the given address
+        for ( auto &entry : strmap_1)
+        {
+            if (entry.second == address)
+            {
+                // Found the string associated with the address
+                result = entry.first.second;
+                break;
+            }
+        }
+    }
+    else if (core == 2)
+    {
+        // Search for the string in strmap_2 using the given address
+        for ( auto &entry : strmap_2)
+        {
+            if (entry.second == address)
+            {
+                // Found the string associated with the address
+                result = entry.first.second;
+                break;
+            }
+        }
+    }
+
+    return result;
+}

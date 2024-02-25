@@ -312,6 +312,11 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         encode[2] = stoi(words[i + 2]);
                         i += 3; // Skip label and operands
                         break;
+                    case RISCV::ecall:
+                        encode[0]= stringToInst(words[i]);
+                        encode[1]= 111111;
+                        i+=3;
+                        break;
                     case RISCV::beq:
                     case RISCV::bne:
                     case RISCV::blt:
@@ -366,10 +371,6 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         encode[2] = stringToReg(words[i + 2]);
                         encode[3] = stoi(words[i + 3]);
                         i += 3; // Skip label and operands
-                        break;
-                    case RISCV::ecall:
-                        encode[i] = stringToInst(words[i]);
-                        i += 3;
                         break;
                     case RISCV::lw:
                     case RISCV::sw:
@@ -436,7 +437,7 @@ int main()
     memory m;
 
     // for first file.
-    const string file_path = "..\\simulator\\test.s";
+    const string file_path = "..\\simulator\\BUBBLE_SORT.s";
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
     {
@@ -457,7 +458,7 @@ int main()
     int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m, p1, 1);
 
     // for second file
-    const string file_path_2 = "..\\simulator\\test_2.s";
+    const string file_path_2 = "..\\simulator\\SELECTION_SORT.s";
     ifstream instructions_prog_2(file_path_2);
     if (!instructions_prog_2.is_open())
     {

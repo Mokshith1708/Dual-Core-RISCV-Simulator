@@ -22,4 +22,5 @@ public:
     vector<int> read_instruction(int32_t address, int core);
     void write_instruction(int32_t address, int encode[], int core);
     void write_str(string s1, string s2, int address_str, int core);
+    string read_str(int32_t address,int core);
 };

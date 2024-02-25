@@ -212,6 +212,21 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         pc++;
         break;
     }
+     case RISCV::ecall:
+    {
+        int n = r.read(17);
+        int k = r.read(10);
+        if(n==1)
+        {
+            cout<<k;
+        }
+        if(n==4)
+        {
+            cout<<m.read_str(k,core);
+        }
+        pc++;
+        break;
+    }
 
     default:
         pc++;

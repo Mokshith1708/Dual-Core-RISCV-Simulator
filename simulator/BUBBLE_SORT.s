@@ -30,3 +30,6 @@ add x0 x0 x0
 add x1 x1 x5
 add x1 x1 x8 
 li x31 23
+la x10 str
+addi x17 x0 4
+ecall
