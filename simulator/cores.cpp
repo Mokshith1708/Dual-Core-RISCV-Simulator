@@ -273,7 +273,8 @@ void ALU::executeInstruction(std::vector<int> instruction, memory &m, registers 
             // logs(temstr, outputFile1);
             // std::cout<<m.read_str(k,core);
             // std::cout<<core<<" "<<m.read_str(k, core);
-            std::cout << m.read_str(k, core);
+            std::string st_temp=m.read_str(k, core);
+            std::cout << st_temp.substr(1,st_temp.size()-2);
         }
         pc++;
         break;
