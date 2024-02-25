@@ -3,6 +3,8 @@
 #include <iostream>
 #include <stdexcept>
 #include "registers.hpp"
+
+// read from registers
 int32_t registers::read(int32_t address)
 {
     if (address < MAX_REG)
@@ -14,7 +16,7 @@ int32_t registers::read(int32_t address)
         throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
     }
 }
-
+//  write to registers
 void registers::write(int32_t address, int32_t data)
 {
     if (address < MAX_REG)
