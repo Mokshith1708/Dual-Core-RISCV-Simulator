@@ -1,6 +1,24 @@
 # Dual-Core-RISCV-Simulator
 Developing a  simulator on the lines of Ripes. The simulator will have two cores and will be able to simulate a multi-core environment. 
-
+- implemented functions
+  ```assembly=
+  add
+  sub
+  mul
+  addi
+  jal
+  jalr
+  beq
+  bne
+  blt
+  bge
+  j
+  lw
+  sw
+  la
+  li
+  ecall
+  ```
 ## Meeting-9(Date: 25/2/24)
 - added li and la instructions
 - made some changes in lw and sw , added comment lines , empty lines skipping.
