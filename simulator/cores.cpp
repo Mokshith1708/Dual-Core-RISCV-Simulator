@@ -2,7 +2,6 @@
 #include "simulator.hpp"
 #include "memory.hpp"
 #include "registers.hpp"
-using namespace std;
 
 // void ALU::logs(const std::string &message, std::ofstream &outputFile)
 // {
@@ -35,11 +34,11 @@ using namespace std;
 // // Explicit instantiation for supported types
 // template void ALU::logVariable<int>(const std::string &, int, std::ofstream &);
 
-ALU::ALU(pair<int, int> &p1, pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2)
+ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2)
 {
     pc1 = p1.second;
     pc2 = p2.second;
-    // cout << pc << endl;
+    // std::cout << pc << std::endl;
     // std::ofstream outputFile1("..\\data_files\\output\\console1.txt", std::ios::app);
     // if (!outputFile1.is_open())
     // {
@@ -48,10 +47,10 @@ ALU::ALU(pair<int, int> &p1, pair<int, int> &p2, int no_inst_1, int no_inst_2, m
     //     return;
     // }
     // std::ofstream outputFile1("..\\data_files\\output\\console1.txt", std::ios::trunc);
-    int maxim = max(no_inst_1, no_inst_2);
+    int maxim = std::max(no_inst_1, no_inst_2);
     while (pc1 < maxim && pc2 < maxim)
     {
-        // cout << no_inst << endl;
+        // std::cout << no_inst << std::endl;
         if (pc1 < no_inst_1)
         {
             executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
@@ -60,9 +59,9 @@ ALU::ALU(pair<int, int> &p1, pair<int, int> &p2, int no_inst_1, int no_inst_2, m
         {
             executeInstruction(m.read_instruction(pc2, core2), m, r2, core2, pc2);
         } //  pc++;
-    };
+    }
 }
-void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, int core, int &pc)
+void ALU::executeInstruction(std::vector<int> instruction, memory &m, registers &r, int core, int &pc)
 {
     if (instruction[1] == 0 && instruction[2] == 0 && instruction[3] == 0)
     {
@@ -111,7 +110,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rd = instruction[1];
         int rs1 = instruction[2];
         int temp2 = instruction[3];
-        // cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<endl;
+        // std::cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<std::endl;
         r.write(rd, r.read(rs1) + temp2);
         pc++;
         break;
@@ -121,7 +120,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rd = instruction[1];
         int rs1 = instruction[2];
         int temp2 = instruction[3];
-        // cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<endl;
+        // std::cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<std::endl;
         r.write(rd, r.read(rs1) * temp2);
         pc++;
         break;
@@ -140,9 +139,9 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rs1 = r.read(instruction[2]);
         int offset = instruction[3];
         r.write(rd, pc + 1);
-        //  cout << rs1 << endl;
+        // std::cout << rs1 << std::endl;
         pc = rs1 + offset - 1;
-        //  cout << pc << endl;
+        // std::cout << pc << std::endl;
         break;
     }
     case RISCV::beq:
@@ -212,7 +211,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
     case RISCV::j:
     {
         int rd = instruction[1];
-        // cout<<rd<<endl;
+        // std::cout<<rd<<std::endl;
         pc = rd;
         break;
     }
@@ -237,10 +236,10 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
     case RISCV::la:
     {
         int rd = instruction[1];
-        vector<int> v = m.read_instruction(instruction[2], core);
+        std::vector<int> v = m.read_instruction(instruction[2], core);
         int rs1 = v[1];
         r.write(rd, rs1);
-        // cout << rs1 << endl;
+        // std::cout << rs1 << std::endl;
         pc++;
         break;
     }
@@ -248,7 +247,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
     {
         int rd = instruction[1];
         int rs1 = instruction[2];
-        // cout << rs1 << " " << rd << endl;
+        // std::cout << rs1 << " " << rd << std::endl;
         r.write(rd, rs1);
         pc++;
         break;
@@ -260,16 +259,16 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         if (n == 1)
         {
             // logVariable("k", k, outputFile1);
-            // cout<<core<<" "<<k;
-            cout<<k;
+            // std::cout<<core<<" "<<k;
+            std::cout<<k;
         }
         if (n == 4)
         {
-            // string temstr = m.read_str(k, core);
+            // std::string temstr = m.read_str(k, core);
             // logs(temstr, outputFile1);
-            // cout<<m.read_str(k,core);
-            // cout<<core<<" "<<m.read_str(k, core);
-            cout<<m.read_str(k, core);
+            // std::cout<<m.read_str(k,core);
+            // std::cout<<core<<" "<<m.read_str(k, core);
+            std::cout<<m.read_str(k, core);
         }
         pc++;
         break;

@@ -1,7 +1,8 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
-#include <bits/stdc++.h>
+#include <vector>
+#include <map>
 #include "memory.hpp"
 
 int32_t memory::read_memory(int32_t address, int core)
@@ -14,7 +15,7 @@ int32_t memory::read_memory(int32_t address, int core)
         }
         else
         {
-            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
     if (core == 2)
@@ -25,7 +26,7 @@ int32_t memory::read_memory(int32_t address, int core)
         }
         else
         {
-            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
 }
@@ -40,7 +41,7 @@ void memory::write_memory(int32_t address, int32_t data, int core)
         }
         else
         {
-            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
     if (core == 2)
@@ -51,17 +52,18 @@ void memory::write_memory(int32_t address, int32_t data, int core)
         }
         else
         {
-            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
 }
-vector<int> memory::read_instruction(int32_t address, int core)
+
+std::vector<int> memory::read_instruction(int32_t address, int core)
 {
     if (core == 1)
     {
         if (address < MEMORY_SIZE)
         {
-            vector<int> v(4, 0);
+            std::vector<int> v(4, 0);
             for (int i = 0; i < 4; i++)
             {
                 v[i] = instructions_1[address][i];
@@ -70,14 +72,14 @@ vector<int> memory::read_instruction(int32_t address, int core)
         }
         else
         {
-            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
     if (core == 2)
     {
         if (address < MEMORY_SIZE)
         {
-            vector<int> v(4, 0);
+            std::vector<int> v(4, 0);
             for (int i = 0; i < 4; i++)
             {
                 v[i] = instructions_2[address][i];
@@ -86,10 +88,11 @@ vector<int> memory::read_instruction(int32_t address, int core)
         }
         else
         {
-            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
 }
+
 void memory::write_instruction(int32_t address, int encode[], int core)
 {
     if (core == 1)
@@ -103,7 +106,7 @@ void memory::write_instruction(int32_t address, int encode[], int core)
         }
         else
         {
-            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
     if (core == 2)
@@ -117,13 +120,14 @@ void memory::write_instruction(int32_t address, int encode[], int core)
         }
         else
         {
-            throw out_of_range("Error: Attempted to read from out of bounds memory address.");
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
         }
     }
 }
-void memory::write_str(string s1, string s2, int address_str, int core)
+
+void memory::write_str(std::string s1, std::string s2, int address_str, int core)
 {
-    pair<string, string> p;
+    std::pair<std::string, std::string> p;
     p.first = s1;
     p.second = s2;
     if (core == 1)
@@ -135,15 +139,16 @@ void memory::write_str(string s1, string s2, int address_str, int core)
         strmap_2[p] = address_str;
     }
 }
-string memory::read_str(int32_t address, int core)
+
+std::string memory::read_str(int32_t address, int core)
 {
-    pair<string, string> p;
-    string result = "";  // Initialize an empty string to store the result
+    std::pair<std::string, std::string> p;
+    std::string result = "";  // Initialize an empty string to store the result
 
     if (core == 1)
     {
         // Search for the string in strmap_1 using the given address
-        for ( auto &entry : strmap_1)
+        for (auto &entry : strmap_1)
         {
             if (entry.second == address)
             {
@@ -156,7 +161,7 @@ string memory::read_str(int32_t address, int core)
     else if (core == 2)
     {
         // Search for the string in strmap_2 using the given address
-        for ( auto &entry : strmap_2)
+        for (auto &entry : strmap_2)
         {
             if (entry.second == address)
             {
