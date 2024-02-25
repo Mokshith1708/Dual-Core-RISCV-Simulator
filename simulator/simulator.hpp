@@ -64,6 +64,8 @@ namespace RISCV
         lbu = 18,
         lwu = 19,
         j = 20, //
+        la = 21,
+        li = 22,
 
     };
 }

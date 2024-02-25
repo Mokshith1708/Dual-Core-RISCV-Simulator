@@ -2,7 +2,7 @@
 arr: .word 4 3 21 1 9 5 6 6 -1
 #ninin guug ig
 .text
-add x5 x0 x0
+la x5 arr
 add x6 x5 x0 
 addi x7 x0 9 
 addi x8 x0 8 
@@ -28,3 +28,4 @@ exit:
 add x0 x0 x0
 add x1 x1 x5
 add x1 x1 x8 
+li x31 23

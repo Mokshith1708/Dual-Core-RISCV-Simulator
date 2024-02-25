@@ -165,6 +165,25 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         pc++;
         break;
     }
+    case RISCV::la:
+    {
+        int rd = instruction[1];
+        vector<int>v =  m.read_instruction(instruction[2],core);
+        int rs1 = v[1];
+        r.write(rd,rs1);
+        pc++;
+        break;
+    }
+    case RISCV::li:
+    {
+        int rd = instruction[1];
+        int rs1 = instruction[2];
+        cout<<rs1<<" "<<rd<<endl;
+        r.write(rd,rs1);
+        pc++;
+        break;
+    }
+
     default:
         pc++;
         break;

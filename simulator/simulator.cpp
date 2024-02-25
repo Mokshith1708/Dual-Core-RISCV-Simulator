@@ -41,6 +41,8 @@ RISCV::Inst stringToInst(const string &s)
         {"lbu", RISCV::lbu},
         {"lwu", RISCV::lwu},
         {"j", RISCV::j},
+        {"la", RISCV::la},
+        {"li", RISCV::li},
     };
 
     auto it = instMap.find(s);
@@ -267,6 +269,18 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                     // Handle instruction
                     switch (stringToInst(words[i]))
                     {
+                    case RISCV::la:
+                         encode[0] = stringToInst(words[i]);
+                         encode[1] = stringToReg(words[i+1]);
+                         encode[2] = labelMap[words[i+2]];
+                        i += 3; // Skip label and operands
+                        break;
+                    case RISCV::li:
+                         encode[0] = stringToInst(words[i]);
+                         encode[1] = stringToReg(words[i+1]);
+                         encode[2] = stoi(words[i+2]);
+                        i += 3; // Skip label and operands
+                        break;
                     case RISCV::beq:
                     case RISCV::bne:
                     case RISCV::blt:
