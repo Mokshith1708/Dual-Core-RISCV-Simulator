@@ -455,7 +455,7 @@ int main()
 
     // std::ofstream outputFile("..\\data_files\\output\\terminal1.txt");
 
-    const string file_path = "..\\simulator\\BUBBLE_SORT.s";
+    const string file_path = "..\\data_files\\input\\BUBBLE_SORT.s";
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
     {
@@ -477,7 +477,7 @@ int main()
     int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m, p1, 1);
 
     // for second file
-    const string file_path_2 = "..\\simulator\\SELECTION_SORT.s";
+    const string file_path_2 = "..\\data_files\\input\\SELECTION_SORT.s";
     ifstream instructions_prog_2(file_path_2);
     if (!instructions_prog_2.is_open())
     {
