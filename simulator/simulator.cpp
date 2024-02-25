@@ -11,7 +11,6 @@
 #include "memory.cpp"
 #include "cores.cpp"
 #include "cores.hpp"
-#include <bits/stdc++.h>
 #include "registers.hpp"
 #include "registers.cpp"
 
