@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include "simulator.hpp"
 #include <sstream>
+#include <cctype>
 #include "memory.hpp"
 #include "memory.cpp"
 #include "cores.cpp"
@@ -119,17 +120,28 @@ vector<string> split_string(const string &line)
 }
 
 // First Pass: Collect Labels and Addresses
-void collectLabels(const vs &lines, map<string, int> &labelMap, map<string, int> &dataSizes, pair<int, int> &p)
+void collectLabels(vs &lines, map<string, int> &labelMap, map<string, int> &dataSizes, pair<int, int> &p)
 {
     int address = 0;
     bool inDataSection = false;
-    for (const string &line : lines)
-    {
+    for (string &line : lines)
+    {      if(line.empty())
+            {
+                address++;
+                continue;
+            }
         vs words = split_string(line);
         if (!words.empty() && words[0] == ".data")
         {
             inDataSection = true;
             p.first = address;
+            address++;
+            continue;
+        }
+        if (!words.empty() && words[0] == ".text")
+        {
+            inDataSection = false;
+            p.second = address;
             address++;
             continue;
         }
@@ -139,16 +151,18 @@ void collectLabels(const vs &lines, map<string, int> &labelMap, map<string, int>
             {
                 string label = words[0].substr(0, words[0].size() - 1);
                 labelMap[label] = address;
-                dataSizes[label] = words.size() - 1;
+                dataSizes[label] = words.size() - 2;
+               // cout<<dataSizes[label]<<endl;
                 address++;
             }
-            else if (!words.empty() && words[0] == ".text")
-            {
-                // End of .data
-                inDataSection = false;
-                p.second = address;
-                address++;
-            }
+           
+            // else if (!words.empty() && words[0] == ".text")
+            // {
+            //     // End of .data
+            //     inDataSection = false;
+            //     p.second = address;
+            //     address++;
+            // }
         }
         else
         {
@@ -173,11 +187,16 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
     int address = 0;
     int address_str = 0;
     int address_memory = 0;
-    for (const string &line : lines)
+    for (string &line : lines)
     {
         vs words = split_string(line);
         int encode[4] = {0, 0, 0, 0};
-
+        if(line.empty() || line[0]=='#')
+        {    
+            m.write_instruction(address, encode, core);
+            address++;
+            continue;
+        }
         if (address >= p.first && address < p.second)
         {
             if (words[0] == ".data")
@@ -194,9 +213,9 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                     encode[1] = address_memory;
                     encode[2] = address_memory + words.size() - 3;
                     encode[0] = -2;
-                    for (int i = 2; i < words.size(); i++)
+                    for (int j = 2; j < words.size(); j++)
                     {
-                        m.write_memory(address_memory, stoi(words[i]), core);
+                        m.write_memory(address_memory, stoi(words[j]), core);
                         address_memory++;
                     }
                     m.write_instruction(address, encode, core);
@@ -206,10 +225,10 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                 else if (words[1] == ".string")
                 {
                     string str;
-                    for (size_t i = 2; i < words.size(); ++i)
+                    for (size_t j = 2; j< words.size(); ++j)
                     {
-                        str += words[i];
-                        if (i != words.size() - 1)
+                        str += words[j];
+                        if (j != words.size() - 1)
                             str += " ";
                     }
                     m.write_str(words[0].substr(0, words[0].size() - 1), str, address_str, 1);
@@ -458,5 +477,12 @@ int main()
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
     }
     std::cout << "===========" << std::endl;
+
+    for(int i=0;i<30;i++)
+    {
+        cout<<m.instructions_1[i][0]<<" "<<m.instructions_1[i][1]<<" "<<m.instructions_1[i][2]<<" "<<m.instructions_1[i][3]<<" "<<endl;
+    }
+
+
     return 0;
 }

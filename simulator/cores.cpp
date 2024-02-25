@@ -9,7 +9,7 @@ ALU::ALU(pair<int, int> &p1,pair<int, int> &p2, int no_inst_1,int no_inst_2,memo
     pc2 = p2.second;
     //cout << pc << endl;
     int maxim = max(no_inst_1,no_inst_2);
-    while (pc1<maxim || pc2<maxim)
+    while (pc1<maxim && pc2<maxim)
     {
         // cout << no_inst << endl;
         if(pc1<no_inst_1)
@@ -143,7 +143,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
     case RISCV::j:
     {
         int rd = instruction[1];
-        cout<<rd<<endl;
+        //cout<<rd<<endl;
         pc = rd;
         break;
     }
@@ -152,7 +152,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rd = instruction[1];
         int rs1 = r.read(instruction[3]);
         int offset = instruction[2];
-        r.write(rd, m.read_memory(rs1 + offset, core));
+        r.write(rd, m.read_memory((rs1 + offset)/4, core));
         pc++;
         break;
     }
@@ -161,7 +161,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rs1 = instruction[1];
         int rd = r.read(instruction[3]);
         int offset = instruction[2];
-        m.write_memory(rd + offset, r.read(rs1), core);
+        m.write_memory((rd + offset)/4, r.read(rs1), core);
         pc++;
         break;
     }
