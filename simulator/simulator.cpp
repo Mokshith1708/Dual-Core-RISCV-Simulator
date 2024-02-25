@@ -136,20 +136,22 @@ vector<string> split_string(const string &line)
 
         // Split the word by comma if present
         size_t pos;
-        while ((pos = word.find(',')) != string::npos) {
-            if (pos > 0) {
+        while ((pos = word.find(',')) != string::npos)
+        {
+            if (pos > 0)
+            {
                 words.push_back(word.substr(0, pos));
             }
             word.erase(0, pos + 1);
         }
-        if (!word.empty()) {
+        if (!word.empty())
+        {
             words.push_back(word);
         }
     }
 
     return words;
 }
-
 
 // First Pass Collect Labels and Addresses
 void collectLabels(vs &lines, map<string, int> &labelMap, map<string, int> &dataSizes, pair<int, int> &p)
@@ -313,9 +315,9 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         i += 3; // Skip label and operands
                         break;
                     case RISCV::ecall:
-                        encode[0]= stringToInst(words[i]);
-                        encode[1]= 111111;
-                        i+=3;
+                        encode[0] = stringToInst(words[i]);
+                        encode[1] = 111111;
+                        i += 3;
                         break;
                     case RISCV::beq:
                     case RISCV::bne:
@@ -427,16 +429,32 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
 //     }
 //     std::cout << "===============" << std::endl;
 // }
-
 int main()
 {
+    ofstream outputFile1("..\\data_files\\output\\terminal1.txt");
+    ofstream outputFile2("..\\data_files\\output\\terminal2.txt");
+    ofstream outputFile3("..\\data_files\\output\\console.txt");
+
+    // Check if the files are opened successfully
+    if (!outputFile1.is_open() || !outputFile2.is_open() || !outputFile3.is_open())
+    {
+        cerr << "Error: Unable to open the output files." << endl;
+        return 1; // Return an error code
+    }
+
+    // Your existing code for BUBBLE SORT program
+
+    // Restore cout
+    // cout.rdbuf(coutbuf1);
+
     map<string, int> labelMap_1, labelMap_2;
     map<string, int> dataSizes_1, dataSizes_2;
     pair<int, int> p1, p2;
     registers r1, r2;
     memory m;
 
-    // for first file.
+    // std::ofstream outputFile("..\\data_files\\output\\terminal1.txt");
+
     const string file_path = "..\\simulator\\BUBBLE_SORT.s";
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
@@ -448,7 +466,8 @@ int main()
     string line_prog_1;
     while (getline(instructions_prog_1, line_prog_1))
     {
-        auto it = std::find_if_not(line_prog_1.begin(), line_prog_1.end(), [](unsigned char c) { return std::isspace(c); });
+        auto it = std::find_if_not(line_prog_1.begin(), line_prog_1.end(), [](unsigned char c)
+                                   { return std::isspace(c); });
         std::string trimmedInput(it, line_prog_1.end());
         lines_prog_1.push_back(trimmedInput);
     }
@@ -470,7 +489,8 @@ int main()
     string line_prog_2;
     while (getline(instructions_prog_2, line_prog_2))
     {
-        auto it2 = std::find_if_not(line_prog_2.begin(), line_prog_2.end(), [](unsigned char c) { return std::isspace(c); });
+        auto it2 = std::find_if_not(line_prog_2.begin(), line_prog_2.end(), [](unsigned char c)
+                                    { return std::isspace(c); });
         std::string trimmedInput(it2, line_prog_2.end());
         if (trimmedInput.find(".string") == string::npos)
         {
@@ -484,62 +504,87 @@ int main()
     collectLabels(lines_prog_2, labelMap_2, dataSizes_2, p2);
     int no_inst_2 = generateMachineCode(lines_prog_2, labelMap_2, m, p2, 2);
 
-    /// #### ///
+    streambuf *coutbuf3 = cout.rdbuf();
+    cout.rdbuf(outputFile3.rdbuf());
 
     ALU alui(p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2);
 
+    cout.rdbuf(coutbuf3);
+
+    streambuf *coutbuf1 = cout.rdbuf();
+    cout.rdbuf(outputFile1.rdbuf());
+
     std::cout << "Register Table:" << std::endl;
-    std::cout << "===============" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     for (int i = 0; i < 32; ++i)
     {
-        std::cout << "x" << i << ": " << r1.read(i) << std::endl;
+        if (i < 10)
+            std::cout << "x" << i << " : " << r1.read(i) << std::endl;
+        else
+            std::cout << "x" << i << ": " << r1.read(i) << std::endl;
     }
-    std::cout << "===============" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     // for (const auto& pair : labelMap) {
     //     std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
     // } // labels
-    std::cout << "==============" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     for (int i = 0; i < 30; ++i)
     {
         std::cout << "Address " << i << ": " << m.read_memory(i, 1) << std::endl;
     }
-    std::cout << "==============" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     std::cout << "String Map:" << std::endl;
-    std::cout << "===========" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     for (const auto &pair : m.strmap_1)
     {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
     }
-    std::cout << "===========" << std::endl;
+    std::cout << "================================================================================" << std::endl;
+
+    cout.rdbuf(coutbuf1);
+
+    // Your existing code for SELECTION SORT program
+
+    streambuf *coutbuf2 = cout.rdbuf();
+    cout.rdbuf(outputFile2.rdbuf());
 
     std::cout << "Register Table 2 :" << std::endl;
-    std::cout << "===============" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     for (int i = 0; i < 32; ++i)
     {
-        std::cout << "x" << i << ": " << r2.read(i) << std::endl;
+        if (i < 10)
+            std::cout << "x" << i << " : " << r1.read(i) << std::endl;
+        else
+            std::cout << "x" << i << ": " << r1.read(i) << std::endl;
     }
-    std::cout << "===============" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     // for (const auto& pair : labelMap) {
     //     std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
     // } // labels
-    std::cout << "==============" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     for (int i = 0; i < 30; ++i)
     {
         std::cout << "Address " << i << ": " << m.read_memory(i, 2) << std::endl;
     }
-    std::cout << "==============" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     std::cout << "String Map:" << std::endl;
-    std::cout << "===========" << std::endl;
+    std::cout << "================================================================================" << std::endl;
     for (const auto &pair : m.strmap_2)
     {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
     }
-    std::cout << "===========" << std::endl;
+    std::cout << "================================================================================" << std::endl;
 
-    for (int i = 0; i < 30; i++)
-    {
-        cout << m.instructions_1[i][0] << " " << m.instructions_1[i][1] << " " << m.instructions_1[i][2] << " " << m.instructions_1[i][3] << " " << endl;
-    }
+    // for (int i = 0; i < 30; i++)
+    // {
+    //     cout << m.instructions_1[i][0] << " " << m.instructions_1[i][1] << " " << m.instructions_1[i][2] << " " << m.instructions_1[i][3] << " " << endl;
+    // }
+
+    cout.rdbuf(coutbuf2);
+
+    outputFile1.close();
+    outputFile2.close();
+    outputFile3.close();
 
     return 0;
 }

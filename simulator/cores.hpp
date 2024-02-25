@@ -4,7 +4,7 @@
 #include <vector>
 #include "registers.hpp"
 // #include "memory.cpp"
-//#include "memory.hpp"
+// #include "memory.hpp"
 
 using namespace std;
 class ALU
@@ -15,6 +15,11 @@ private:
   vector<string> program;
 
 public:
-  ALU(pair<int, int> &p1,pair<int, int> &p2, int no_inst_1,int no_inst_2,memory &m, registers &r1,registers &r2, int core1, int core2);
-  void executeInstruction(vector<int> instructions, memory &m, registers &r, int core,int &pc);
+  ALU(pair<int, int> &p1, pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2);
+  void executeInstruction(vector<int> instructions, memory &m, registers &r, int core, int &pc);
+  void logs(const std::string &message, std::ofstream &outputFile);
+  void logi(int number, std::ofstream &outputFile);
+  template <typename T>
+  void logVariable(const std::string &variableName, T variable, std::ofstream &outputFile);
 };
+// #endif

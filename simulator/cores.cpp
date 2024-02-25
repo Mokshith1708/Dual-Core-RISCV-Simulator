@@ -3,35 +3,76 @@
 #include "memory.hpp"
 #include "registers.hpp"
 using namespace std;
-ALU::ALU(pair<int, int> &p1,pair<int, int> &p2, int no_inst_1,int no_inst_2,memory &m, registers &r1,registers &r2, int core1, int core2)
+
+// void ALU::logs(const std::string &message, std::ofstream &outputFile)
+// {
+//     // Implementation for logging strings
+//     // Print to terminal
+//     std::cout << message << std::endl;
+//     // Print to output file
+//     outputFile << message << std::endl;
+// }
+
+// void ALU::logi(int number, std::ofstream &outputFile)
+// {
+//     // Implementation for logging integers
+//     // Print to terminal
+//     std::cout << number << std::endl;
+//     // Print to output file
+//     outputFile << number << std::endl;
+// }
+
+// template <typename T>
+// void ALU::logVariable(const std::string &variableName, T variable, std::ofstream &outputFile)
+// {
+//     // Implementation for logging variables
+//     // Print to terminal
+//     std::cout << variableName << ": " << variable << std::endl;
+//     // Print to output file
+//     outputFile << variableName << ": " << variable << std::endl;
+// }
+
+// // Explicit instantiation for supported types
+// template void ALU::logVariable<int>(const std::string &, int, std::ofstream &);
+
+ALU::ALU(pair<int, int> &p1, pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2)
 {
     pc1 = p1.second;
     pc2 = p2.second;
-    //cout << pc << endl;
-    int maxim = max(no_inst_1,no_inst_2);
-    while (pc1<maxim && pc2<maxim)
+    // cout << pc << endl;
+    // std::ofstream outputFile1("..\\data_files\\output\\console1.txt", std::ios::app);
+    // if (!outputFile1.is_open())
+    // {
+    //     std::cerr << "Error: Unable to open output file!" << std::endl;
+    //     // Optionally, you can return or handle the error in another way
+    //     return;
+    // }
+    // std::ofstream outputFile1("..\\data_files\\output\\console1.txt", std::ios::trunc);
+    int maxim = max(no_inst_1, no_inst_2);
+    while (pc1 < maxim && pc2 < maxim)
     {
         // cout << no_inst << endl;
-        if(pc1<no_inst_1)
+        if (pc1 < no_inst_1)
         {
-            executeInstruction(m.read_instruction(pc1, core1), m, r1, core1,pc1);
+            executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
         }
-        if(pc2<no_inst_2)
+        if (pc2 < no_inst_2)
         {
-        executeInstruction(m.read_instruction(pc2, core2), m, r2, core2,pc2);
-        }//  pc++;
+            executeInstruction(m.read_instruction(pc2, core2), m, r2, core2, pc2);
+        } //  pc++;
     };
 }
-void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, int core,int &pc)
-{  if(instruction[1]==0 && instruction[2]==0 && instruction[3]==0)
+void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, int core, int &pc)
+{
+    if (instruction[1] == 0 && instruction[2] == 0 && instruction[3] == 0)
     {
-     pc++;
-    return;
+        pc++;
+        return;
     }
-    if(instruction[0]==-1 || instruction[0]==-2 )
+    if (instruction[0] == -1 || instruction[0] == -2)
     {
-     pc++;
-    return;
+        pc++;
+        return;
     }
     RISCV::Inst opcode = static_cast<RISCV::Inst>(instruction[0]);
     switch (opcode)
@@ -61,7 +102,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rd = instruction[1];
         int rs1 = instruction[2];
         int rs2 = instruction[3];
-        r.write(rd, r.read(rs1)*r.read(rs2));
+        r.write(rd, r.read(rs1) * r.read(rs2));
         pc++;
         break;
     }
@@ -81,7 +122,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rs1 = instruction[2];
         int temp2 = instruction[3];
         // cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<endl;
-        r.write(rd, r.read(rs1)*temp2);
+        r.write(rd, r.read(rs1) * temp2);
         pc++;
         break;
     }
@@ -99,9 +140,9 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rs1 = r.read(instruction[2]);
         int offset = instruction[3];
         r.write(rd, pc + 1);
-      //  cout << rs1 << endl;
-        pc = rs1 + offset-1;
-      //  cout << pc << endl;
+        //  cout << rs1 << endl;
+        pc = rs1 + offset - 1;
+        //  cout << pc << endl;
         break;
     }
     case RISCV::beq:
@@ -171,7 +212,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
     case RISCV::j:
     {
         int rd = instruction[1];
-        //cout<<rd<<endl;
+        // cout<<rd<<endl;
         pc = rd;
         break;
     }
@@ -180,7 +221,7 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rd = instruction[1];
         int rs1 = r.read(instruction[3]);
         int offset = instruction[2];
-        r.write(rd, m.read_memory((rs1 + offset)/4, core));
+        r.write(rd, m.read_memory((rs1 + offset) / 4, core));
         pc++;
         break;
     }
@@ -189,17 +230,17 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int rs1 = instruction[1];
         int rd = r.read(instruction[3]);
         int offset = instruction[2];
-        m.write_memory((rd + offset)/4, r.read(rs1), core);
+        m.write_memory((rd + offset) / 4, r.read(rs1), core);
         pc++;
         break;
     }
     case RISCV::la:
     {
         int rd = instruction[1];
-        vector<int>v =  m.read_instruction(instruction[2],core);
+        vector<int> v = m.read_instruction(instruction[2], core);
         int rs1 = v[1];
-        r.write(rd,rs1);
-        cout<<rs1<<endl;
+        r.write(rd, rs1);
+        // cout << rs1 << endl;
         pc++;
         break;
     }
@@ -207,22 +248,28 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
     {
         int rd = instruction[1];
         int rs1 = instruction[2];
-        cout<<rs1<<" "<<rd<<endl;
-        r.write(rd,rs1);
+        // cout << rs1 << " " << rd << endl;
+        r.write(rd, rs1);
         pc++;
         break;
     }
-     case RISCV::ecall:
+    case RISCV::ecall:
     {
         int n = r.read(17);
         int k = r.read(10);
-        if(n==1)
+        if (n == 1)
         {
+            // logVariable("k", k, outputFile1);
+            // cout<<core<<" "<<k;
             cout<<k;
         }
-        if(n==4)
+        if (n == 4)
         {
-            cout<<m.read_str(k,core);
+            // string temstr = m.read_str(k, core);
+            // logs(temstr, outputFile1);
+            // cout<<m.read_str(k,core);
+            // cout<<core<<" "<<m.read_str(k, core);
+            cout<<m.read_str(k, core);
         }
         pc++;
         break;
