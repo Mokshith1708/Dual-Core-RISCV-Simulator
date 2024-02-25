@@ -1,12 +1,12 @@
 .data
-     base: .word 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+     base: .word 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 
 .text
 start:
     li x1 0
 li x2 0
 li x3 18
-    li x19 19
-li x18 20
+li x19 18
+li x18 19
 la,x16, base
 la,x17,base
 la x21 base

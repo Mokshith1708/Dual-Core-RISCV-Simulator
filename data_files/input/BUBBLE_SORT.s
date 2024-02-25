@@ -1,12 +1,12 @@
 .data
-    arr: .word 40000 3 2100 1 90 5 6000 6 -100 500 300 200 
-    str: .string "nibib,bububu"
+arr: .word 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+str: .string "nibib,bububu"
 #ninin guug ig
 .text
 la x5 arr
 add x6 x5 x0 
- addi x7 x0 12
-addi x8 x0 11
+ addi x7 x0 20
+addi x8 x0 19
 loop1:
 beq x0 x7 exit
 addi x7 x7 -1
