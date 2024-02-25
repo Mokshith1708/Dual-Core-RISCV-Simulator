@@ -5,6 +5,7 @@
 #include <map>
 #include "memory.hpp"
 
+// Read data from memory based on the address and core
 int32_t memory::read_memory(int32_t address, int core)
 {
     if (core == 1)
@@ -31,6 +32,7 @@ int32_t memory::read_memory(int32_t address, int core)
     }
 }
 
+// Write data to memory based on the address, data, and core
 void memory::write_memory(int32_t address, int32_t data, int core)
 {
     if (core == 1)
@@ -56,7 +58,7 @@ void memory::write_memory(int32_t address, int32_t data, int core)
         }
     }
 }
-
+// Read instruction from instruction memory based on the address and core
 std::vector<int> memory::read_instruction(int32_t address, int core)
 {
     if (core == 1)
@@ -93,6 +95,7 @@ std::vector<int> memory::read_instruction(int32_t address, int core)
     }
 }
 
+// write instruction to instruction memory based on the address and core
 void memory::write_instruction(int32_t address, int encode[], int core)
 {
     if (core == 1)
@@ -124,7 +127,7 @@ void memory::write_instruction(int32_t address, int encode[], int core)
         }
     }
 }
-
+// Write strings to str memory based on the addresses and core
 void memory::write_str(std::string s1, std::string s2, int address_str, int core)
 {
     std::pair<std::string, std::string> p;
@@ -139,11 +142,11 @@ void memory::write_str(std::string s1, std::string s2, int address_str, int core
         strmap_2[p] = address_str;
     }
 }
-
+// read strings from memory based on the addresses and core
 std::string memory::read_str(int32_t address, int core)
 {
     std::pair<std::string, std::string> p;
-    std::string result = "";  // Initialize an empty string to store the result
+    std::string result = ""; // Initialize an empty string to store the result
 
     if (core == 1)
     {

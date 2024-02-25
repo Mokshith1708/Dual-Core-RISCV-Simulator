@@ -34,6 +34,7 @@
 // // Explicit instantiation for supported types
 // template void ALU::logVariable<int>(const std::string &, int, std::ofstream &);
 
+// Constructor for ALU class
 ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2)
 {
     pc1 = p1.second;
@@ -61,8 +62,10 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no
         } //  pc++;
     }
 }
+
+// Function to execute individual instructions
 void ALU::executeInstruction(std::vector<int> instruction, memory &m, registers &r, int core, int &pc)
-{
+{ // Check for no-operation instruction
     if (instruction[1] == 0 && instruction[2] == 0 && instruction[3] == 0)
     {
         pc++;
@@ -73,6 +76,8 @@ void ALU::executeInstruction(std::vector<int> instruction, memory &m, registers 
         pc++;
         return;
     }
+
+    // Convert the instruction opcode to enum type
     RISCV::Inst opcode = static_cast<RISCV::Inst>(instruction[0]);
     switch (opcode)
     {
@@ -260,7 +265,7 @@ void ALU::executeInstruction(std::vector<int> instruction, memory &m, registers 
         {
             // logVariable("k", k, outputFile1);
             // std::cout<<core<<" "<<k;
-            std::cout<<k;
+            std::cout << k;
         }
         if (n == 4)
         {
@@ -268,7 +273,7 @@ void ALU::executeInstruction(std::vector<int> instruction, memory &m, registers 
             // logs(temstr, outputFile1);
             // std::cout<<m.read_str(k,core);
             // std::cout<<core<<" "<<m.read_str(k, core);
-            std::cout<<m.read_str(k, core);
+            std::cout << m.read_str(k, core);
         }
         pc++;
         break;
