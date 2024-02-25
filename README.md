@@ -1,8 +1,6 @@
 # Dual-Core-RISCV-Simulator
 Developing a  simulator on the lines of Ripes. The simulator will have two cores and will be able to simulate a multi-core environment. 
 
-# {Note: Majority of the work was done together. So sometimes we only worked from one laptop and comitted from one git account.}
-
 ## Meeting-9(Date: 25/2/24)
 - added li and la instructions
 - made some changes in lw and sw , added comment lines , empty lines skipping.
@@ -64,4 +62,6 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
 - For each class we wrote a hpp file and cpp file.
 - hpp file mainly consisted the basic structure without implementation
 - cpp file contained the implementations of the methods declared in hpp file.
+
+# {Note: Majority of the work was done together. So sometimes we only worked from one laptop and comitted from one git account.}
 
