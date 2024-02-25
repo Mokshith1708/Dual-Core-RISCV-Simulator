@@ -1,6 +1,6 @@
 # Dual-Core-RISCV-Simulator
 Developing a  simulator on the lines of Ripes. The simulator will have two cores and will be able to simulate a multi-core environment. 
-- implemented functions
+- implemented instructions
   ```assembly=
   add
   sub
