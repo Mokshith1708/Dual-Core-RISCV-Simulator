@@ -1,71 +1,102 @@
-Register Table:
+Register Table : 1
 ================================================================================
-x0 : 0
-x1 : 19
-x2 : 0
-x3 : 0
-x4 : 19
-x5 : 0
-x6 : 0
-x7 : 0
-x8 : 19
-x9 : 20
-x10: 0
-x11: 0
-x12: 0
-x13: 0
-x14: 0
-x15: 0
-x16: 0
-x17: 4
-x18: 0
-x19: 0
-x20: 0
-x21: 0
-x22: 0
-x23: 0
-x24: 0
-x25: 0
-x26: 0
-x27: 0
-x28: 0
-x29: 0
-x30: 0
-x31: 23
+x0  : 0
+x1  : 19
+x2  : 0
+x3  : 0
+x4  : 19
+x5  : 0
+x6  : 0
+x7  : 0
+x8  : 19
+x9  : 20
+x10 : 0
+x11 : 0
+x12 : 0
+x13 : 0
+x14 : 0
+x15 : 0
+x16 : 0
+x17 : 4
+x18 : 0
+x19 : 0
+x20 : 0
+x21 : 0
+x22 : 0
+x23 : 0
+x24 : 0
+x25 : 0
+x26 : 0
+x27 : 0
+x28 : 0
+x29 : 0
+x30 : 0
+x31 : 23
 ================================================================================
 ================================================================================
-Address 0: 1
-Address 1: 2
-Address 2: 3
-Address 3: 4
-Address 4: 5
-Address 5: 6
-Address 6: 7
-Address 7: 8
-Address 8: 9
-Address 9: 10
-Address 10: 11
-Address 11: 12
-Address 12: 13
-Address 13: 14
-Address 14: 15
-Address 15: 16
-Address 16: 17
-Address 17: 18
-Address 18: 19
-Address 19: 20
-Address 20: 0
-Address 21: 0
-Address 22: 0
-Address 23: 0
-Address 24: 0
-Address 25: 0
-Address 26: 0
-Address 27: 0
-Address 28: 0
-Address 29: 0
+Label map code 1
 ================================================================================
-String Map:
+Key: arr, Value: 1
+Key: exit, Value: 26
+Key: loop1, Value: 8
+Key: loop2, Value: 13
+Key: noswap, Value: 20
+Key: str, Value: 2
+================================================================================
+Address list code 1
+================================================================================
+Address 0  : 1
+Address 1  : 2
+Address 2  : 3
+Address 3  : 4
+Address 4  : 5
+Address 5  : 6
+Address 6  : 7
+Address 7  : 8
+Address 8  : 9
+Address 9  : 10
+Address 10 : 11
+Address 11 : 12
+Address 12 : 13
+Address 13 : 14
+Address 14 : 15
+Address 15 : 16
+Address 16 : 17
+Address 17 : 18
+Address 18 : 19
+Address 19 : 20
+Address 20 : 0
+Address 21 : 0
+Address 22 : 0
+Address 23 : 0
+Address 24 : 0
+Address 25 : 0
+Address 26 : 0
+Address 27 : 0
+Address 28 : 0
+Address 29 : 0
+Address 30 : 0
+Address 31 : 0
+Address 32 : 0
+Address 33 : 0
+Address 34 : 0
+Address 35 : 0
+Address 36 : 0
+Address 37 : 0
+Address 38 : 0
+Address 39 : 0
+Address 40 : 0
+Address 41 : 0
+Address 42 : 0
+Address 43 : 0
+Address 44 : 0
+Address 45 : 0
+Address 46 : 0
+Address 47 : 0
+Address 48 : 0
+Address 49 : 0
+================================================================================
+String Map : code 1
 ================================================================================
 Key: str, Value: "nibib bububu", Address: 0
 ================================================================================
