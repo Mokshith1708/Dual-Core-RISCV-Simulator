@@ -66,6 +66,8 @@ namespace RISCV
         j = 20, //
         la = 21,
         li = 22,
+        mul = 23,
+        muli = 24,
 
     };
 }

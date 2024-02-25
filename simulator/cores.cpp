@@ -47,6 +47,15 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         pc++;
         break;
     }
+    case RISCV::mul:
+    {
+        int rd = instruction[1];
+        int rs1 = instruction[2];
+        int rs2 = instruction[3];
+        r.write(rd, r.read(rs1)*r.read(rs2));
+        pc++;
+        break;
+    }
     case RISCV::addi:
     {
         int rd = instruction[1];
@@ -54,6 +63,16 @@ void ALU::executeInstruction(vector<int> instruction, memory &m, registers &r, i
         int temp2 = instruction[3];
         // cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<endl;
         r.write(rd, r.read(rs1) + temp2);
+        pc++;
+        break;
+    }
+    case RISCV::muli:
+    {
+        int rd = instruction[1];
+        int rs1 = instruction[2];
+        int temp2 = instruction[3];
+        // cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<endl;
+        r.write(rd, r.read(rs1)*temp2);
         pc++;
         break;
     }

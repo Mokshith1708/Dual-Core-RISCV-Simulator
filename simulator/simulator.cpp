@@ -43,6 +43,8 @@ RISCV::Inst stringToInst(const string &s)
         {"j", RISCV::j},
         {"la", RISCV::la},
         {"li", RISCV::li},
+        {"mul", RISCV::mul},
+        {"muli", RISCV::muli},
     };
 
     auto it = instMap.find(s);
@@ -353,6 +355,13 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         i = i + 3;
                         break;
                     case RISCV::addi:
+                        encode[0] = stringToInst(words[i]);
+                        encode[1] = stringToReg(words[i + 1]);
+                        encode[2] = stringToReg(words[i + 2]);
+                        encode[3] = stoi(words[i + 3]);
+                        i += 3;
+                        break;
+                    case RISCV::muli:
                         encode[0] = stringToInst(words[i]);
                         encode[1] = stringToReg(words[i + 1]);
                         encode[2] = stringToReg(words[i + 2]);
