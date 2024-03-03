@@ -3,51 +3,13 @@
 #include "memory.hpp"
 #include "registers.hpp"
 
-// void ALU::logs(const std::string &message, std::ofstream &outputFile)
-// {
-//     // Implementation for logging strings
-//     // Print to terminal
-//     std::cout << message << std::endl;
-//     // Print to output file
-//     outputFile << message << std::endl;
-// }
-
-// void ALU::logi(int number, std::ofstream &outputFile)
-// {
-//     // Implementation for logging integers
-//     // Print to terminal
-//     std::cout << number << std::endl;
-//     // Print to output file
-//     outputFile << number << std::endl;
-// }
-
-// template <typename T>
-// void ALU::logVariable(const std::string &variableName, T variable, std::ofstream &outputFile)
-// {
-//     // Implementation for logging variables
-//     // Print to terminal
-//     std::cout << variableName << ": " << variable << std::endl;
-//     // Print to output file
-//     outputFile << variableName << ": " << variable << std::endl;
-// }
-
-// // Explicit instantiation for supported types
-// template void ALU::logVariable<int>(const std::string &, int, std::ofstream &);
-
 // Constructor for ALU class
 ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2)
 {
     pc1 = p1.second;
     pc2 = p2.second;
     // std::cout << pc << std::endl;
-    // std::ofstream outputFile1("..\\data_files\\output\\console1.txt", std::ios::app);
-    // if (!outputFile1.is_open())
-    // {
-    //     std::cerr << "Error: Unable to open output file!" << std::endl;
-    //     // Optionally, you can return or handle the error in another way
-    //     return;
-    // }
-    // std::ofstream outputFile1("..\\data_files\\output\\console1.txt", std::ios::trunc);
+  
     int maxim = std::max(no_inst_1, no_inst_2);
     while (pc1 < maxim && pc2 < maxim)
     {
