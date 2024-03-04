@@ -13,11 +13,16 @@ private:
   int pc1 = 0;
   int pc2 = 0;
   std::vector<std::string> program;
-  std::vector<std::vector<int>> fetch;
-  std::vector<std::vector<int>> decode;
-  std::vector<std::vector<int>> execute;
-  std::vector<std::vector<int>> mem;
-  std::vector<std::vector<int>> write;
+  std::vector<int> fetch1;
+  std::vector<int> decode1;
+  std::vector<int> execute1;
+  std::vector<int> mem1;
+  std::vector<int> write1;
+  std::vector<int> fetch2;
+  std::vector<int> decode2;
+  std::vector<int> execute2;
+  std::vector<int> mem2;
+  std::vector<int> write2;
 
 public:
   ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2);
