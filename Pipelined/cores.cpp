@@ -3,25 +3,12 @@
 #include "memory.hpp"
 #include "registers.hpp"
 using namespace std;
-// Constructor for ALU class
-// ALU::ALU()
-//     : fetch1(std::vector<int>()),
-//       fetch2(std::vector<int>()),
-//       decode1(std::vector<int>()),
-//       decode2(std::vector<int>()),
-//       execute1(std::vector<int>()),
-//       execute2(std::vector<int>()),
-//       mem1(std::vector<int>()),
-//       mem2(std::vector<int>()),
-//       write1(std::vector<int>()),
-//       write2(std::vector<int>());
-// {
-// }
 ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2)
 {
     pc1 = p1.second;
     pc2 = p2.second;
-
+    std::vector<int>tempReg1(32);
+    std::vector<int>tempReg2(32);
     int maxim = std::max(no_inst_1, no_inst_2);
     std::vector<int>v1,k1,k2,v2;
     while (pc1 < maxim+4 && pc2 < maxim+4)
@@ -61,14 +48,14 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no
             }
             cout<<endl;
             k1.clear();
-            k1=instructionExecute(v1,m,r1,core1,pc1);
+            k1=instructionExecute(v1,m,r1,core1,pc1,tempReg1);
              for(auto& p:execute1)
             {
             cout<<p<<" ";
             }
             cout<<endl;
             v1.clear();
-            v1=instructionDecode(m,core1,r1,pc1);
+            v1=instructionDecode(m,core1,r1,pc1,tempReg1);
              for(auto& p:decode1)
             {
             cout<<p<<" ";
@@ -87,8 +74,8 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no
         {
             writeBack(k2,m,core2, pc2,r2);
             memoryAccess(k2,m,core2,pc2);
-            k2=instructionExecute(v2,m,r2,core2,pc2);
-            v2=instructionDecode(m,core2,r2,pc2);
+            k2=instructionExecute(v2,m,r2,core2,pc2,tempReg2);
+            v2=instructionDecode(m,core2,r2,pc2,tempReg2);
             instructionFetch(m,core2,pc2);
             clockCycles2++;
           //  std::cout<<clockCycles2<<std::endl;
@@ -108,8 +95,9 @@ void ALU::instructionFetch(memory &m, int core, int& pc)
     pc++;
 }
 
-std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc)
-{   std::vector<int>& fetch = (core == 1) ? fetch1 : fetch2;
+std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc, std::vector<int>& tempReg)
+{   
+    std::vector<int>& fetch = (core == 1) ? fetch1 : fetch2;
     std::vector<int>& decode = (core == 1) ? decode1 : decode2;
     std::vector<int>& execute = (core == 1) ? execute1 : execute2;
     std::vector<int>v;
@@ -139,10 +127,16 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rs2 = decode[3];
         int ans1 = r.read(rs1);
         int ans2 = r.read(rs2);
+        if(dataforwarding1)
+        {
+        int ans1 = tempReg[rs1];
+        int ans2 = tempReg[rs2];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
         v.push_back(ans1);
         v.push_back(ans2);
+       
        // r.write(rd, ans1 + ans2);
         break;
     }
@@ -151,11 +145,18 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rd = decode[1];
         int rs1 = decode[2];
         int rs2 = decode[3];
-       // r.write(rd, r.read(rs1) - r.read(rs2));
+         int ans1 = r.read(rs1);
+        int ans2 = r.read(rs2);
+        if(dataforwarding1)
+        {
+        int ans1 = tempReg[rs1];
+        int ans2 = tempReg[rs2];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
-        v.push_back(r.read(rs2));
+        v.push_back(ans1);
+        v.push_back(ans2);
+     //   tempReg[rd]=r.read(rs1)-r.read(rs2);
         break;
     }
     case RISCV::mul:
@@ -163,10 +164,18 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rd = decode[1];
         int rs1 = decode[2];
         int rs2 = decode[3];
+        int ans1 = r.read(rs1);
+        int ans2 = r.read(rs2);
+        if(dataforwarding1)
+        {
+        int ans1 = tempReg[rs1];
+        int ans2 = tempReg[rs2];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
-        v.push_back(r.read(rs2));
+        v.push_back(ans1);
+        v.push_back(ans2);
+     //    tempReg[rd]=r.read(rs1)*r.read(rs2);
        // r.write(rd, r.read(rs1) * r.read(rs2));
         break;
     }
@@ -176,10 +185,16 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rs1 = decode[2];
         int temp2 = decode[3];
         // std::cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<std::endl;
+        int ans = r.read(rs1);
+        if(dataforwarding1)
+        {
+         ans = tempReg[rs1];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
+        v.push_back(ans);
         v.push_back(temp2);
+      //   tempReg[rd]=r.read(rs1)+temp2;
       //  r.write(rd, r.read(rs1) + temp2);
         break;
     }
@@ -188,10 +203,16 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rd = decode[1];
         int rs1 = decode[2];
         int temp2 = decode[3];
+         int ans = r.read(rs1);
+        if(dataforwarding1)
+        {
+         ans = tempReg[rs1];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
         v.push_back(r.read(rs1));
         v.push_back(temp2);
+     //   tempReg[rd]=r.read(rs1)*temp2;
         // std::cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<std::endl;
        // r.write(rd, r.read(rs1) * temp2);
         break;
@@ -203,6 +224,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         v.push_back(decode[0]);
         v.push_back(rd);
         v.push_back(rs1);
+       // tempReg[rd]=pc+1;
        // v.push_back();
        // r.write(rd, pc + 1);
        // pc = rs1;
@@ -217,6 +239,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         v.push_back(rd);
         v.push_back(rs1);
         v.push_back(offset);
+      //  tempReg[rd]=pc+1;
       //  r.write(rd, pc + 1);
         // std::cout << rs1 << std::endl;
       //  pc = rs1 + offset - 1;
@@ -232,6 +255,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         v.push_back(rd);
         v.push_back(r.read(rs1));
         v.push_back(r.read(rs2));
+
         break;
         // if (r.read(rs1) == r.read(rs2))
         // {
@@ -321,6 +345,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         v.push_back(rd);
         v.push_back(rs1);
         v.push_back(offset);
+     //   tempReg[rd]=m.read_memory((rs1 + offset) / 4,core);
        // r.write(rd, m.read_memory((rs1 + offset) / 4, core));
         break;
     }
@@ -344,6 +369,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         v.push_back(decode[0]);
         v.push_back(rd);
         v.push_back(rs1);
+      //  tempReg[rd]=rs1;
         //r.write(rd, rs1);
         // std::cout << rs1 << std::endl;
         break;
@@ -356,7 +382,8 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         v.push_back(decode[0]);
         v.push_back(rd);
         v.push_back(rs1);
-        r.write(rd, rs1);
+       //  tempReg[rd]=rs1;
+       // r.write(rd, rs1);
         break;
     }
     case RISCV::ecall:
@@ -392,7 +419,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
     // }
      return v;
 }
-std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers &r, int core, int &pc)
+std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers &r, int core, int &pc, std::vector<int>& tempReg)
 {
     std::vector<int>& execute = (core == 1) ? execute1 : execute2;
     std::vector<int>& decode = (core == 1) ? decode1 : decode2;
@@ -428,6 +455,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(ans);
+         tempReg[v[1]]=ans;
         //r.write(rd, ans1 + ans2);
         break;
     }
@@ -437,6 +465,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(ans);
+         tempReg[v[1]]=ans;
         break;
     }
     case RISCV::mul:
@@ -445,6 +474,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(ans);
+         tempReg[v[1]]=ans;
         break;
     }
     case RISCV::addi:
@@ -453,6 +483,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(ans);
+         tempReg[v[1]]=ans;
         break;
     }
     case RISCV::muli:
@@ -461,6 +492,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(ans);
+         tempReg[v[1]]=ans;
         break;
     }
     case RISCV::jal:
@@ -470,6 +502,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(pc+1);
        // r.write(rd, pc + 1);
         pc = v[2];
+         tempReg[v[1]]=pc+1;
         break;
     }
     case RISCV::jalr:
@@ -478,6 +511,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(v[1]);
         k.push_back(pc+1);
         pc = v[2] + v[3] - 1;
+         tempReg[v[1]]=pc+1;
         break;
     }
     case RISCV::beq:
@@ -552,6 +586,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(m.read_memory((v[2] + v[3])/4,core));
+         tempReg[v[1]]=m.read_memory((v[2] + v[3])/4,core);
        // r.write(rd, m.read_memory((rs1 + offset) / 4, core));
         break;
     }
@@ -567,6 +602,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(v[2]);
+        tempReg[v[1]]=v[2];
         // r.write(rd, rs1);
         // std::cout << rs1 << std::endl;
         break;
@@ -578,6 +614,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int>v,memory &m, registers 
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(v[2]);
+        tempReg[v[1]]=v[2];
         // std::cout << rs1 << " " << rd << std::endl;
        // r.write(rd, rs1);
         break;
