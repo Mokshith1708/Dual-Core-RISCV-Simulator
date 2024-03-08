@@ -129,8 +129,8 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int ans2 = r.read(rs2);
         if(dataforwarding1)
         {
-        int ans1 = tempReg[rs1];
-        int ans2 = tempReg[rs2];
+         ans1 = tempReg[rs1];
+         ans2 = tempReg[rs2];
         }
         v.push_back(decode[0]);
         v.push_back(rd);
@@ -149,8 +149,8 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int ans2 = r.read(rs2);
         if(dataforwarding1)
         {
-        int ans1 = tempReg[rs1];
-        int ans2 = tempReg[rs2];
+         ans1 = tempReg[rs1];
+         ans2 = tempReg[rs2];
         }
         v.push_back(decode[0]);
         v.push_back(rd);
@@ -168,8 +168,8 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int ans2 = r.read(rs2);
         if(dataforwarding1)
         {
-        int ans1 = tempReg[rs1];
-        int ans2 = tempReg[rs2];
+        ans1 = tempReg[rs1];
+        ans2 = tempReg[rs2];
         }
         v.push_back(decode[0]);
         v.push_back(rd);
@@ -210,7 +210,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
+        v.push_back(ans);
         v.push_back(temp2);
      //   tempReg[rd]=r.read(rs1)*temp2;
         // std::cout<<rd<<" "<<r.read(rs1)<<" "<<temp2<<std::endl;
@@ -251,10 +251,17 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rs1 = decode[1];
         int rs2 = decode[2];
         int rd = decode[3];
+        int ans1 = r.read(rs1);
+        int ans2 = r.read(rs2);
+        if(dataforwarding1)
+        {
+            ans1 = tempReg[rs1];
+            ans2 = tempReg[rs2];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
-        v.push_back(r.read(rs2));
+        v.push_back(ans1);
+        v.push_back(ans2);
 
         break;
         // if (r.read(rs1) == r.read(rs2))
@@ -272,10 +279,17 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rs1 = decode[1];
         int rs2 = decode[2];
         int rd = decode[3];
+         int ans1 = r.read(rs1);
+        int ans2 = r.read(rs2);
+        if(dataforwarding1)
+        {
+            ans1 = tempReg[rs1];
+            ans2 = tempReg[rs2];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
-        v.push_back(r.read(rs2));
+        v.push_back(ans1);
+        v.push_back(ans2);
         break;
         // if (r.read(rs1) != r.read(rs2))
         // {
@@ -292,10 +306,18 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rs1 = decode[1];
         int rs2 = decode[2];
         int rd = decode[3];
+       int ans1 = r.read(rs1);
+        int ans2 = r.read(rs2);
+        if(dataforwarding1)
+        {
+            ans1 = tempReg[rs1];
+            ans2 = tempReg[rs2];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
-        v.push_back(r.read(rs2));
+        v.push_back(ans1);
+        v.push_back(ans2);
+        break;
         // if (r.read(rs1) < r.read(rs2))
         // {
         //     pc = rd;
@@ -305,17 +327,29 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         // {
         //     break;
         // }
-        break;
+       // break;
     }
     case RISCV::bge:
     {
         int rs1 = decode[1];
         int rs2 = decode[2];
         int rd = decode[3];
+        int ans1 = r.read(rs1);
+        int ans2 = r.read(rs2);
+        if(dataforwarding1)
+        {
+            ans1 = tempReg[rs1];
+            ans2 = tempReg[rs2];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
-        v.push_back(r.read(rs2));
+        v.push_back(ans1);
+        v.push_back(ans2);
+        break;
+        // v.push_back(decode[0]);
+        // v.push_back(rd);
+        // v.push_back(r.read(rs1));
+        // v.push_back(r.read(rs2));
         // if (r.read(rs1) >= r.read(rs2))
         // {
         //     pc = rd;
@@ -325,7 +359,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         // {
         //     break;
         // }
-        break;
+       // break;
     }
     case RISCV::j:
     {
@@ -340,6 +374,10 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
     {
         int rd = decode[1];
         int rs1 = r.read(decode[3]);
+        if(dataforwarding1)
+        {
+            rs1 = tempReg[decode[3]];
+        }
         int offset = decode[2];
         v.push_back(decode[0]);
         v.push_back(rd);
@@ -354,9 +392,15 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rs1 = decode[1];
         int rd = r.read(decode[3]);
         int offset = decode[2];
+        int ans = r.read(rs1);
+        if(dataforwarding1)
+        {
+            rd = tempReg[decode[3]];
+            ans = tempReg[rs1];
+        }
         v.push_back(decode[0]);
         v.push_back(rd);
-        v.push_back(r.read(rs1));
+        v.push_back(ans);
         v.push_back(offset);
         //m.write_memory((rd + offset) / 4, r.read(rs1), core);
         break;
@@ -366,6 +410,10 @@ std::vector<int> ALU::instructionDecode(memory &m, int core,registers& r,int& pc
         int rd = decode[1];
         std::vector<int> v11 = m.read_instruction(decode[2], core);
         int rs1 = v11[1];
+        // if(dataforwarding1)
+        // {
+            
+        // }
         v.push_back(decode[0]);
         v.push_back(rd);
         v.push_back(rs1);

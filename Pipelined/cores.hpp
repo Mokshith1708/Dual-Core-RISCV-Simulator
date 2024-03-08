@@ -33,7 +33,7 @@ public:
   // Clock cycles
   int clockCycles1=0;
   int clockCycles2=0;
-  bool dataforwarding1, dataforwarding2;
+  bool dataforwarding1=true, dataforwarding2;
   // Function for each pipeline stage
   void instructionFetch(memory &m, int core, int &pc);
   std::vector<int> instructionDecode(memory &m, int core,registers& r,int& pc, std::vector<int>& tempReg);
