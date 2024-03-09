@@ -99,3 +99,9 @@ bool isReadMem(int i)
     }
     return false;
 }
+bool isArithmatic(int i)
+{
+    if (i == 14 || i == 15 || i == 16 || i == 23 || i == 24)
+        return true;
+    return false;
+}

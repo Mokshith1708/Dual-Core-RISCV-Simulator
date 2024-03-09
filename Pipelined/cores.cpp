@@ -13,6 +13,7 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
     std::vector<int> tempReg2(32);
     no_inst_1 = no_inst_11;
     no_inst_2 = no_inst_22;
+    bool hazard_1 = false, hazard_2 = false;
     // prevpc1[0]=pc1;
     // prevpc2[0]=pc2;
     // prevpc1[1]=pc1;
@@ -26,6 +27,16 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
         // std::cout << no_inst << std::endl;
         if (pc1 < no_inst_1 + 4)
         {
+            if (detectRAW(execute1, decode1))
+            {
+                // cout << "Stall_1" << "  ";
+                clockCycles1 += 3;
+                hazard_1 = true;
+                int temp_pc1 = pc1;
+                // cout << "-------------  " << pc1 - 1 << "    =============" << endl;
+            }
+            else
+                clockCycles1++;
             // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
             // for(auto& p:k1)
             // {
@@ -57,14 +68,14 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
             // cout<<p<<" ";
             // }
             // cout<<endl;
-            // k1.clear();
+            k1.clear();
             k1 = instructionExecute(v1, m, r1, core1, pc1, tempReg1);
             //  for(auto& p:execute1)
             // {
             // cout<<p<<" ";
             // }
             // cout<<endl;
-            // v1.clear();
+            v1.clear();
             v1 = instructionDecode(m, core1, r1, pc1, tempReg1);
             //  for(auto& p:decode1)
             // {
@@ -77,79 +88,152 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
             // cout<<p<<" ";
             // }
             // cout<<endl;
-            clockCycles1++;
+            // clockCycles1++;
             // std::cout<<clockCycles1<<std::endl;
         }
         if (pc2 < no_inst_2 + 4)
-        { // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
-            cout << "------------start-----------" << endl;
-            for (auto &p : k2)
+        {
+            cout << "fetch   : ";
+            for (auto p : fetch2)
             {
                 cout << p << " ";
             }
             cout << endl;
-            cout << "k2++" << endl;
+            cout << "decode  : ";
+            for (auto p : decode2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            cout << "execute : ";
+            for (auto p : execute2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            cout << "mem     : ";
+            for (auto p : mem2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            cout << "write   : ";
+            for (auto p : write2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+
+            if (detectRAW(execute2, decode2))
+            {
+                // cout << "Stall_2" << endl;
+                cout << "Stall_2"
+                     << "  ";
+                clockCycles2 += 3;
+                hazard_2 = true;
+                int temp_pc2 = pc2;
+                cout << "-------------  " << pc2 - 1 << "    =============" << endl;
+            }
+            else
+                clockCycles2++;
+            // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
+            // cout << "------------start-----------" << endl;
+            // for (auto &p : k2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
+            // cout << "k2++" << endl;
 
             writeBack(k2, m, core2, pc2, r2);
 
-            for (auto &p : write2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            for (auto &p : k2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "k2" << endl;
+            // for (auto &p : write2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
+            // for (auto &p : k2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
+            // cout << "k2" << endl;
 
             memoryAccess(k2, m, core2, pc2);
 
-            for (auto &p : mem2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "$$$$" << endl;
-            for (auto &p : v2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
+            // for (auto &p : mem2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
+            // cout << "$$$$" << endl;
+            // for (auto &p : v2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
             k2.clear();
 
             k2 = instructionExecute(v2, m, r2, core2, pc2, tempReg2);
 
-            for (auto &p : execute2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
+            // for (auto &p : execute2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
             v2.clear();
 
             v2 = instructionDecode(m, core2, r2, pc2, tempReg2);
 
-            for (auto &p : decode2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
+            // for (auto &p : decode2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
 
             instructionFetch(m, core2, pc2, r2, tempReg2);
 
-            for (auto &p : fetch2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
+            // for (auto &p : fetch2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
 
-            clockCycles2++;
-            std::cout << clockCycles2 << std::endl;
+            // clockCycles2++;
+            std::cout << "!!!!!!!!!     " << clockCycles2 << std::endl;
         } //  pc++;
     }
 }
-
+bool ALU::detectRAW(vector<int> &Prev_Line, vector<int> &Next_Line)
+{
+    return (loadUsedefect(Prev_Line, Next_Line) || dataDependencyHazard(Prev_Line, Next_Line) || branchDependencyHazard(Prev_Line, Next_Line));
+}
+bool ALU::loadUsedefect(vector<int> &Prev_Line, vector<int> &Next_Line)
+{
+    if (Prev_Line.empty())
+        return false;
+    if (Prev_Line[0] == 11 && Next_Line[0] != 13 && (Next_Line[1] == Prev_Line[1] || Next_Line[2] == Prev_Line[1] || Next_Line[3] == Prev_Line[1]))
+        return true;
+    if (Prev_Line[0] == 11 && Next_Line[0] == 13 && (Next_Line[1] == Prev_Line[1] || Next_Line[3] == Prev_Line[1]))
+        return true;
+    return false;
+}
+bool ALU::dataDependencyHazard(vector<int> &Prev_Line, vector<int> &Next_Line)
+{
+    if (Prev_Line.empty())
+        return false;
+    if (isArithmatic(Next_Line[0]) && (Next_Line[1] == Prev_Line[1] || Next_Line[2] == Prev_Line[1] || Next_Line[3] == Prev_Line[1]))
+        return true;
+    return false;
+}
+bool ALU::branchDependencyHazard(vector<int> &Prev_Line, vector<int> &Next_Line)
+{
+    if (Next_Line.empty())
+        return false;
+    if (isBranch(Next_Line[0]) && (Prev_Line[1] == Next_Line[1] || Prev_Line[1] == Next_Line[2]))
+        return true;
+    return false;
+}
 void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vector<int> &tempReg)
 {
     // fetch.push_back(m.read_instruction(pc, core));
@@ -158,117 +242,237 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
     int no_inst = (core == 1) ? no_inst_1 : no_inst_2;
     std::vector<int> &prevpc = (core == 1) ? prevpc1 : prevpc2;
     // std::vector<int>& decode = (core == 1) ? decode1 : decode2;
-    fetch.clear();
-    std::vector<int> instruction(4, 0);
-    // prevpc[1]=prevpc[0];
-    // prevpc[0]=pc-1;
-
-    cout << ggg << "opp" << ggg1 << endl;
-    if (pc < no_inst)
+    if (core == 1)
     {
-        instruction.clear();
-        instruction = m.read_instruction(pc, core);
-        while (instruction[1] == -101)
+        fetch.clear();
+        std::vector<int> instruction(4, 0);
+        // prevpc[1]=prevpc[0];
+        // prevpc[0]=pc-1;
+
+        // cout << ggg << "opp" << ggg1 << endl;
+        if (pc < no_inst)
         {
-            if (pc + 1 > no_inst)
-            {
-                break;
-            }
             instruction.clear();
-            pc++;
             instruction = m.read_instruction(pc, core);
+            while (instruction[1] == -101)
+            {
+                if (pc + 1 > no_inst)
+                {
+                    break;
+                }
+                instruction.clear();
+                pc++;
+                instruction = m.read_instruction(pc, core);
+            }
         }
-    }
-    int tempry = pc;
-    pc++;
+        int tempry = pc;
+        pc++;
 
-    if (dataforwarding1)
-    {
-        if (instruction[1] != 0 || instruction[2] != 0 || instruction[3] != 0)
+        if (dataforwarding1)
         {
-            if (instruction[0] == 20)
+            if (instruction[1] != 0 || instruction[2] != 0 || instruction[3] != 0)
             {
-                pc = instruction[1];
-                cout << pc << "~~~~~~~~~~~~20" << endl;
-            }
-            else if (instruction[0] == 3)
-            {
-                int rs1 = instruction[1];
-                int rs2 = instruction[2];
-                int rd = instruction[3];
-                //    if(m.read_instruction(ggg1, core)[0]==11 || m.read_instruction(ggg1, core)[0]==13 ||m.read_instruction(ggg1, core)[0]==14 ||m.read_instruction(ggg1, core)[0]==15||m.read_instruction(ggg1, core)[0]==16||m.read_instruction(ggg1, core)[0]==21 ||m.read_instruction(ggg1, core)[0]==22 ||m.read_instruction(ggg1, core)[0]==23||m.read_instruction(ggg1, core)[0]==24)
+                if (instruction[0] == 20)
+                {
+                    pc = instruction[1];
+                    cout << pc << "~~20" << endl;
+                }
+                else if (instruction[0] == 3)
+                {
+                    int rs1 = instruction[1];
+                    int rs2 = instruction[2];
+                    int rd = instruction[3];
+                    //    if(m.read_instruction(ggg1, core)[0]==11 || m.read_instruction(ggg1, core)[0]==13 ||m.read_instruction(ggg1, core)[0]==14 ||m.read_instruction(ggg1, core)[0]==15||m.read_instruction(ggg1, core)[0]==16||m.read_instruction(ggg1, core)[0]==21 ||m.read_instruction(ggg1, core)[0]==22 ||m.read_instruction(ggg1, core)[0]==23||m.read_instruction(ggg1, core)[0]==24)
 
-                // if(m.read_instruction(ggg, core)[0]==11 || m.read_instruction(ggg, core)[0]==13 ||m.read_instruction(ggg, core)[0]==14 ||m.read_instruction(ggg, core)[0]==15||m.read_instruction(ggg, core)[0]==16||m.read_instruction(ggg, core)[0]==21 ||m.read_instruction(ggg, core)[0]==22 ||m.read_instruction(ggg, core)[0]==23||m.read_instruction(ggg, core)[0]==24)
-                executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg4);
-                executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg3);
-                executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2);
-                executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1);
-                executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg);
-                if (r.read(rs1) == r.read(rs2))
-                {
-                    pc = rd;
-                    cout << pc << "~~~~~~~~~~~~3" << endl;
+                    // if(m.read_instruction(ggg, core)[0]==11 || m.read_instruction(ggg, core)[0]==13 ||m.read_instruction(ggg, core)[0]==14 ||m.read_instruction(ggg, core)[0]==15||m.read_instruction(ggg, core)[0]==16||m.read_instruction(ggg, core)[0]==21 ||m.read_instruction(ggg, core)[0]==22 ||m.read_instruction(ggg, core)[0]==23||m.read_instruction(ggg, core)[0]==24)
+                    executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg4);
+                    executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg3);
+                    executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2);
+                    executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1);
+                    executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg);
+                    if (r.read(rs1) == r.read(rs2))
+                    {
+                        pc = rd;
+                        cout << pc << "~~3" << endl;
+                    }
                 }
-            }
-            else if (instruction[0] == 4)
-            {
-                int rs1 = instruction[1];
-                int rs2 = instruction[2];
-                int rd = instruction[3];
-                cout << rd << "kokokoko" << (r.read(rs1) < r.read(rs2)) << endl;
-                cout << r.read(rs1) << r.read(rs2) << endl;
-                executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg4);
-                executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg3);
-                executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2);
-                executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1);
-                executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg);
-                if (r.read(rs1) != r.read(rs2))
+                else if (instruction[0] == 4)
                 {
-                    pc = rd;
-                    cout << pc << "~~~~~~~~~~~~4" << endl;
+                    int rs1 = instruction[1];
+                    int rs2 = instruction[2];
+                    int rd = instruction[3];
+                    cout << rd << "kokokoko" << (r.read(rs1) < r.read(rs2)) << endl;
+                    cout << r.read(rs1) << r.read(rs2) << endl;
+                    executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg4);
+                    executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg3);
+                    executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2);
+                    executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1);
+                    executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg);
+                    if (r.read(rs1) != r.read(rs2))
+                    {
+                        pc = rd;
+                        cout << pc << "~~4" << endl;
+                    }
                 }
-            }
-            else if (instruction[0] == 5)
-            {
-                int rs1 = instruction[1];
-                int rs2 = instruction[2];
-                int rd = instruction[3];
-                executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg4);
-                executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg3);
-                executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2);
-                executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1);
-                executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg);
-                cout << "HI" << r.read(rs1) << " " << r.read(rs2) << endl;
-                if (r.read(rs1) < r.read(rs2))
+                else if (instruction[0] == 5)
                 {
-                    pc = rd;
-                    cout << pc << "~~~~~~~~~~~~5" << endl;
+                    int rs1 = instruction[1];
+                    int rs2 = instruction[2];
+                    int rd = instruction[3];
+                    executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg4);
+                    executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg3);
+                    executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2);
+                    executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1);
+                    executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg);
+                    cout << "HI" << r.read(rs1) << " " << r.read(rs2) << endl;
+                    if (r.read(rs1) < r.read(rs2))
+                    {
+                        pc = rd;
+                        cout << pc << "~~5" << endl;
+                    }
                 }
-            }
-            else if (instruction[0] == 6)
-            {
-                int rs1 = instruction[1];
-                int rs2 = instruction[2];
-                int rd = instruction[3];
-                executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg4);
-                executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg3);
-                executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2);
-                executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1);
-                executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg);
-                if (r.read(rs1) >= r.read(rs2))
+                else if (instruction[0] == 6)
                 {
-                    pc = rd;
-                    cout << pc << "~~~~~~~~~~~~6" << endl;
+                    int rs1 = instruction[1];
+                    int rs2 = instruction[2];
+                    int rd = instruction[3];
+                    executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg4);
+                    executeInstructiondummy(m.read_instruction(ggg3, core), m, r, core, ggg3);
+                    executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2);
+                    executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1);
+                    executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg);
+                    if (r.read(rs1) >= r.read(rs2))
+                    {
+                        pc = rd;
+                        cout << pc << "~~6" << endl;
+                    }
                 }
             }
         }
+        ggg4 = ggg3;
+        ggg3 = ggg2;
+        ggg2 = ggg1;
+        ggg1 = ggg;
+        ggg = tempry;
+
+        fetch.insert(fetch.end(), instruction.begin(), instruction.end());
     }
-    ggg4 = ggg3;
-    ggg3 = ggg2;
-    ggg2 = ggg1;
-    ggg1 = ggg;
-    ggg = tempry;
-    fetch.insert(fetch.end(), instruction.begin(), instruction.end());
+
+    else
+    {
+        fetch.clear();
+        std::vector<int> instruction(4, 0);
+        // prevpc[1]=prevpc[0];
+        // prevpc[0]=pc-1;
+
+        cout << gg << "opp" << gg1 << endl;
+        if (pc < no_inst)
+        {
+            instruction.clear();
+            instruction = m.read_instruction(pc, core);
+            while (instruction[1] == -101)
+            {
+                if (pc + 1 > no_inst)
+                {
+                    break;
+                }
+                instruction.clear();
+                pc++;
+                instruction = m.read_instruction(pc, core);
+            }
+        }
+        int tempry = pc;
+        pc++;
+
+        if (dataforwarding1)
+        {
+            if (instruction[1] != 0 || instruction[2] != 0 || instruction[3] != 0)
+            {
+                if (instruction[0] == 20)
+                {
+                    pc = instruction[1];
+                    cout << pc << "~~20" << endl;
+                }
+                else if (instruction[0] == 3)
+                {
+                    int rs1 = instruction[1];
+                    int rs2 = instruction[2];
+                    int rd = instruction[3];
+                    //    if(m.read_instruction(ggg1, core)[0]==11 || m.read_instruction(ggg1, core)[0]==13 ||m.read_instruction(ggg1, core)[0]==14 ||m.read_instruction(ggg1, core)[0]==15||m.read_instruction(ggg1, core)[0]==16||m.read_instruction(ggg1, core)[0]==21 ||m.read_instruction(ggg1, core)[0]==22 ||m.read_instruction(ggg1, core)[0]==23||m.read_instruction(ggg1, core)[0]==24)
+
+                    // if(m.read_instruction(ggg, core)[0]==11 || m.read_instruction(ggg, core)[0]==13 ||m.read_instruction(ggg, core)[0]==14 ||m.read_instruction(ggg, core)[0]==15||m.read_instruction(ggg, core)[0]==16||m.read_instruction(ggg, core)[0]==21 ||m.read_instruction(ggg, core)[0]==22 ||m.read_instruction(ggg, core)[0]==23||m.read_instruction(ggg, core)[0]==24)
+                    executeInstructiondummy(m.read_instruction(gg3, core), m, r, core, gg4);
+                    executeInstructiondummy(m.read_instruction(gg3, core), m, r, core, gg3);
+                    executeInstructiondummy(m.read_instruction(gg2, core), m, r, core, gg2);
+                    executeInstructiondummy(m.read_instruction(gg1, core), m, r, core, gg1);
+                    executeInstructiondummy(m.read_instruction(gg, core), m, r, core, gg);
+                    if (r.read(rs1) == r.read(rs2))
+                    {
+                        pc = rd;
+                        cout << pc << "~~3" << endl;
+                    }
+                }
+                else if (instruction[0] == 4)
+                {
+                    int rs1 = instruction[1];
+                    int rs2 = instruction[2];
+                    int rd = instruction[3];
+                    cout << rd << "kokokoko" << (r.read(rs1) < r.read(rs2)) << endl;
+                    cout << r.read(rs1) << r.read(rs2) << endl;
+                    executeInstructiondummy(m.read_instruction(gg3, core), m, r, core, gg4);
+                    executeInstructiondummy(m.read_instruction(gg3, core), m, r, core, gg3);
+                    executeInstructiondummy(m.read_instruction(gg2, core), m, r, core, gg2);
+                    executeInstructiondummy(m.read_instruction(gg1, core), m, r, core, gg1);
+                    executeInstructiondummy(m.read_instruction(gg, core), m, r, core, gg);
+                    if (r.read(rs1) != r.read(rs2))
+                    {
+                        pc = rd;
+                        cout << pc << "~~4" << endl;
+                    }
+                }
+                else if (instruction[0] == 5)
+                {
+                    int rs1 = instruction[1];
+                    int rs2 = instruction[2];
+                    int rd = instruction[3];
+                    executeInstructiondummy(m.read_instruction(gg3, core), m, r, core, gg4);
+                    executeInstructiondummy(m.read_instruction(gg3, core), m, r, core, gg3);
+                    executeInstructiondummy(m.read_instruction(gg2, core), m, r, core, gg2);
+                    executeInstructiondummy(m.read_instruction(gg1, core), m, r, core, gg1);
+                    executeInstructiondummy(m.read_instruction(gg, core), m, r, core, gg);
+                    cout << "HI" << r.read(rs1) << " " << r.read(rs2) << endl;
+                    if (r.read(rs1) < r.read(rs2))
+                    {
+                        pc = rd;
+                        cout << pc << "~~5" << endl;
+                    }
+                }
+                else if (instruction[0] == 6)
+                {
+                    int rs1 = instruction[1];
+                    int rs2 = instruction[2];
+                    int rd = instruction[3];
+                    executeInstructiondummy(m.read_instruction(gg3, core), m, r, core, gg4);
+                    executeInstructiondummy(m.read_instruction(gg3, core), m, r, core, gg3);
+                    executeInstructiondummy(m.read_instruction(gg2, core), m, r, core, gg2);
+                    executeInstructiondummy(m.read_instruction(gg1, core), m, r, core, gg1);
+                    executeInstructiondummy(m.read_instruction(gg, core), m, r, core, gg);
+                    if (r.read(rs1) >= r.read(rs2))
+                    {
+                        pc = rd;
+                        cout << pc << "~~6" << endl;
+                    }
+                }
+            }
+        }
+        gg4 = gg3;
+        gg3 = gg2;
+        gg2 = gg1;
+        gg1 = gg;
+        gg = tempry;
+
+        fetch.insert(fetch.end(), instruction.begin(), instruction.end());
+    }
 }
 std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &pc, std::vector<int> &tempReg)
 {
@@ -678,7 +882,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
     }
 
     // Convert the execute opcode to enum type
-    cout << v[0] << endl;
+    // cout << v[0] << endl;
     RISCV::Inst opcode = static_cast<RISCV::Inst>(v[0]);
     switch (opcode)
     {
@@ -825,7 +1029,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         k.push_back(0);
         k.push_back(v[1]);
 
-        cout << m.read_memory((v[2] + v[3]) / 4, core) << "blacksheep" << endl;
+        // cout << m.read_memory((v[2] + v[3]) / 4, core) << "blacksheep" << endl;
         k.push_back(m.read_memory((v[2] + v[3]) / 4, core));
         tempReg[v[1]] = m.read_memory((v[2] + v[3]) / 4, core);
         // r.write(rd, m.read_memory((rs1 + offset) / 4, core));

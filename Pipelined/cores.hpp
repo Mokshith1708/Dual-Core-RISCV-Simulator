@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include "registers.hpp"
+using std::vector;
 // #include "memory.cpp"
 // #include "memory.hpp"
 class memory;
@@ -36,6 +37,8 @@ public:
   int clockCycles2 = 0;
   int ggg;
   int ggg1, ggg2, ggg3, ggg4;
+  int gg;
+  int gg1, gg2, gg3, gg4;
   bool dataforwarding1 = true, dataforwarding2;
   // std::map<std::string, int> labelMap_1, labelMap_2;
   void executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc);
@@ -49,6 +52,9 @@ public:
 
   // Helper functions for data forwarding and stall detection
   int forwardData(int reg, int stage);
-  bool detectDataHazard(const std::pair<std::string, std::vector<int>> &current, const std::pair<std::string, std::vector<int>> &previous);
+  bool detectRAW(vector<int> &Prev_Line, vector<int> &Next_Line);
+  bool loadUsedefect(vector<int> &Prev_Line, vector<int> &Next_Line);
+  bool branchDependencyHazard(vector<int> &Prev_Line, vector<int> &Next_Line);
+  bool dataDependencyHazard(vector<int> &Prev_Line, vector<int> &Next_Line);
 };
 // #endif
