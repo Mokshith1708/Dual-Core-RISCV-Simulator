@@ -599,7 +599,7 @@ if(dataforwarding2==false)
    {
     clockCycles2+=2;
     stall_adj =true;
-    cout<<"--------Stall-------"<<endl;
+    cout<<"--------Stall-------"<<p<<endl;
     cout<<tempry+1<<endl;
     for(auto& jj:m.read_instruction(tempry,core))
     {
@@ -615,10 +615,10 @@ if(dataforwarding2==false)
      cout<<"end"<<endl;
    }
    int r =  RAW_Hazard(m.read_instruction(gg1,core),m.read_instruction(tempry, core));
-   if((p==1 || p==2 || p==3 || p==4 || p==5 || p==6 || p==7 || p==8) )
+   if((r==1 || r==2 || r==3 || r==4 || r==5 || r==6 || r==7 || r==8))
    {
     clockCycles2+=1;
-    cout<<"--------Stall-------"<<endl;
+    cout<<"--------Stall-------"<<p<<endl;
     cout<<tempry+1<<endl;
     for(auto& jj:m.read_instruction(tempry,core))
     {
