@@ -14,6 +14,7 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
     std::vector<int> tempReg2(32);
     no_inst_1 = no_inst_11;
     no_inst_2 = no_inst_22;
+    bool hazard_1 = false, hazard_2 = false;
     // prevpc1[0]=pc1;
     // prevpc2[0]=pc2;
     // prevpc1[1]=pc1;
@@ -27,6 +28,16 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
         // std::cout << no_inst << std::endl;
         if (pc1 < no_inst_1 + 4)
         {
+            if (detectRAW(execute1, decode1))
+            {
+                // cout << "Stall_1" << "  ";
+                clockCycles1 += 3;
+                hazard_1 = true;
+                int temp_pc1 = pc1;
+                // cout << "-------------  " << pc1 - 1 << "    =============" << endl;
+            }
+            else
+                clockCycles1++;
             // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
             // for(auto& p:k1)
             // {
@@ -78,75 +89,119 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
             // cout<<p<<" ";
             // }
             // cout<<endl;
-            clockCycles1++;
+            // clockCycles1++;
             // std::cout<<clockCycles1<<std::endl;
         }
         if (pc2 < no_inst_2 + 4)
-        { // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
-            cout << "------------start-----------" << endl;
-            for (auto &p : k2)
+        {
+            cout << "fetch   : ";
+            for (auto p : fetch2)
             {
                 cout << p << " ";
             }
             cout << endl;
-            cout << "k2++" << endl;
+            cout << "decode  : ";
+            for (auto p : decode2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            cout << "execute : ";
+            for (auto p : execute2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            cout << "mem     : ";
+            for (auto p : mem2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            cout << "write   : ";
+            for (auto p : write2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+
+            if (detectRAW(execute2, decode2))
+            {
+                // cout << "Stall_2" << endl;
+                cout << "Stall_2"
+                     << "  ";
+                clockCycles2 += 3;
+                hazard_2 = true;
+                int temp_pc2 = pc2;
+                cout << "-------------  " << pc2 - 1 << "    =============" << endl;
+            }
+            else
+                clockCycles2++;
+            // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
+            // cout << "------------start-----------" << endl;
+            // for (auto &p : k2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
+            // cout << "k2++" << endl;
 
             writeBack(k2, m, core2, pc2, r2);
 
-            for (auto &p : write2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            for (auto &p : k2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "k2" << endl;
+            // for (auto &p : write2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
+            // for (auto &p : k2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
+            // cout << "k2" << endl;
 
             memoryAccess(k2, m, core2, pc2);
 
-            for (auto &p : mem2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "$$$$" << endl;
-            for (auto &p : v2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
+            // for (auto &p : mem2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
+            // cout << "$$$$" << endl;
+            // for (auto &p : v2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
             k2.clear();
 
             k2 = instructionExecute(v2, m, r2, core2, pc2, tempReg2);
 
-            for (auto &p : execute2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
+            // for (auto &p : execute2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
             v2.clear();
 
             v2 = instructionDecode(m, core2, r2, pc2, tempReg2);
 
-            for (auto &p : decode2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
+            // for (auto &p : decode2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
 
             instructionFetch(m, core2, pc2, r2, tempReg2);
 
-            for (auto &p : fetch2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
+            // for (auto &p : fetch2)
+            // {
+            //     cout << p << " ";
+            // }
+            // cout << endl;
 
-            clockCycles2++;
-            std::cout << clockCycles2 << std::endl;
+            // clockCycles2++;
+            std::cout << "!!!!!!!!!     " << clockCycles2 << std::endl;
         } //  pc++;
     }
 }
