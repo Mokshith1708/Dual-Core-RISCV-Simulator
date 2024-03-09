@@ -14,7 +14,6 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
     std::vector<int> tempReg2(32);
     no_inst_1 = no_inst_11;
     no_inst_2 = no_inst_22;
-    bool hazard_1 = false, hazard_2 = false;
     // prevpc1[0]=pc1;
     // prevpc2[0]=pc2;
     // prevpc1[1]=pc1;
@@ -28,16 +27,6 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
         // std::cout << no_inst << std::endl;
         if (pc1 < no_inst_1 + 4)
         {
-            if (detectRAW(execute1, decode1))
-            {
-                // cout << "Stall_1" << "  ";
-                clockCycles1 += 3;
-                hazard_1 = true;
-                int temp_pc1 = pc1;
-                // cout << "-------------  " << pc1 - 1 << "    =============" << endl;
-            }
-            else
-                clockCycles1++;
             // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
             // for(auto& p:k1)
             // {
@@ -89,119 +78,75 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
             // cout<<p<<" ";
             // }
             // cout<<endl;
-            // clockCycles1++;
+            clockCycles1++;
             // std::cout<<clockCycles1<<std::endl;
         }
         if (pc2 < no_inst_2 + 4)
-        {
-            cout << "fetch   : ";
-            for (auto p : fetch2)
+        { // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
+            cout << "------------start-----------" << endl;
+            for (auto &p : k2)
             {
                 cout << p << " ";
             }
             cout << endl;
-            cout << "decode  : ";
-            for (auto p : decode2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "execute : ";
-            for (auto p : execute2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "mem     : ";
-            for (auto p : mem2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "write   : ";
-            for (auto p : write2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-
-            if (detectRAW(execute2, decode2))
-            {
-                // cout << "Stall_2" << endl;
-                cout << "Stall_2"
-                     << "  ";
-                clockCycles2 += 3;
-                hazard_2 = true;
-                int temp_pc2 = pc2;
-                cout << "-------------  " << pc2 - 1 << "    =============" << endl;
-            }
-            else
-                clockCycles2++;
-            // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
-            // cout << "------------start-----------" << endl;
-            // for (auto &p : k2)
-            // {
-            //     cout << p << " ";
-            // }
-            // cout << endl;
-            // cout << "k2++" << endl;
+            cout << "k2++" << endl;
 
             writeBack(k2, m, core2, pc2, r2);
 
-            // for (auto &p : write2)
-            // {
-            //     cout << p << " ";
-            // }
-            // cout << endl;
-            // for (auto &p : k2)
-            // {
-            //     cout << p << " ";
-            // }
-            // cout << endl;
-            // cout << "k2" << endl;
+            for (auto &p : write2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            for (auto &p : k2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            cout << "k2" << endl;
 
             memoryAccess(k2, m, core2, pc2);
 
-            // for (auto &p : mem2)
-            // {
-            //     cout << p << " ";
-            // }
-            // cout << endl;
-            // cout << "$$$$" << endl;
-            // for (auto &p : v2)
-            // {
-            //     cout << p << " ";
-            // }
-            // cout << endl;
+            for (auto &p : mem2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
+            cout << "$$$$" << endl;
+            for (auto &p : v2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
             k2.clear();
 
             k2 = instructionExecute(v2, m, r2, core2, pc2, tempReg2);
 
-            // for (auto &p : execute2)
-            // {
-            //     cout << p << " ";
-            // }
-            // cout << endl;
+            for (auto &p : execute2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
             v2.clear();
 
             v2 = instructionDecode(m, core2, r2, pc2, tempReg2);
 
-            // for (auto &p : decode2)
-            // {
-            //     cout << p << " ";
-            // }
-            // cout << endl;
+            for (auto &p : decode2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
 
             instructionFetch(m, core2, pc2, r2, tempReg2);
 
-            // for (auto &p : fetch2)
-            // {
-            //     cout << p << " ";
-            // }
-            // cout << endl;
+            for (auto &p : fetch2)
+            {
+                cout << p << " ";
+            }
+            cout << endl;
 
-            // clockCycles2++;
-            std::cout << "!!!!!!!!!     " << clockCycles2 << std::endl;
+            clockCycles2++;
+            std::cout << clockCycles2 << std::endl;
         } //  pc++;
     }
 }
@@ -255,7 +200,18 @@ int ALU::RAW_Hazard(std::vector<int>v1,std::vector<int>v2)
   }
    if(typeOf(v1[0])==4 && typeOf(v2[0])==5)
   {
-    if(v1[1]==v2[1] || v1[1]==v2[3])
+    if(v1[1]==v2[1] || v1[1]==v2[3] )
+   {
+     return 3;
+   }
+   else
+   {
+    return -1;
+   }
+  }
+  if(typeOf(v1[0])==5 && typeOf(v2[0])==4)
+  {
+    if(v1[1]==v2[1] || v1[1]==v2[3] || v1[3]==v2[3])
    {
      return 3;
    }
@@ -275,17 +231,17 @@ int ALU::RAW_Hazard(std::vector<int>v1,std::vector<int>v2)
     return -1;
    }
   }
-//       if(typeOf(v1[0])==5 && typeOf(v2[0])==1)
-//   {
-//     if(v1[1]==v2[2] || v1[1]==v2[3])
-//    {
-//      return 5;
-//    }
-//    else
-//    {
-//     return -1;
-//    }
-//   } 
+      if(typeOf(v1[0])==5 && typeOf(v2[0])==1)
+  {
+    if(v1[1]==v2[2] || v1[1]==v2[3])
+   {
+     return 5;
+   }
+   else
+   {
+    return -1;
+   }
+  } 
        if(typeOf(v1[0])==1 && typeOf(v2[0])==4)
   {
     if(v1[1]==v2[3])
@@ -301,7 +257,7 @@ int ALU::RAW_Hazard(std::vector<int>v1,std::vector<int>v2)
   {
     if(v1[1]==v2[3] || v1[1]==v2[2])
    {
-     return 6;
+     return 7;
    }
    else
    {
@@ -312,7 +268,7 @@ int ALU::RAW_Hazard(std::vector<int>v1,std::vector<int>v2)
   {
     if(v1[1]==v2[1] || v1[1]==v2[2])
    {
-     return 7;
+     return 8;
    }
    else
    {
@@ -639,7 +595,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
 if(dataforwarding2==false)
 {  bool stall_adj = false;
    int p = RAW_Hazard(m.read_instruction(gg,core),m.read_instruction(tempry, core));
-   if(p==1 || p==2 || p==3 || p==4 || p==5 || p==6 || p==7 )
+   if(p==1 || p==2 || p==3 || p==4 || p==5 || p==6 || p==7 || p==8 )
    {
     clockCycles2+=2;
     stall_adj =true;
@@ -659,7 +615,7 @@ if(dataforwarding2==false)
      cout<<"end"<<endl;
    }
    int r =  RAW_Hazard(m.read_instruction(gg1,core),m.read_instruction(tempry, core));
-   if((p==1 || p==2 || p==3 || p==4 || p==5 || p==6 || p==7 ) && !stall_adj )
+   if((p==1 || p==2 || p==3 || p==4 || p==5 || p==6 || p==7 || p==8) )
    {
     clockCycles2+=1;
     cout<<"--------Stall-------"<<endl;
