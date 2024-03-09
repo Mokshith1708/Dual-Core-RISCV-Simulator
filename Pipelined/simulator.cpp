@@ -325,6 +325,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
             {
                 string label = words[0].substr(0, words[0].size() - 1);
                 encode[0] = labelMap[label];
+                encode[1] = -101;
                 m.write_instruction(address, encode, core);
                 address++;
                 continue;
@@ -562,8 +563,10 @@ int main()
               << "================================================================================" << std::endl;
     for (int i = 0; i < 50; ++i)
     {
-        if(i<10) std::cout << "Address " << i << "  : " << m.read_memory(i, 1) << std::endl;
-        else std::cout << "Address " << i << " : " << m.read_memory(i, 1) << std::endl;
+        if (i < 10)
+            std::cout << "Address " << i << "  : " << m.read_memory(i, 1) << std::endl;
+        else
+            std::cout << "Address " << i << " : " << m.read_memory(i, 1) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 1\n"
@@ -594,8 +597,10 @@ int main()
               << "================================================================================" << std::endl;
     for (int i = 0; i < 50; ++i)
     {
-        if(i<10) std::cout << "Address " << i << "  : " << m.read_memory(i, 2) << std::endl;
-        else std::cout << "Address " << i << " : " << m.read_memory(i, 2) << std::endl;
+        if (i < 10)
+            std::cout << "Address " << i << "  : " << m.read_memory(i, 2) << std::endl;
+        else
+            std::cout << "Address " << i << " : " << m.read_memory(i, 2) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 2\n"
