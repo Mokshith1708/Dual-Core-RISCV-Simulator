@@ -36,6 +36,8 @@ public:
   int clockCycles2 = 0;
   int ggg;
   int ggg1, ggg2, ggg3, ggg4;
+  int gg;
+  int gg1, gg2, gg3, gg4;
   bool dataforwarding1 = true, dataforwarding2;
   // std::map<std::string, int> labelMap_1, labelMap_2;
   void executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc);
@@ -46,9 +48,10 @@ public:
   std::vector<int> instructionExecute(std::vector<int> v, memory &m, registers &r, int core, int &pc, std::vector<int> &tempReg);
   void memoryAccess(std::vector<int> k, memory &m, int core, int &pc);
   void writeBack(std::vector<int> k, memory &m, int core, int &pc, registers &r);
-
+  int RAW_Hazard(std::vector<int>v1,std::vector<int>v);
+  int typeOf(int k);
   // Helper functions for data forwarding and stall detection
-  int forwardData(int reg, int stage);
-  bool detectDataHazard(const std::pair<std::string, std::vector<int>> &current, const std::pair<std::string, std::vector<int>> &previous);
+  //int forwardData(int reg, int stage);
+ // bool detectDataHazard(const std::pair<std::string, std::vector<int>> &current, const std::pair<std::string, std::vector<int>> &previous);
 };
 // #endif
