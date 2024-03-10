@@ -19,6 +19,9 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
   li
   ecall
   ```
+ - Phase 2 lag
+     - We implemented Clock cycles.But we were not getting the count exactly same as in the ripes simulator. Maybe our approach towards stalls should be changes. It is giving some near value but not the exact value.
+     - In next phase we would first like to change the detection of stalls process.
  - few constraints
      - we didn't write implementaion for back slash n(\n) through ecall.
      - there must me always a space straight mext after a label
@@ -32,7 +35,7 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
 - we allocated a memory of 8 kb.Out of which 4 kb is for instruction set and 4 kb is for memory blocks combined for both cores equally.
 ###### in next phase we will cover these above problems and also implement more instructions.
 ### Meeting-13(Date: 10/3/24)
-- Enabled user choiced Data forwarding.
+- Enabled user choice Data forwarding.
 - Added latencies for `add`,`mul`,`addi`,`sub`,`muli`.
 - Added few more cases in possible hazard cases.
 - Fixed several bugs.
