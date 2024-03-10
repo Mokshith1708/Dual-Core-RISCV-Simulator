@@ -470,6 +470,37 @@ void printRegisterTable(registers r, int core)
     }
     std::cout << "================================================================================" << std::endl;
 }
+void segregateLines(const std::string& inputFilename, const std::string& outputFilename1, const std::string& outputFilename2) {
+    std::ifstream inputFile(inputFilename);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening input file: " << inputFilename << std::endl;
+        return;
+    }
+    std::ofstream outputFile1(outputFilename1);
+    if (!outputFile1.is_open()) {
+        std::cerr << "Error creating output file: " << outputFilename1 << std::endl;
+        inputFile.close();
+        return;
+    }
+    std::ofstream outputFile2(outputFilename2);
+    if (!outputFile2.is_open()) {
+        std::cerr << "Error creating output file: " << outputFilename2 << std::endl;
+        inputFile.close();
+        outputFile1.close();
+        return;
+    }
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        if (!line.empty()) {
+            int startNum = std::stoi(line.substr(0, line.find_first_of(" ")));
+            std::ofstream& outFile = (startNum == 1) ? outputFile1 : outputFile2;
+            outFile << line << std::endl;
+        }
+    }
+    inputFile.close();
+    outputFile1.close();
+    outputFile2.close();
+}
 int main()
 {
     ofstream outputFile1("..\\data_files\\output\\terminal1.txt");
@@ -647,6 +678,6 @@ int main()
     outputFile1.close();
     outputFile2.close();
     outputFile3.close();
-
+    segregateLines("..\\data_files\\output\\console.txt","..\\data_files\\output\\console1.txt","..\\data_files\\output\\console2.txt");
     return 0;
 }
