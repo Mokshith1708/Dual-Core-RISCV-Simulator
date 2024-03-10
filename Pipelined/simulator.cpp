@@ -15,6 +15,7 @@
 #include "registers.cpp"
 
 using std::cerr;
+using std::cin;
 using std::cout;
 using std::endl;
 using std::find_if_not;
@@ -518,6 +519,7 @@ int main()
     pair<int, int> p1, p2;
     registers r1, r2;
     memory m;
+
     map<string, int> latency_map;
     int is_Latency;
     cout << "Do you want to add latencies to instructions : \nEnter ** 1 ** for yes\nEnter ** 0 ** for no\n";
@@ -530,7 +532,7 @@ int main()
         for (int i = 0; i < num_instructions; ++i) {
             string instruction;
             int latency;
-            cout << "Enter instruction type (eg add,sub,mul) : ";
+            cout << "Enter instruction type (use only add,sub,mul,addi,muli) : ";
             cin >> instruction;
             cout << "Enter latency for " << instruction << " instruction: ";
             cin >> latency;
@@ -545,6 +547,7 @@ int main()
     } else {
         cout << "No latencies added.\n";
     }
+
     // for first file
     const string file_path = "..\\data_files\\input\\BUBBLE_SORT.s";
     ifstream instructions_prog_1(file_path);
@@ -599,7 +602,7 @@ int main()
     streambuf *coutbuf3 = cout.rdbuf();
     cout.rdbuf(outputFile3.rdbuf());
 
-    ALU alui(p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2);
+    ALU alui(latency_map,p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2);
 
     cout.rdbuf(coutbuf3);
 

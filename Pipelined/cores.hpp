@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include "registers.hpp"
+using std::string;
 // #include "memory.cpp"
 // #include "memory.hpp"
 class memory;
@@ -28,10 +29,9 @@ private:
   std::vector<int> tempReg2;
 
 public:
-  ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2);
+  ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2);
   void executeInstruction(std::vector<int> instructions, memory &m, registers &r, int core, int &pc);
-  // ALU();
-  //  Clock cycles
+  
   int clockCycles1 = 0;
   int clockCycles2 = 0;
   int ggg;

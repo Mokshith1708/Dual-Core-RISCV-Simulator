@@ -2,9 +2,13 @@
 #include "simulator.hpp"
 #include "memory.hpp"
 #include "registers.hpp"
-#include <bits/stdc++.h>
+#include<vector>
+#include<map>
+using std::cout;
+using std::string;
+using std::endl;
 using namespace std;
-void print_array(int core, vector<int> k, vector<int> v, vector<int> fetch, vector<int> decode, vector<int> execute, vector<int> mem, vector<int> write)
+void print_array(int core, std::vector<int> k, std::vector<int> v, std::vector<int> fetch, std::vector<int> decode, std::vector<int> execute, std::vector<int> mem, std::vector<int> write)
 {
     cout << core << " |"
          << " k       : ";
@@ -43,16 +47,16 @@ void print_array(int core, vector<int> k, vector<int> v, vector<int> fetch, vect
     cout << endl;
     cout << core << " |------------------------ " << endl;
 }
-ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int no_inst_22, memory &m, registers &r1, registers &r2, int core1, int core2)
+ALU::ALU(std::map<string, int> &latency_map,std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int no_inst_22, memory &m, registers &r1, registers &r2, int core1, int core2)
 {
     pc1 = p1.second;
     pc2 = p2.second;
     dataforwarding2 = false;
-    add_lat = 3;
-    addi_lat = 3;
-    sub_lat = 3;
-    mul_lat = 3;
-    muli_lat = 3;
+    add_lat = latency_map["add"];
+    addi_lat = latency_map["addi"];;
+    sub_lat = latency_map["sub"];;
+    mul_lat = latency_map["mul"];;
+    muli_lat = latency_map["muli"];;
     std::vector<int> tempReg1(32);
     std::vector<int> tempReg2(32);
     no_inst_1 = no_inst_11;
