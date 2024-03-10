@@ -487,7 +487,33 @@ int main()
     pair<int, int> p1, p2;
     registers r1, r2;
     memory m;
+    map<string, int> latency_map;
+    int is_Latency;
+    cout << "Do you want to add latencies to instructions : \nEnter ** 1 ** for yes\nEnter ** 0 ** for no\n";
+    cin>>is_Latency;
+    if (is_Latency) {
+        int num_instructions;
+        cout << "Enter the number of instructions you want to add latencies for: ";
+        cin >> num_instructions;
 
+        for (int i = 0; i < num_instructions; ++i) {
+            string instruction;
+            int latency;
+            cout << "Enter instruction type (eg add,sub,mul) : ";
+            cin >> instruction;
+            cout << "Enter latency for " << instruction << " instruction: ";
+            cin >> latency;
+            latency_map[instruction] = latency;
+        }
+    }
+    if (!latency_map.empty()) {
+        cout << "Instruction latencies:\n";
+        for (const auto& pair : latency_map) {
+            cout << pair.first << ": " << pair.second << endl;
+        }
+    } else {
+        cout << "No latencies added.\n";
+    }
     // for first file
     const string file_path = "..\\data_files\\input\\BUBBLE_SORT.s";
     ifstream instructions_prog_1(file_path);

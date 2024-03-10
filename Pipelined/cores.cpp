@@ -2,9 +2,47 @@
 #include "simulator.hpp"
 #include "memory.hpp"
 #include "registers.hpp"
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-
+void print_array(int core, vector<int> k, vector<int> v, vector<int> fetch, vector<int> decode, vector<int> execute, vector<int> mem, vector<int> write)
+{
+    cout << core << " |"
+         << " k       : ";
+    for (auto p : k)
+        cout << p << " ";
+    cout << endl;
+    cout << core << " |"
+         << " v       : ";
+    for (auto p : v)
+        cout << p << " ";
+    cout << endl;
+    cout << core << " |"
+         << " fetch   : ";
+    for (auto p : fetch)
+        cout << p << " ";
+    cout << endl;
+    cout << core << " |"
+         << " decode  : ";
+    for (auto p : decode)
+        cout << p << " ";
+    cout << endl;
+    cout << core << " |"
+         << " execute : ";
+    for (auto p : execute)
+        cout << p << " ";
+    cout << endl;
+    cout << core << " |"
+         << " mem     : ";
+    for (auto p : mem)
+        cout << p << " ";
+    cout << endl;
+    cout << core << " |"
+         << " write   : ";
+    for (auto p : write)
+        cout << p << " ";
+    cout << endl;
+    cout << core << " |------------------------ " << endl;
+}
 ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int no_inst_22, memory &m, registers &r1, registers &r2, int core1, int core2)
 {
     pc1 = p1.second;
@@ -15,145 +53,39 @@ ALU::ALU(std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int n
     sub_lat = 3;
     mul_lat = 3;
     muli_lat = 3;
-    // labelMap_1 = labelMap_11;
-    // labelMap_2 = labelMap_22;
     std::vector<int> tempReg1(32);
     std::vector<int> tempReg2(32);
     no_inst_1 = no_inst_11;
     no_inst_2 = no_inst_22;
-    // prevpc1[0]=pc1;
-    // prevpc2[0]=pc2;
-    // prevpc1[1]=pc1;
-    // prevpc2[1]=pc2;
-    // cout<<no_inst_2<<endl;
     int maxim = std::max(no_inst_1, no_inst_2);
     std::vector<int> v1, k1, k2, v2;
-    //  cout<<no_inst_11<<endl;
     while (pc1 < maxim + 4 && pc2 < maxim + 4)
     {
-        // std::cout << no_inst << std::endl;
         if (pc1 < no_inst_1 + 4)
         {
-            // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
-            // for(auto& p:k1)
-            // {
-            // cout<<p<<" ";
-            // }
-            // cout<<endl;
-            // cout<<"k1++"<<endl;
+            print_array(1, k1, v1, fetch1, decode1, execute1, mem1, write1);
             writeBack(k1, m, core1, pc1, r1);
-            // for(auto& p:write1)
-            // {
-            // cout<<p<<" ";
-            // }
-            // cout<<endl;
-            // for(auto& p:k1)
-            // {
-            // cout<<p<<" ";
-            // }
-            // cout<<endl;
-            // cout<<"k1"<<endl;
             memoryAccess(k1, m, core1, pc1);
-            //  for(auto& p:mem1)
-            // {
-            // cout<<p<<" ";
-            // }
-            // cout<<endl;
-            // cout<<"$$$$"<<endl;
-            // for(auto& p:v1)
-            // {
-            // cout<<p<<" ";
-            // }
-            // cout<<endl;
             k1.clear();
             k1 = instructionExecute(v1, m, r1, core1, pc1, tempReg1);
-            //  for(auto& p:execute1)
-            // {
-            // cout<<p<<" ";
-            // }
-            // cout<<endl;
             v1.clear();
             v1 = instructionDecode(m, core1, r1, pc1, tempReg1);
-            //  for(auto& p:decode1)
-            // {
-            // cout<<p<<" ";
-            // }
-            // cout<<endl;
             instructionFetch(m, core1, pc1, r1, tempReg1);
-            //  for(auto& p:fetch1)
-            // {
-            // cout<<p<<" ";
-            // }
-            // cout<<endl;
             clockCycles1++;
-            // std::cout<<clockCycles1<<std::endl;
+            std::cout << "1 | clockCycles1 : " << clockCycles1 << std::endl;
         }
         if (pc2 < no_inst_2 + 4)
-        { // executeInstruction(m.read_instruction(pc1, core1), m, r1, core1, pc1);
-            cout << "------------start-----------" << endl;
-            for (auto &p : k2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "k2++" << endl;
-
+        {
+            print_array(2, k2, v2, fetch2, decode2, execute2, mem2, write2);
             writeBack(k2, m, core2, pc2, r2);
-
-            for (auto &p : write2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            for (auto &p : k2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "k2" << endl;
-
             memoryAccess(k2, m, core2, pc2);
-
-            for (auto &p : mem2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-            cout << "$$$$" << endl;
-            for (auto &p : v2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
             k2.clear();
-
             k2 = instructionExecute(v2, m, r2, core2, pc2, tempReg2);
-
-            for (auto &p : execute2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
             v2.clear();
-
             v2 = instructionDecode(m, core2, r2, pc2, tempReg2);
-
-            for (auto &p : decode2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-
             instructionFetch(m, core2, pc2, r2, tempReg2);
-
-            for (auto &p : fetch2)
-            {
-                cout << p << " ";
-            }
-            cout << endl;
-
             clockCycles2++;
-            std::cout << clockCycles2 << std::endl;
+            std::cout << "1 | clockCycles2 : " << clockCycles2 << std::endl;
         } //  pc++;
     }
 }
@@ -298,7 +230,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
         // prevpc[1]=prevpc[0];
         // prevpc[0]=pc-1;
 
-        // cout << ggg << "opp" << ggg1 << endl;
+        // cout <<core<<" | "<< ggg << "opp" << ggg1 << endl;
         if (pc < no_inst)
         {
             instruction.clear();
@@ -316,7 +248,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
         }
         int tempry = pc;
         pc++;
-       
+
         if (dataforwarding1)
         {
             if (instruction[1] != 0 || instruction[2] != 0 || instruction[3] != 0)
@@ -405,18 +337,21 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             if (p != -1)
             {
                 clockCycles1 += 3;
-                cout << "--------Stall-------" << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " |--------Stall-------" << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(ggg, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
+                cout << core << " |--------Stall end-------" << endl;
             }
         }
         if (dataforwarding2 == true)
@@ -426,53 +361,62 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles1 += 1;
 
-                cout << "--------Stall-------" << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " |--------Stall-------" << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(ggg, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
+                cout << core << " --------Stall end-------" << endl;
             }
             if (p == 6)
             {
                 clockCycles1 += 1;
 
-                cout << "--------Stall-------" << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " |--------Stall-------" << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(ggg, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
+                cout << core << " |--------Stall end-------" << endl;
             }
             if (p == 7)
             {
                 clockCycles1 += 1;
 
-                cout << "--------Stall-------" << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " |--------Stall-------" << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << ggg << endl;
+                cout << core << " | " << ggg << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(ggg, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
+                cout << core << " |--------Stall end-------" << endl;
             }
         }
         ggg4 = ggg3;
@@ -491,7 +435,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
         // prevpc[1]=prevpc[0];
         // prevpc[0]=pc-1;
 
-        cout << gg << "opp" << gg1 << endl;
+        // cout <<core<<" | "<< gg << "opp" << gg1 << endl;
         if (pc < no_inst)
         {
             instruction.clear();
@@ -600,39 +544,43 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles2 += 2;
                 stall_adj = true;
-                cout << "--------Stall-------" << p << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " |--------Stall-------" << p << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << gg + 1 << endl;
+                cout << core << " | " << gg + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(gg, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << "end" << endl;
+                cout << core << " |--------Stall end-------" << endl;
             }
             int r = RAW_Hazard(m.read_instruction(gg1, core), m.read_instruction(tempry, core));
             if ((r == 1 || r == 2 || r == 3 || r == 4 || r == 5 || r == 6 || r == 7 || r == 8))
             {
                 clockCycles2 += 1;
-                cout << "--------Stall-------" << p << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " |--------Stall-------" << p << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << gg1 + 1 << endl;
+                cout << core << " | " << gg1 + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(gg1, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << "end" << endl;
+                cout << core << " |--------Stall end-------" << endl;
             }
             stall_adj = false;
         }
@@ -643,52 +591,58 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles2 += 1;
 
-                cout << "--------Stall-------" << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " --------Stall-------" << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << gg + 1 << endl;
+                cout << core << " | " << gg + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(gg, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << "end" << endl;
+                cout << core << " |--------Stall end-------" << endl;
             }
             if (p == 6)
             {
                 clockCycles2 += 1;
 
-                cout << "--------Stall-------" << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " |--------Stall-------" << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << gg + 1 << endl;
+                cout << core << " | " << gg + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(gg, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << "end" << endl;
+                cout << core << " |--------Stall end-------" << endl;
             }
             if (p == 7)
             {
                 clockCycles2 += 1;
 
-                cout << "--------Stall-------" << endl;
-                cout << tempry + 1 << endl;
+                cout << core << " |--------Stall-------" << endl;
+                cout << core << " | " << tempry + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
                 {
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << gg + 1 << endl;
+                cout << core << " | " << gg + 1 << endl;
+                cout << core << " | ";
                 for (auto &jj : m.read_instruction(gg, core))
                 {
                     cout << jj << " ";
@@ -1125,13 +1079,13 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        if(core==1)
+        if (core == 1)
         {
-            clockCycles1+=add_lat-1;
+            clockCycles1 += add_lat - 1;
         }
         else
         {
-             clockCycles2+=add_lat-1;
+            clockCycles2 += add_lat - 1;
         }
         // r.write(rd, ans1 + ans2);
         break;
@@ -1143,13 +1097,13 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        if(core==1)
+        if (core == 1)
         {
-            clockCycles1+=sub_lat-1;
+            clockCycles1 += sub_lat - 1;
         }
         else
         {
-             clockCycles2+=sub_lat-1;
+            clockCycles2 += sub_lat - 1;
         }
         break;
     }
@@ -1160,13 +1114,13 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        if(core==1)
+        if (core == 1)
         {
-            clockCycles1+=mul_lat-1;
+            clockCycles1 += mul_lat - 1;
         }
         else
         {
-             clockCycles2+=mul_lat-1;
+            clockCycles2 += mul_lat - 1;
         }
         break;
     }
@@ -1177,13 +1131,13 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        if(core==1)
+        if (core == 1)
         {
-            clockCycles1+=addi_lat-1;
+            clockCycles1 += addi_lat - 1;
         }
         else
         {
-             clockCycles2+=addi_lat-1;
+            clockCycles2 += addi_lat - 1;
         }
         break;
     }
@@ -1194,13 +1148,13 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        if(core==1)
+        if (core == 1)
         {
-            clockCycles1+=muli_lat-1;
+            clockCycles1 += muli_lat - 1;
         }
         else
         {
-             clockCycles2+=muli_lat-1;
+            clockCycles2 += muli_lat - 1;
         }
         break;
     }
@@ -1237,7 +1191,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         }
         else
         {
-            cout << "*** Wrong Prediction ***" << endl;
+            cout <<core<<" | "<< "*** Wrong Prediction ***" << endl;
             break;
         }
         break;
@@ -1255,7 +1209,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         }
         else
         {
-            cout << "*** Wrong Prediction ***" << endl;
+            cout <<core<<" | "<< "*** Wrong Prediction ***" << endl;
             break;
         }
         break;
@@ -1273,7 +1227,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         }
         else
         {
-            cout << "*** Wrong Prediction ***" << endl;
+            cout <<core<<" | "<< "*** Wrong Prediction ***" << endl;
             break;
         }
         break;
@@ -1291,7 +1245,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         }
         else
         {
-            cout << "*** Wrong Prediction ***" << endl;
+            cout <<core<<" | "<< "*** Wrong Prediction ***" << endl;
             break;
         }
         break;
