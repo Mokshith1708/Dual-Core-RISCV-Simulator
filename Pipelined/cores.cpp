@@ -384,9 +384,9 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     cout << jj << " ";
                 }
                 cout << endl;
-                cout << core << " | " << gg1 + 1 << endl;
+                cout << core << " | " << ggg1 + 1 << endl;
                 cout << core << " | ";
-                for (auto &jj : m.read_instruction(gg1, core))
+                for (auto &jj : m.read_instruction(ggg1, core))
                 {
                     cout << jj << " ";
                 }
