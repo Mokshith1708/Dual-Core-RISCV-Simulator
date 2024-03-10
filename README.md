@@ -19,6 +19,9 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
   li
   ecall
   ```
+ - Phase 2 lag
+     - We implemented Clock cycles.But we were not getting the count exactly same as in the ripes simulator. Maybe our approach towards stalls should be changes. It is giving some near value but not the exact value.
+     - In next phase we would first like to change the detection of stalls process.
  - few constraints
      - we didn't write implementaion for back slash n(\n) through ecall.
      - there must me always a space straight mext after a label
@@ -31,6 +34,26 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
     - for now we kept same console for both cores.
 - we allocated a memory of 8 kb.Out of which 4 kb is for instruction set and 4 kb is for memory blocks combined for both cores equally.
 ###### in next phase we will cover these above problems and also implement more instructions.
+### Meeting-13(Date: 10/3/24)
+- Enabled user choice Data forwarding.
+- Added latencies for `add`,`mul`,`addi`,`sub`,`muli`.
+- Added few more cases in possible hazard cases.
+- Fixed several bugs.
+- Seperated consoles for both cores.
+
+### Meeting-12(Date: 9/3/24)
+- Added RAW hazard detection.
+- Discussed possible hazard cases.
+- Pipelining with data forwarding is done. Made some changes in pipeline , to make instructionfetch predict what pc to take next
+
+### Meeting-11(Date: 8/3/24)
+- Discussed how to implement data forwarding and started implementing.
+### Meeting-10(Date: 3/3/24)
+- Created seperate folder for Pipelined
+- Discussed how to start doing pipelining.
+- seperated execute function in Non-Pipelined into 5 steps as required in pipeline.
+- Implemented pipelining by adding all the five stages seperately. We did it using Backward execution of pieline stages.
+- We created seperate vectors for both cores for all 5 stages.
 ### Meeting-9(Date: 25/2/24)
 - added li and la instructions
 - made some changes in lw and sw , added comment lines , empty lines skipping.
@@ -94,5 +117,5 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
 - hpp file mainly consisted the basic structure without implementation
 - cpp file contained the implementations of the methods declared in hpp file.
 
-### { Note: Majority of the work was done together. So sometimes we only worked from one laptop and comitted from one git account. }
+### Note: Majority of the work was done together. So sometimes we only worked from one laptop and comitted from one git account. 
 
