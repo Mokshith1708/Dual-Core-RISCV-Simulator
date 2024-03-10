@@ -34,6 +34,8 @@ public:
   
   int clockCycles1 = 0;
   int clockCycles2 = 0;
+  int count1=0;
+  int count2=0;
   int ggg;
   int ggg1, ggg2, ggg3, ggg4;
   int gg;

@@ -7,8 +7,6 @@
 using std::cout;
 using std::endl;
 using std::string;
-#include <bits/stdc++.h>
-using namespace std;
 void print_array(int core, std::vector<int> k, std::vector<int> v, std::vector<int> fetch, std::vector<int> decode, std::vector<int> execute, std::vector<int> mem, std::vector<int> write)
 {
     cout << core << " |"
@@ -52,33 +50,33 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
 {
     pc1 = p1.second;
     pc2 = p2.second;
-    add_lat=1;
-    addi_lat=1;
-    sub_lat=1;
-    mul_lat=1;
-    muli_lat=1;
-    if(!latency_map.empty())
+    add_lat = 1;
+    addi_lat = 1;
+    sub_lat = 1;
+    mul_lat = 1;
+    muli_lat = 1;
+    if (!latency_map.empty())
     {
-    if(latency_map["add"]>0)
-    {
-    add_lat = latency_map["add"];
-    }
-    if(latency_map["addi"]>0)
-    {
-    addi_lat = latency_map["addi"];
-    }
-    if(latency_map["sub"]>0)
-    {
-    sub_lat = latency_map["sub"];
-    }
-    if(latency_map["mul"]>0)
-    {
-    mul_lat = latency_map["mul"];
-    }
-    if(latency_map["muli"]>0)
-    {
-    muli_lat = latency_map["muli"];
-    }
+        if (latency_map["add"] > 0)
+        {
+            add_lat = latency_map["add"];
+        }
+        if (latency_map["addi"] > 0)
+        {
+            addi_lat = latency_map["addi"];
+        }
+        if (latency_map["sub"] > 0)
+        {
+            sub_lat = latency_map["sub"];
+        }
+        if (latency_map["mul"] > 0)
+        {
+            mul_lat = latency_map["mul"];
+        }
+        if (latency_map["muli"] > 0)
+        {
+            muli_lat = latency_map["muli"];
+        }
     }
     // add_lat=1;
     // addi_lat=1;
@@ -109,7 +107,8 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
             instructionFetch(m, core1, pc1, r1, tempReg1);
             clockCycles1++;
             std::cout << "1 | clockCycles1 : " << clockCycles1 << std::endl;
-            std::cout<<std::endl;
+            count1++;
+            std::cout << std::endl;
         }
         if (pc2 < no_inst_2 + 4)
         {
@@ -123,9 +122,40 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
             instructionFetch(m, core2, pc2, r2, tempReg2);
             clockCycles2++;
             std::cout << "2 | clockCycles2 : " << clockCycles2 << std::endl;
-            std::cout<<std::endl;
+            count2++;
+            std::cout << std::endl;
         }
     }
+    print_array(1, k1, v1, fetch1, decode1, execute1, mem1, write1);
+
+    print_array(2, k2, v2, fetch2, decode2, execute2, mem2, write2);
+
+    cout << 3 << " | "
+         << "No of instructions for core1 : ";
+    cout << count1 << endl;
+    cout << 3 << " | "
+         << "No of Clockcycles for core1 : ";
+    cout << clockCycles1 << endl;
+    cout << 3 << " | "
+         << "IPC_1 : ";
+    cout << (double)count1 / clockCycles1 << endl;
+    cout << 3 << " | "
+         << "CPI_1 : ";
+    cout << (double)clockCycles1 / count1 << endl;
+    cout << 3 << " | "
+         << "     *****       " << endl;
+    cout << 3 << " | "
+         << "No of instructions for core2:";
+    cout << count2 << endl;
+    cout << 3 << " | "
+         << "No of Clockcycles for core2:";
+    cout << clockCycles2 << endl;
+    cout << 3 << " | "
+         << "IPC_2 : ";
+    cout << (double)count2 / clockCycles2 << endl;
+    cout << 3 << " | "
+         << "CPI_2 : ";
+    cout << (double)clockCycles2 / count2 << endl;
 }
 
 int ALU::typeOf(int k)
@@ -142,7 +172,7 @@ int ALU::typeOf(int k)
     {
         return 3;
     }
-    if (k == 10 || k == 11)
+    if (k == 10 || k == 11 || k == 21 || k == 22)
     {
         return 4;
     }
@@ -208,17 +238,17 @@ int ALU::RAW_Hazard(std::vector<int> v1, std::vector<int> v2)
             return -1;
         }
     }
-    if (typeOf(v1[0]) == 5 && typeOf(v2[0]) == 1)
-    {
-        if (v1[1] == v2[2] || v1[1] == v2[3])
-        {
-            return 5;
-        }
-        else
-        {
-            return -1;
-        }
-    }
+    // if (typeOf(v1[0]) == 5 && typeOf(v2[0]) == 1)
+    // {
+    //     if (v1[1] == v2[2] || v1[1] == v2[3])
+    //     {
+    //         return 5;
+    //     }
+    //     else
+    //     {
+    //         return -1;
+    //     }
+    // }
     if (typeOf(v1[0]) == 1 && typeOf(v2[0]) == 4)
     {
         if (v1[1] == v2[3])
@@ -234,6 +264,7 @@ int ALU::RAW_Hazard(std::vector<int> v1, std::vector<int> v2)
     {
         if (v1[1] == v2[3] || v1[1] == v2[2])
         {
+            // cout<<"/////////////core"<<endl;
             return 7;
         }
         else
@@ -300,6 +331,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     if (r.read(rs1) == r.read(rs2))
                     {
                         pc = rd;
+                        clockCycles1 += 2;
                     }
                 }
                 else if (instruction[0] == 4)
@@ -314,6 +346,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     if (r.read(rs1) != r.read(rs2))
                     {
                         pc = rd;
+                        clockCycles1 += 2;
                     }
                 }
                 else if (instruction[0] == 5)
@@ -328,6 +361,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     if (r.read(rs1) < r.read(rs2))
                     {
                         pc = rd;
+                        clockCycles1 += 2;
                     }
                 }
                 else if (instruction[0] == 6)
@@ -342,6 +376,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     if (r.read(rs1) >= r.read(rs2))
                     {
                         pc = rd;
+                        clockCycles1 += 2;
                     }
                 }
             }
@@ -350,12 +385,13 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
         if (dataforwarding2 == false)
         {
             bool stall_adj = false;
-            int p = RAW_Hazard(m.read_instruction(gg, core), m.read_instruction(tempry, core));
+            int p = RAW_Hazard(m.read_instruction(ggg, core), m.read_instruction(tempry, core));
             if (p == 1 || p == 2 || p == 3 || p == 4 || p == 5 || p == 6 || p == 7 || p == 8)
             {
                 clockCycles1 += 2;
                 stall_adj = true;
-                cout << core << " |--------Stall-------" << "no of stalls:2" << endl;
+                cout << core << " |--------Stall-------"
+                     << "no of stalls:2" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -372,11 +408,12 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                 cout << endl;
                 cout << core << " |--------Stall end-------" << endl;
             }
-            int r = RAW_Hazard(m.read_instruction(gg1, core), m.read_instruction(tempry, core));
-            if ((r == 1 || r == 2 || r == 3 || r == 4 || r == 5 || r == 6 || r == 7 || r == 8))
+            int r = RAW_Hazard(m.read_instruction(ggg1, core), m.read_instruction(tempry, core));
+            if ((r == 1 || r == 2 || r == 3 || r == 4 || r == 5 || r == 6 || r == 7 || r == 8) && stall_adj == false)
             {
-                clockCycles2 += 1;
-                cout << core << " |--------Stall-------" << "no of stalls:1" << endl;
+                clockCycles1 += 1;
+                cout << core << " |--------Stall-------"
+                     << "no of stalls:1" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -402,7 +439,8 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles1 += 1;
 
-                cout << core << " --------Stall-------" <<"no of stalls:1"<< endl;
+                cout << core << " --------Stall-------"
+                     << "no of stalls:1" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -423,7 +461,8 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles1 += 1;
 
-                cout << core << " |--------Stall-------" <<"no of stalls:1"<< endl;
+                cout << core << " |--------Stall-------"
+                     << "no of stalls:1" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -444,7 +483,8 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles1 += 1;
 
-                cout << core << " |--------Stall-------" <<"no of stalls:1"<< endl;
+                cout << core << " |--------Stall-------"
+                     << "no of stalls:1" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -461,94 +501,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                 cout << endl;
             }
         }
-        // if (dataforwarding2 == false)
-        // {
-        //     int p = RAW_Hazard(m.read_instruction(ggg, core), m.read_instruction(tempry, core));
-        //     if (p != -1)
-        //     {
-        //         clockCycles1 += 2;
-        //         cout << core << " |--------Stall-------" << endl;
-        //         cout << core << " | " << tempry + 1 << endl;
-        //         cout << core << " | ";
-        //         for (auto &jj : m.read_instruction(tempry, core))
-        //         {
-        //             cout << jj << " ";
-        //         }
-        //         cout << endl;
-        //         cout << core << " | ";
-        //         for (auto &jj : m.read_instruction(ggg, core))
-        //         {
-        //             cout << jj << " ";
-        //         }
-        //         cout << endl;
-        //         cout << core << " |--------Stall end-------" << endl;
-        //     }
-        // }
-        // if (dataforwarding2 == true)
-        // {
-        //     int p = RAW_Hazard(m.read_instruction(ggg, core), m.read_instruction(tempry, core));
-        //     if (p == 3)
-        //     {
-        //         clockCycles1 += 1;
 
-        //         cout << core << " |--------Stall-------" << endl;
-        //         cout << core << " | " << tempry + 1 << endl;
-        //         cout << core << " | ";
-        //         for (auto &jj : m.read_instruction(tempry, core))
-        //         {
-        //             cout << jj << " ";
-        //         }
-        //         cout << endl;
-        //         cout << core << " | ";
-        //         for (auto &jj : m.read_instruction(ggg, core))
-        //         {
-        //             cout << jj << " ";
-        //         }
-        //         cout << endl;
-        //         cout << core << " --------Stall end-------" << endl;
-        //     }
-        //     if (p == 6)
-        //     {
-        //         clockCycles1 += 1;
-
-        //         cout << core << " |--------Stall-------" << endl;
-        //         cout << core << " | " << tempry + 1 << endl;
-        //         cout << core << " | ";
-        //         for (auto &jj : m.read_instruction(tempry, core))
-        //         {
-        //             cout << jj << " ";
-        //         }
-        //         cout << endl;
-        //         cout << core << " | ";
-        //         for (auto &jj : m.read_instruction(ggg, core))
-        //         {
-        //             cout << jj << " ";
-        //         }
-        //         cout << endl;
-        //         cout << core << " |--------Stall end-------" << endl;
-        //     }
-        //     if (p == 7)
-        //     {
-        //         clockCycles1 += 1;
-
-        //         cout << core << " |--------Stall-------" << endl;
-        //         cout << core << " | " << tempry + 1 << endl;
-        //         cout << core << " | ";
-        //         for (auto &jj : m.read_instruction(tempry, core))
-        //         {
-        //             cout << jj << " ";
-        //         }
-        //         cout << endl;
-        //         cout << core << " | " << ggg << endl;
-        //         cout << core << " | ";
-        //         for (auto &jj : m.read_instruction(ggg, core))
-        //         {
-        //             cout << jj << " ";
-        //         }
-        //         cout << endl;
-        //         cout << core << " |--------Stall end-------" << endl;
-        //     }
-        // }
         ggg4 = ggg3;
         ggg3 = ggg2;
         ggg2 = ggg1;
@@ -600,6 +553,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     if (r.read(rs1) == r.read(rs2))
                     {
                         pc = rd;
+                        clockCycles2 += 2;
                     }
                 }
                 else if (instruction[0] == 4)
@@ -614,6 +568,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     if (r.read(rs1) != r.read(rs2))
                     {
                         pc = rd;
+                        clockCycles2 += 2;
                     }
                 }
                 else if (instruction[0] == 5)
@@ -628,6 +583,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     if (r.read(rs1) < r.read(rs2))
                     {
                         pc = rd;
+                        clockCycles2 += 2;
                     }
                 }
                 else if (instruction[0] == 6)
@@ -642,6 +598,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     if (r.read(rs1) >= r.read(rs2))
                     {
                         pc = rd;
+                        clockCycles2 += 2;
                     }
                 }
             }
@@ -652,10 +609,11 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             bool stall_adj = false;
             int p = RAW_Hazard(m.read_instruction(gg, core), m.read_instruction(tempry, core));
             if (p == 1 || p == 2 || p == 3 || p == 4 || p == 5 || p == 6 || p == 7 || p == 8)
-            {   
+            {
                 clockCycles2 += 2;
                 stall_adj = true;
-                cout << core << " |--------Stall-------" <<"no of stalls:2" << endl;
+                cout << core << " |--------Stall-------"
+                     << "no of stalls:2" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -676,7 +634,8 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             if ((r == 1 || r == 2 || r == 3 || r == 4 || r == 5 || r == 6 || r == 7 || r == 8))
             {
                 clockCycles2 += 1;
-                cout << core << " |--------Stall-------" <<"no of stalls:1" << endl;
+                cout << core << " |--------Stall-------"
+                     << "no of stalls:1" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -702,7 +661,8 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles2 += 1;
 
-                cout << core << " --------Stall-------" <<"no of stalls:1"<< endl;
+                cout << core << " --------Stall-------"
+                     << "no of stalls:1" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -723,7 +683,8 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles2 += 1;
 
-                cout << core << " |--------Stall-------"<<"no of stalls:1" << endl;
+                cout << core << " |--------Stall-------"
+                     << "no of stalls:1" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))
@@ -744,7 +705,8 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
             {
                 clockCycles2 += 1;
 
-                cout << core << " |--------Stall-------" <<"no of stalls:1"<< endl;
+                cout << core << " |--------Stall-------"
+                     << "no of stalls:1" << endl;
                 cout << core << " | " << tempry + 1 << endl;
                 cout << core << " | ";
                 for (auto &jj : m.read_instruction(tempry, core))

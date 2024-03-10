@@ -37,10 +37,10 @@ x31 : 23
 Label map code 1
 ================================================================================
 Key: arr, Value: 1
-Key: exit, Value: 26
+Key: exit, Value: 24
 Key: loop1, Value: 8
-Key: loop2, Value: 13
-Key: noswap, Value: 20
+Key: loop2, Value: 11
+Key: noswap, Value: 18
 Key: str, Value: 2
 ================================================================================
 Address list code 1

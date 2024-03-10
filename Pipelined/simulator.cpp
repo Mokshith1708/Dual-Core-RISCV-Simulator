@@ -471,36 +471,61 @@ void printRegisterTable(registers r, int core)
     }
     std::cout << "================================================================================" << std::endl;
 }
-void segregateLines(const std::string& inputFilename, const std::string& outputFilename1, const std::string& outputFilename2) {
+void segregateLines(const std::string &inputFilename, const std::string &outputFilename1, const std::string &outputFilename2, const std::string &outputFilename3)
+{
     std::ifstream inputFile(inputFilename);
-    if (!inputFile.is_open()) {
+    if (!inputFile.is_open())
+    {
         std::cerr << "Error opening input file: " << inputFilename << std::endl;
         return;
     }
     std::ofstream outputFile1(outputFilename1);
-    if (!outputFile1.is_open()) {
+    if (!outputFile1.is_open())
+    {
         std::cerr << "Error creating output file: " << outputFilename1 << std::endl;
         inputFile.close();
         return;
     }
     std::ofstream outputFile2(outputFilename2);
-    if (!outputFile2.is_open()) {
+    if (!outputFile2.is_open())
+    {
+        std::cerr << "Error creating output file: " << outputFilename2 << std::endl;
+        inputFile.close();
+        outputFile1.close();
+        return;
+    }
+    std::ofstream outputFile3(outputFilename3);
+    if (!outputFile3.is_open())
+    {
         std::cerr << "Error creating output file: " << outputFilename2 << std::endl;
         inputFile.close();
         outputFile1.close();
         return;
     }
     std::string line;
-    while (std::getline(inputFile, line)) {
-        if (!line.empty()) {
-            int startNum = std::stoi(line.substr(0, line.find_first_of(" ")));
-            std::ofstream& outFile = (startNum == 1) ? outputFile1 : outputFile2;
-            outFile << line << std::endl;
+    while (std::getline(inputFile, line))
+    {
+        if (!line.empty())
+        {
+            int startNum = std::stoi(line.substr(0, line.find_first_of("")));
+            std::ofstream *outFile = nullptr;
+
+            if (startNum == 1)
+                outFile = &outputFile1;
+            else if (startNum == 2)
+                outFile = &outputFile2;
+            else if (startNum == 3)
+                outFile = &outputFile3;
+            if (outFile != nullptr)
+                *outFile << line << std::endl;
+            else
+                std::cerr << "Invalid startNum: " << startNum << std::endl;
         }
     }
     inputFile.close();
     outputFile1.close();
     outputFile2.close();
+    outputFile3.close();
 }
 int main()
 {
@@ -521,18 +546,20 @@ int main()
     memory m;
 
     bool dataforwardin_on;
-    cout<<"Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **"<<endl;
-    cin>>dataforwardin_on;
+    cout << "Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **" << endl;
+    cin >> dataforwardin_on;
     map<string, int> latency_map;
     int is_Latency;
     cout << "Do you want to add latencies to instructions : \nEnter ** 1 ** for yes\nEnter ** 0 ** for no\n";
-    cin>>is_Latency;
-    if (is_Latency) {
+    cin >> is_Latency;
+    if (is_Latency)
+    {
         int num_instructions;
         cout << "Enter the number of instructions you want to add latencies for: ";
         cin >> num_instructions;
 
-        for (int i = 0; i < num_instructions; ++i) {
+        for (int i = 0; i < num_instructions; ++i)
+        {
             string instruction;
             int latency;
             cout << "Enter instruction type (use only add,sub,mul,addi,muli) : ";
@@ -542,12 +569,16 @@ int main()
             latency_map[instruction] = latency;
         }
     }
-    if (!latency_map.empty()) {
+    if (!latency_map.empty())
+    {
         cout << "Instruction latencies:\n";
-        for (const auto& pair : latency_map) {
+        for (const auto &pair : latency_map)
+        {
             cout << pair.first << ": " << pair.second << endl;
         }
-    } else {
+    }
+    else
+    {
         cout << "No latencies added.\n";
     }
 
@@ -605,7 +636,7 @@ int main()
     streambuf *coutbuf3 = cout.rdbuf();
     cout.rdbuf(outputFile3.rdbuf());
 
-    ALU alui(latency_map,p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2,dataforwardin_on);
+    ALU alui(latency_map, p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2, dataforwardin_on);
 
     cout.rdbuf(coutbuf3);
 
@@ -684,6 +715,6 @@ int main()
     outputFile1.close();
     outputFile2.close();
     outputFile3.close();
-    segregateLines("..\\data_files\\output\\console.txt","..\\data_files\\output\\console1.txt","..\\data_files\\output\\console2.txt");
+    segregateLines("..\\data_files\\output\\console.txt", "..\\data_files\\output\\console1.txt", "..\\data_files\\output\\console2.txt", "..\\data_files\\output\\OUTPUTS.txt");
     return 0;
 }
