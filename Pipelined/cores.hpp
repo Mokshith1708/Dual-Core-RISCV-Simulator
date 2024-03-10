@@ -29,7 +29,7 @@ private:
   std::vector<int> tempReg2;
 
 public:
-  ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2);
+  ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2,bool dataforwarding_on);
   void executeInstruction(std::vector<int> instructions, memory &m, registers &r, int core, int &pc);
   
   int clockCycles1 = 0;
@@ -39,7 +39,8 @@ public:
   int gg;
   int gg1, gg2, gg3, gg4;
   int add_lat,addi_lat,sub_lat,mul_lat,muli_lat;
-  bool dataforwarding1 = true, dataforwarding2;
+  bool dataforwarding1 = true;
+  bool dataforwarding2;
   void executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc);
   std::vector<int> prevpc1, prevpc2;
   void instructionFetch(memory &m, int core, int &pc, registers &r, std::vector<int> &tempReg);
@@ -51,4 +52,3 @@ public:
   int typeOf(int k);
   bool predictor(int pc,memory& m);
 };
-

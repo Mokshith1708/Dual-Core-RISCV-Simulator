@@ -520,6 +520,9 @@ int main()
     registers r1, r2;
     memory m;
 
+    bool dataforwardin_on;
+    cout<<"Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **"<<endl;
+    cin>>dataforwardin_on;
     map<string, int> latency_map;
     int is_Latency;
     cout << "Do you want to add latencies to instructions : \nEnter ** 1 ** for yes\nEnter ** 0 ** for no\n";
@@ -602,7 +605,7 @@ int main()
     streambuf *coutbuf3 = cout.rdbuf();
     cout.rdbuf(outputFile3.rdbuf());
 
-    ALU alui(latency_map,p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2);
+    ALU alui(latency_map,p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2,dataforwardin_on);
 
     cout.rdbuf(coutbuf3);
 

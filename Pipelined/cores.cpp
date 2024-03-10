@@ -2,11 +2,12 @@
 #include "simulator.hpp"
 #include "memory.hpp"
 #include "registers.hpp"
-#include<vector>
-#include<map>
+#include <vector>
+#include <map>
 using std::cout;
-using std::string;
 using std::endl;
+using std::string;
+#include <bits/stdc++.h>
 using namespace std;
 void print_array(int core, std::vector<int> k, std::vector<int> v, std::vector<int> fetch, std::vector<int> decode, std::vector<int> execute, std::vector<int> mem, std::vector<int> write)
 {
@@ -47,22 +48,29 @@ void print_array(int core, std::vector<int> k, std::vector<int> v, std::vector<i
     cout << endl;
     cout << core << " |------------------------ " << endl;
 }
-ALU::ALU(std::map<string, int> &latency_map,std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int no_inst_22, memory &m, registers &r1, registers &r2, int core1, int core2)
+ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int no_inst_22, memory &m, registers &r1, registers &r2, int core1, int core2, bool dataforwarding_on)
 {
     pc1 = p1.second;
     pc2 = p2.second;
-    dataforwarding2 = false;
     add_lat = latency_map["add"];
-    addi_lat = latency_map["addi"];;
-    sub_lat = latency_map["sub"];;
-    mul_lat = latency_map["mul"];;
-    muli_lat = latency_map["muli"];;
+    addi_lat = latency_map["addi"];
+    ;
+    sub_lat = latency_map["sub"];
+    ;
+    mul_lat = latency_map["mul"];
+    ;
+    muli_lat = latency_map["muli"];
+    ;
     std::vector<int> tempReg1(32);
     std::vector<int> tempReg2(32);
     no_inst_1 = no_inst_11;
     no_inst_2 = no_inst_22;
     int maxim = std::max(no_inst_1, no_inst_2);
     std::vector<int> v1, k1, k2, v2;
+    if (dataforwarding_on)
+        dataforwarding2 = true;
+    else
+        dataforwarding2 = false;
     while (pc1 < maxim + 4 && pc2 < maxim + 4)
     {
         if (pc1 < no_inst_1 + 4)
@@ -1047,7 +1055,8 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         }
         else
         {
-            cout <<core<<" | "<< "*** Wrong Prediction ***" << endl;
+            cout << core << " | "
+                 << "*** Wrong Prediction ***" << endl;
             break;
         }
         break;
@@ -1064,7 +1073,8 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         }
         else
         {
-            cout <<core<<" | "<< "*** Wrong Prediction ***" << endl;
+            cout << core << " | "
+                 << "*** Wrong Prediction ***" << endl;
             break;
         }
         break;
@@ -1081,7 +1091,8 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         }
         else
         {
-            cout <<core<<" | "<< "*** Wrong Prediction ***" << endl;
+            cout << core << " | "
+                 << "*** Wrong Prediction ***" << endl;
             break;
         }
         break;
@@ -1098,7 +1109,8 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         }
         else
         {
-            cout <<core<<" | "<< "*** Wrong Prediction ***" << endl;
+            cout << core << " | "
+                 << "*** Wrong Prediction ***" << endl;
             break;
         }
         break;
