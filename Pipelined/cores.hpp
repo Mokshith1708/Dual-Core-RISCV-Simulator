@@ -34,6 +34,7 @@ public:
   
   int clockCycles1 = 0;
   int clockCycles2 = 0;
+  int t_f_1,t_f_2;
   int count1=0;
   int count2=0;
   int ggg;
@@ -43,7 +44,7 @@ public:
   int add_lat,addi_lat,sub_lat,mul_lat,muli_lat;
   bool dataforwarding1 = true;
   bool dataforwarding2;
-  void executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc);
+  void executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc,std::vector<int> &tempReg);
   std::vector<int> prevpc1, prevpc2;
   void instructionFetch(memory &m, int core, int &pc, registers &r, std::vector<int> &tempReg);
   std::vector<int> instructionDecode(memory &m, int core, registers &r, int &pc, std::vector<int> &tempReg);
@@ -53,4 +54,5 @@ public:
   int RAW_Hazard(std::vector<int>v1,std::vector<int>v);
   int typeOf(int k);
   bool predictor(int pc,memory& m);
+  void stallManagement(memory &m, int core, registers &r, int &pc, std::vector<int> &tempReg);
 };
