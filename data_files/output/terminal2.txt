@@ -5,8 +5,8 @@ x1  : 19
 x2  : 20
 x3  : 18
 x4  : 0
-x5  : 20
-x6  : 19
+x5  : 3
+x6  : 2
 x7  : 0
 x8  : 0
 x9  : 0
@@ -15,12 +15,12 @@ x11 : 0
 x12 : 0
 x13 : 0
 x14 : 0
-x15 : 80
-x16 : 72
+x15 : 8
+x16 : 0
 x17 : 0
 x18 : 20
 x19 : 19
-x20 : 76
+x20 : 4
 x21 : 0
 x22 : 0
 x23 : 0
@@ -37,34 +37,34 @@ x31 : 0
 Label map code 2
 ================================================================================
 Key: base, Value: 1
-Key: exit, Value: 28
+Key: exit, Value: 29
 Key: exit2, Value: 24
-Key: loop, Value: 13
+Key: loop, Value: 12
 Key: loop1, Value: 17
 Key: start, Value: 3
 ================================================================================
 Address list code 2
 ================================================================================
-Address 0  : 1
-Address 1  : 2
-Address 2  : 3
-Address 3  : 4
+Address 0  : 2
+Address 1  : 3
+Address 2  : 6
+Address 3  : 13
 Address 4  : 5
-Address 5  : 6
-Address 6  : 7
-Address 7  : 8
-Address 8  : 9
-Address 9  : 10
-Address 10 : 11
-Address 11 : 12
-Address 12 : 13
-Address 13 : 14
-Address 14 : 15
-Address 15 : 16
-Address 16 : 17
-Address 17 : 18
-Address 18 : 19
-Address 19 : 20
+Address 5  : 1
+Address 6  : 4
+Address 7  : 16
+Address 8  : 7
+Address 9  : 11
+Address 10 : 12
+Address 11 : 14
+Address 12 : 15
+Address 13 : 17
+Address 14 : 18
+Address 15 : 8
+Address 16 : 19
+Address 17 : 9
+Address 18 : 20
+Address 19 : 10
 Address 20 : 0
 Address 21 : 0
 Address 22 : 0

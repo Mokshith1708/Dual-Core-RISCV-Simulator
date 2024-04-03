@@ -1,6 +1,9 @@
 ## Dual-Core-RISCV-Simulator
-Developing a  simulator on the lines of Ripes. The simulator will have two cores and will be able to simulate a multi-core environment. 
+
+Developing a  simulator on the lines of Ripes. The simulator will have two cores and will be able to simulate a multi-core environment.
+
 - implemented functions
+
   ```assembly=
   add
   sub
@@ -19,7 +22,9 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
   li
   ecall
   ```
- - Phase 2 lag
+
+- Phase 2 lag
+
      - We implemented Clock cycles.But we were not getting the count exactly same as in the ripes simulator. Maybe our approach towards stalls should be changes. It is giving some near value but not the exact value.
      - In next phase we would first like to change the detection of stalls process.
  - few constraints

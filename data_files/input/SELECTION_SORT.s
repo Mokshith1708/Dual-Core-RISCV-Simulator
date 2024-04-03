@@ -10,8 +10,8 @@ start:
     la x16 base
     la x17 base
     la x21 base
-    la x20 base
     loop:
+    la x20 base
         addi x2 x1 1
         addi x16 x20 0
         addi x15 x20 4
@@ -26,6 +26,7 @@ start:
             addi x15 x15 4
             addi x2 x2 1
             j loop1
+            
         exit:
         addi x1 x1 1
         addi x20 x20 4
