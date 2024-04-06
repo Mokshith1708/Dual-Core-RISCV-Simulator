@@ -13,7 +13,7 @@ int32_t registers::read(int32_t address)
     }
     else
     {
-        throw std::out_of_range("Error: Attempted to read from out of bounds memory address.");
+        throw std::out_of_range("Error: Attempted to read from out of bounds memory address. 19");
     }
 }
 //  write to registers
@@ -25,6 +25,6 @@ void registers::write(int32_t address, int32_t data)
     }
     else
     {
-        throw std::out_of_range("Error: Attempted to write out of bounds of memory address.");
+        throw std::out_of_range("Error: Attempted to write out of bounds of memory address. 20");
     }
 }

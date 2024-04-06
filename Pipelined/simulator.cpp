@@ -583,7 +583,7 @@ int main()
     }
 
     // for first file
-    const string file_path = "..\\data_files\\input\\BUBBLE_SORT.s";
+    const string file_path = "..\\data_files\\input\\test.s";
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
     {
