@@ -4,14 +4,20 @@
 #include "registers.hpp"
 #include <vector>
 #include <map>
+#include <algorithm>
 using std::cout;
 using std::endl;
 using std::string;
-void print_array(int core, std::vector<int> k, std::vector<int> v, std::vector<int> fetch, std::vector<int> decode, std::vector<int> execute, std::vector<int> mem, std::vector<int> write)
+void print_array(int core, std::vector<int> k, std::vector<int> kk, std::vector<int> v, std::vector<int> fetch, std::vector<int> decode, std::vector<int> execute, std::vector<int> mem, std::vector<int> write)
 {
     cout << core << " |"
          << " k       : ";
     for (auto p : k)
+        cout << p << " ";
+    cout << endl;
+    cout << core << " |"
+         << " kk       : ";
+    for (auto p : kk)
         cout << p << " ";
     cout << endl;
     cout << core << " |"
@@ -46,30 +52,35 @@ void print_array(int core, std::vector<int> k, std::vector<int> v, std::vector<i
     cout << endl;
     cout << core << " |------------------------ " << endl;
 }
-void ALU::break_execute(int core,int &clockcyc, int &pc, memory &m, registers &r, std::vector<int> &tempReg, std::vector<int> &k, std::vector<int> &v, std::vector<int> &fetch, std::vector<int> &decode, std::vector<int> &execute, std::vector<int> &mem, std::vector<int> &write)
+void ALU::break_execute(int core, int &clockcyc,int &instruction_count, int &pc, memory &m, registers &r, std::vector<int> &tempReg,std::vector<int> &tempReg1, std::vector<int> &k, std::vector<int> &kk, std::vector<int> &v, std::vector<int> &fetch, std::vector<int> &decode, std::vector<int> &execute, std::vector<int> &mem, std::vector<int> &write)
 {
-    // cout << "1 | " << pc1 << endl;
+     cout << "1 | " << pc1 <<"hero"<< endl;
     writeBack(k, m, core, pc, r);
-   // cout << "ki" << endl;
+    // cout << "ki" << endl;
     // cout << u << endl;
-  //  cout << "dd" << endl;
-   if (RAW_Hazard(mem, decode) != -1)
+    //  cout << "dd" << endl;
+    if (RAW_Hazard(mem, decode) != -1)
     {
         // cout << "1 | hello1" << endl;
+        k.clear();
+        kk.clear();
         mem[0] = 0;
         mem[1] = 0;
         mem[2] = 0;
         mem[3] = 0;
         return;
     }
-   // cout << "ih" << endl;
+    // cout << "ih" << endl;
     memoryAccess(k, m, core, pc);
     k.clear();
-
-    k = instructionExecute(v, m, r, core, pc, tempReg,clockcyc);
+    kk.clear();
+    k = instructionExecute(v, m, r, core, pc, tempReg, clockcyc);
+    kk = k;
     if (RAW_Hazard(mem, execute) != -1)
     {
         // cout << "1 | hello1" << endl;
+       // k.clear();
+       // kk.clear();
         execute[0] = 0;
         execute[1] = 0;
         execute[2] = 0;
@@ -79,7 +90,9 @@ void ALU::break_execute(int core,int &clockcyc, int &pc, memory &m, registers &r
     v.clear();
 
     v = instructionDecode(m, core, r, pc, tempReg);
-    instructionFetch(m, core, pc, r, tempReg);
+    instructionFetch(m, core, pc,instruction_count, r, tempReg);
+    cout<< core <<" | "<<instruction_count<<endl;
+    instruction_count++;
 }
 ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int no_inst_22, memory &m, registers &r1, registers &r2, int core1, int core2, bool dataforwarding_on)
 {
@@ -118,42 +131,56 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
 
     std::vector<int> tempReg1(32);
     std::vector<int> tempReg2(32);
+    std::vector<int> tempReg11(32);
+    std::vector<int> tempReg22(32);
     no_inst_1 = no_inst_11;
     no_inst_2 = no_inst_22;
     int maxim = std::max(no_inst_1, no_inst_2);
-    std::vector<int> v1, k1, k2, v2;
+    std::vector<int> v1, k1, k2, v2, kk1, kk2;
     if (dataforwarding_on)
         dataforwarding2 = true;
     else
         dataforwarding2 = false;
-    while (pc1 < maxim + 4 && pc2 < maxim + 4)
+    for(int i=0;i<32;i++)
     {
+       cout<<1<<" | "<< m.read_memory(i,1)<<endl;
+    }
+    cout<<1<<" | "<<no_inst_1<<"&&&"<<no_inst_2<<endl;
+    while (pc1 < maxim + 4 && pc2 < maxim + 4)
+    {   
         if (pc1 < no_inst_1 + 4)
         {
             clockCycles1++;
-            print_array(1, k1, v1, fetch1, decode1, execute1, mem1, write1);
+            print_array(1, k1,kk1, v1, fetch1, decode1, execute1, mem1, write1);
+             for(int i=0;i<32;i++)
+           {
+              cout<<1<<" | "<< m.read_memory(i,1)<<endl;
+           }
             cout << "1 | ---------------------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
-            break_execute(1,clockCycles1, pc1, m, r1, tempReg1, k1, v1, fetch1, decode1, execute1, mem1, write1);
+            break_execute(1, clockCycles1,count1, pc1, m, r1, tempReg1,tempReg11, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
             std::cout << "1 | clockCycles1 : " << clockCycles1 << std::endl;
             cout << "1 | (((((((((((((((((((((((())))))))))))))))))))))))" << endl;
-            count1++;
             std::cout << std::endl;
         }
         if (pc2 < no_inst_2 + 4)
-        {
-            // pc2++;
-            clockCycles2++;
-            print_array(2, k2, v2, fetch2, decode2, execute2, mem2, write2);
-            break_execute(2,clockCycles2, pc2, m, r2, tempReg2, k2, v2, fetch2, decode2, execute2, mem2, write2);
+        {  
+            pc2==1;
+            // clockCycles2++;
+            // print_array(2, k2, v2, fetch2, decode2, execute2, mem2, write2);
+            // break_execute(2,clockCycles2,count2, pc2, m, r2, tempReg2,tempReg22,k2,kk2 v2, fetch2, decode2, execute2, mem2, write2);
 
-            std::cout << "2 | clockCycles2 : " << clockCycles2 << std::endl;
-            count2++;
-            std::cout << std::endl;
+            // std::cout << "2 | clockCycles2 : " << clockCycles2 << std::endl;
+            // std::cout << std::endl;
         }
     }
-    print_array(1, k1, v1, fetch1, decode1, execute1, mem1, write1);
+    cout<<1<<" | " <<pc2 << std::endl;
+          for(int i=0;i<32;i++)
+          {
+            cout<<1<<" | "<<i<<" : "<<m.read_memory(i,1)<<endl;
+          }
+    print_array(1, k1,kk1 , v1, fetch1, decode1, execute1, mem1, write1);
 
-    print_array(2, k2, v2, fetch2, decode2, execute2, mem2, write2);
+    print_array(2, k2,kk2 , v2, fetch2, decode2, execute2, mem2, write2);
 
     cout << 3 << " | "
          << "No of instructions for core1 : ";
@@ -171,16 +198,16 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
          << "     *****       " << endl;
     cout << 3 << " | "
          << "No of instructions for core2:";
-    cout << count2 << endl;
-    cout << 3 << " | "
-         << "No of Clockcycles for core2:";
-    cout << clockCycles2 << endl;
-    cout << 3 << " | "
-         << "IPC_2 : ";
-    cout << (double)count2 / clockCycles2 << endl;
-    cout << 3 << " | "
-         << "CPI_2 : ";
-    cout << (double)clockCycles2 / count2 << endl;
+    // cout << count2 << endl;
+    // cout << 3 << " | "
+    //      << "No of Clockcycles for core2:";
+    // cout << clockCycles2 << endl;
+    // cout << 3 << " | "
+    //      << "IPC_2 : ";
+    // cout << (double)count2 / clockCycles2 << endl;
+    // cout << 3 << " | "
+    //      << "CPI_2 : ";
+    // cout << (double)clockCycles2 / count2 << endl;
 }
 
 int ALU::typeOf(int k)
@@ -213,7 +240,7 @@ int ALU::RAW_Hazard(std::vector<int> v1, std::vector<int> v2)
     {
         return -1;
     }
-    if(v1[0]==0 || v2[0]==0)
+    if (v1[0] == 0 || v2[0] == 0)
     {
         return -1;
     }
@@ -323,7 +350,7 @@ int ALU::RAW_Hazard(std::vector<int> v1, std::vector<int> v2)
     }
     return -1;
 }
-void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vector<int> &tempReg)
+void ALU::instructionFetch(memory &m, int core, int &pc,int &count, registers &r, std::vector<int> &tempReg)
 {
     std::vector<int> &fetch = (core == 1) ? fetch1 : fetch2;
     int no_inst = (core == 1) ? no_inst_1 : no_inst_2;
@@ -334,15 +361,20 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
         std::vector<int> instruction(4, 0);
         if (pc < no_inst)
         {
-            instruction.clear();
+           // instruction.clear();
             if (t_f_1 != 0)
-            {
-                instruction[0] = 0;
-                instruction[1] = 0;
-                instruction[2] = 0;
-                instruction[3] = 0;
+            {   
+                // instruction[0] = 0;
+                // instruction[1] = 0;
+                // instruction[2] = 0;
+                // instruction[3] = 0;
+                fetch.push_back(0);
+                fetch.push_back(0);
+                fetch.push_back(0);
+                fetch.push_back(0);
+                count--;
                 t_f_1--;
-                fetch.insert(fetch.end(), instruction.begin(), instruction.end());
+               // fetch.insert(fetch.end(), instruction.begin(), instruction.end());
                 return;
             }
             instruction = m.read_instruction(pc, core);
@@ -377,10 +409,21 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2, tempReg);
                     executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1, tempReg);
                     executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg, tempReg);
+                    if(RAW_Hazard(m.read_instruction(ggg, core),m.read_instruction(tempry, core))!=-1 && dataforwarding1==false)
+                    {
+                         if (tempReg[rs1] == tempReg[rs2])
+                    {
+                        pc = rd;
+                        t_f_1 = 2;
+                    }
+                    }
+                    else
+                    {
                     if (tempReg[rs1] == tempReg[rs2])
                     {
                         pc = rd;
                         t_f_1 = 2;
+                    }
                     }
                 }
                 else if (instruction[0] == 4)
@@ -392,10 +435,22 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2, tempReg);
                     executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1, tempReg);
                     executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg, tempReg);
+                   // cout<<tempReg[rs1]<<"hbyhbyhb"<<tempReg[rs2]<<"hi"<<ggg<<" "<<tempry<<" "<<RAW_Hazard(instruction,m.read_instruction(ggg, core))<<endl;
+                    if(RAW_Hazard(instruction,m.read_instruction(ggg, core))!=-1 && dataforwarding1==false)
+                    {
+                         if (tempReg[rs1] != tempReg[rs2])
+                    {
+                        pc = rd;
+                        t_f_1 = 2;
+                    }
+                    }
+                    else
+                    {
                     if (tempReg[rs1] != tempReg[rs2])
                     {
                         pc = rd;
                         t_f_1 = 2;
+                    }
                     }
                 }
                 else if (instruction[0] == 5)
@@ -407,10 +462,23 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2, tempReg);
                     executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1, tempReg);
                     executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg, tempReg);
+                    cout<<core<<" | "<<tempReg[rs1]<<"hbyhbyhb"<<tempReg[rs2]<<"hi"<<ggg<<" "<<tempry<<" "<<RAW_Hazard(m.read_instruction(ggg, core),instruction)<<endl;
+                    if(RAW_Hazard(m.read_instruction(ggg, core),m.read_instruction(tempry, core))!=-1 && dataforwarding1==false)
+                    {
+                        cout<<core<<" | "<<tempReg[rs1]<<"ERROR"<<tempReg[rs2]<<endl;
+                     if (tempReg[rs1] < tempReg[rs2])
+                    {
+                        pc = rd;
+                        t_f_1 = 2;
+                    }
+                    }
+                    else
+                    {                   
                     if (tempReg[rs1] < tempReg[rs2])
                     {
                         pc = rd;
                         t_f_1 = 2;
+                    }
                     }
                 }
                 else if (instruction[0] == 6)
@@ -422,10 +490,21 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
                     executeInstructiondummy(m.read_instruction(ggg2, core), m, r, core, ggg2, tempReg);
                     executeInstructiondummy(m.read_instruction(ggg1, core), m, r, core, ggg1, tempReg);
                     executeInstructiondummy(m.read_instruction(ggg, core), m, r, core, ggg, tempReg);
+                    if(RAW_Hazard(m.read_instruction(ggg, core),m.read_instruction(tempry, core))!=-1 && dataforwarding1==false)
+                    {
+                         if (tempReg[rs1]>=tempReg[rs2])
+                    {
+                        pc = rd;
+                        t_f_1 = 2;
+                    }
+                    }
+                    else
+                    {
                     if (tempReg[rs1] >= tempReg[rs2])
                     {
                         pc = rd;
                         t_f_1 = 2;
+                    }
                     }
                 }
             }
@@ -437,6 +516,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, registers &r, std::vect
         ggg = tempry;
 
         fetch.insert(fetch.end(), instruction.begin(), instruction.end());
+       
     }
 
     else
@@ -780,6 +860,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &
         int rd = r.read(decode[3]);
         int offset = decode[2];
         int ans = r.read(rs1);
+        cout<<1<<" |hello "<<ans<<endl;
         if (dataforwarding1)
         {
             rd = tempReg[decode[3]];
@@ -829,7 +910,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &
     }
     return v;
 }
-std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, registers &r, int core, int &pc, std::vector<int> &tempReg,int &clockcycles)
+std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registers &r, int core, int &pc, std::vector<int> &tempReg, int &clockcycles)
 {
     std::vector<int> &execute = (core == 1) ? execute1 : execute2;
     std::vector<int> &decode = (core == 1) ? decode1 : decode2;
@@ -950,8 +1031,8 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(pc + 1);
-        pc = v[2];
-        tempReg[v[1]] = pc + 1;
+       // pc = v[2];
+        tempReg[v[1]] = v[2] + 1;
         break;
     }
     case RISCV::jalr:
@@ -959,8 +1040,8 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(pc + 1);
-        pc = v[2] + v[3] - 1;
-        tempReg[v[1]] = pc + 1;
+       // pc = v[2] + v[3] - 1;
+       tempReg[v[1]] = v[2] + v[3] ;
         break;
     }
     case RISCV::beq:
@@ -971,7 +1052,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         bool i = predictor(pc, m);
         if (rs1 == rs2)
         {
-            pc = v[1];
+          //  pc = v[1];
             // break;
         }
         else
@@ -991,7 +1072,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         bool i = predictor(pc, m);
         if (rs1 != rs2)
         {
-            pc = v[1];
+           // pc = v[1];
         }
         else
         {
@@ -1010,7 +1091,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         bool i = predictor(pc, m);
         if (rs1 < rs2)
         {
-            pc = v[1];
+           // pc = v[1];
         }
         else
         {
@@ -1029,7 +1110,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         bool i = predictor(pc, m);
         if (rs1 >= rs2)
         {
-            pc = v[1];
+           // pc = v[1];
         }
         else
         {
@@ -1050,6 +1131,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
     {
         k.push_back(0);
         k.push_back(v[1]);
+        cout<<1<<" | "<<v[2] + v[3]<<"oppp"<<m.read_memory((v[2] + v[3]) / 4,core)<<endl;
         k.push_back(m.read_memory((v[2] + v[3]) / 4, core));
         tempReg[v[1]] = m.read_memory((v[2] + v[3]) / 4, core);
         break;
@@ -1058,6 +1140,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
     {
         k.push_back(1);
         k.push_back((v[1] + v[3]) / 4);
+        cout<<1<<" |nene "<<(v[1] + v[3])<<" "<<v[2]<<endl;
         k.push_back(v[2]);
         break;
     }
@@ -1083,12 +1166,12 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
         int k = v[2];
         if (n == 1)
         {
-            std::cout << k;
+            std::cout <<core<<" | "<< k;
         }
         if (n == 4)
         {
             std::string st_temp = m.read_str(k, core);
-            std::cout << st_temp.substr(1, st_temp.size() - 2);
+            std::cout <<core<<" | "<< st_temp.substr(1, st_temp.size() - 2);
         }
         break;
     }
@@ -1099,7 +1182,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> v, memory &m, register
     execute = decode;
     return k;
 }
-void ALU::memoryAccess(std::vector<int> k, memory &m, int core, int &pc)
+void ALU::memoryAccess(std::vector<int> &k, memory &m, int core, int &pc)
 {
     std::vector<int> &execute = (core == 1) ? execute1 : execute2;
     std::vector<int> &mem = (core == 1) ? mem1 : mem2;
@@ -1117,11 +1200,13 @@ void ALU::memoryAccess(std::vector<int> k, memory &m, int core, int &pc)
     if (k[0] == 1)
     {
         m.write_memory(k[1], k[2], core);
+         cout<<core<<" | "<<m.read_memory(k[1],core)<<"see"<<core<<endl;
+        cout <<core<<" | "<< " hi" << k[1] << k[2] << endl;
     }
     mem.clear();
     mem = execute;
 }
-void ALU::writeBack(std::vector<int> k, memory &m, int core, int &pc, registers &r)
+void ALU::writeBack(std::vector<int> &k, memory &m, int core, int &pc, registers &r)
 {
     std::vector<int> &write = (core == 1) ? write1 : write2;
     std::vector<int> &mem = (core == 1) ? mem1 : mem2;
@@ -1139,6 +1224,8 @@ void ALU::writeBack(std::vector<int> k, memory &m, int core, int &pc, registers 
     if (k[0] == 0)
     {
         r.write(k[1], k[2]);
+        // cout<<core<<" | "<<r.read(k[1])<<"see"<<endl;
+        // cout <<core<<" | "<< " hi" << k[1] << k[2] << endl;
     }
     write.clear();
     write = mem;
@@ -1291,7 +1378,7 @@ void ALU::executeInstructiondummy(std::vector<int> instruction, memory &m, regis
         int rs1 = instruction[1];
         int rd = tempReg[instruction[3]];
         int offset = instruction[2];
-        m.write_memory((rd + offset) / 4, tempReg[rs1], core);
+       // m.write_memory((rd + offset) / 4, tempReg[rs1], core);
         break;
     }
     case RISCV::la:
@@ -1337,25 +1424,4 @@ void ALU::stallManagement(memory &m, int core, registers &r, int &pc, std::vecto
 {
     std::vector<int> &execute = (core == 1) ? execute1 : execute2;
     std::vector<int> &decode = (core == 1) ? decode1 : decode2;
-}
-bool ALU::RAW_Hazarda(std::vector<int> v1, std::vector<int> v2)
-{
-    if (v1.empty() || v2.empty())
-        return false;
-    int a0 = v1[0];
-    int a1 = v1[1];
-    int a2 = v1[2];
-    int a3 = v1[3];
-    int b0 = v2[0];
-    int b1 = v2[1];
-    int b2 = v2[2];
-    int b3 = v2[3];
-    if (((a0 == 0) && (a1 == 0) && (a2 == 0) && (a3 == 0)) || ((b0 == 0) && (b1 == 0) && (b2 == 0) && (b3 == 0)))
-        return false;
-    // if (isArithmatic(v1[0]) && isArithmatic(v2[0]))
-    // {
-    if (a1 == b1 || a1 == b3 || a1 == b2)
-        return true;
-    // }
-    return false;
 }

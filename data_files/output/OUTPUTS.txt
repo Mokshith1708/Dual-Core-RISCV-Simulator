@@ -1,9 +1,6 @@
-3 | No of instructions for core1 : 10
-3 | No of Clockcycles for core1 : 9
-3 | IPC_1 : 1.11111
-3 | CPI_1 : 0.9
+3 | No of instructions for core1 : 22
+3 | No of Clockcycles for core1 : 31
+3 | IPC_1 : 0.709677
+3 | CPI_1 : 1.40909
 3 |      *****       
-3 | No of instructions for core2:2747
-3 | No of Clockcycles for core2:2502
-3 | IPC_2 : 1.09792
-3 | CPI_2 : 0.910812
+3 | No of instructions for core2:
