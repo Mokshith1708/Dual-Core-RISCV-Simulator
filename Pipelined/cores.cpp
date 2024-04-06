@@ -68,31 +68,9 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
     }
     memoryAccess(k, m, core, pc);
 
-    // if (!execute.empty())
-    // {
-    //     if (isBranch(execute[0]))
-    //     {
-    //         if (branch_bool)
-    //         {   fetch[0]=0;
-    //             fetch[1]=0;
-    //             fetch[2]=0;
-    //             fetch[3]=0;
-    //             // execute[0] = 0;
-    //             // execute[1] = 0;
-    //             // execute[2] = 0;
-    //             // execute[3] = 0;
-    //             decode[0] = 0;
-    //             decode[1] = 0;
-    //             decode[2] = 0;
-    //             decode[3] = 0;
-    //             branch_bool=false;
-    //             return;
-    //         }
-    //     }
-    // }
     k.clear();
     kk.clear();
-    k = instructionExecute(v, m, r, core, pc, tempReg, clockcyc, branch_bool_1);
+    k = instructionExecute(v, m, r, core, pc, tempReg, clockcyc, branch_bool);
     kk = k;
 
     if (RAW_Hazard(mem, execute) != -1)
@@ -108,17 +86,14 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
 
     v = instructionDecode(m, core, r, pc, tempReg);
 
-    instructionFetch(m, core, pc, instruction_count, r, tempReg1);
+    instructionFetch(m, core, pc, instruction_count, r, tempReg);
     if (!mem.empty())
     {
         if (isBranch(mem[0]))
         {
             if (branch_bool)
             {
-                // fetch[0] = 0;
-                // fetch[1] = 0;
-                // fetch[2] = 0;
-                // fetch[3] = 0;
+            
                 execute[0] = 0;
                 execute[1] = 0;
                 execute[2] = 0;
@@ -207,13 +182,13 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
         if (pc2 < no_inst_2 + 4)
         {
             // cout<<2<<" | "<<pc2<<endl;
-            pc2++;
-            // clockCycles2++;
-            // print_array(2, k2,kk2, v2, fetch2, decode2, execute2, mem2, write2);
-            // break_execute(2, clockCycles2, count2, pc2, m, r2, tempReg2, tempReg22, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2, branch_bool_2);
+            //  pc2++;
+            clockCycles2++;
+            print_array(2, k2,kk2, v2, fetch2, decode2, execute2, mem2, write2);
+            break_execute(2, clockCycles2, count2, pc2, m, r2, tempReg2, tempReg22, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2, branch_bool_2);
 
-            // std::cout << "2 | clockCycles2 : " << clockCycles2 << std::endl;
-            // std::cout << std::endl;
+            std::cout << "2 | clockCycles2 : " << clockCycles2 << std::endl;
+            std::cout << std::endl;
         }
     }
     // for (int i = 0; i < 32; i++)
@@ -256,7 +231,6 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
          << "CPI_2 : ";
     cout << (double)clockCycles2 / count2 << endl;
 }
-
 int ALU::typeOf(int k)
 {
     if (k == 14 || k == 15 || k == 16 || k == 17 || k == 23 || k == 24)
@@ -408,22 +382,6 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         std::vector<int> instruction(4, 0);
         if (pc < no_inst)
         {
-            // instruction.clear();
-            if (t_f_1 != 0)
-            {
-                // instruction[0] = 0;
-                // instruction[1] = 0;
-                // instruction[2] = 0;
-                // instruction[3] = 0;
-                fetch.push_back(0);
-                fetch.push_back(0);
-                fetch.push_back(0);
-                fetch.push_back(0);
-                count--;
-                t_f_1--;
-                // fetch.insert(fetch.end(), instruction.begin(), instruction.end());
-                return;
-            }
             instruction = m.read_instruction(pc, core);
             while (instruction[1] == -101)
             {
@@ -571,17 +529,6 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         std::vector<int> instruction(4, 0);
         if (pc < no_inst)
         {
-            instruction.clear();
-            if (t_f_2 != 0)
-            {
-                instruction[0] = 0;
-                instruction[1] = 0;
-                instruction[2] = 0;
-                instruction[3] = 0;
-                t_f_2--;
-                fetch.insert(fetch.end(), instruction.begin(), instruction.end());
-                return;
-            }
             instruction = m.read_instruction(pc, core);
             while (instruction[1] == -101)
             {
@@ -667,7 +614,6 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         //         }
         //     }
         // }
-
         // gg4 = gg3;
         // gg3 = gg2;
         // gg2 = gg1;
@@ -906,7 +852,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &
         int rd = r.read(decode[3]);
         int offset = decode[2];
         int ans = r.read(rs1);
-        cout << 1 << " |hello " << ans << endl;
+     //   cout << 1 << " |hello " << ans << endl;
         if (dataforwarding1)
         {
             rd = tempReg[decode[3]];
@@ -1121,7 +1067,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         {
             branch_bool = true;
             pc = v[1];
-            cout << 1 << " | " << pc << "hi" << endl;
+          //  cout << 1 << " | " << pc << "hi" << endl;
         }
         else
         {
@@ -1184,7 +1130,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
     {
         k.push_back(0);
         k.push_back(v[1]);
-        cout << 1 << " | " << v[2] + v[3] << "oppp" << m.read_memory((v[2] + v[3]) / 4, core) << endl;
+       // cout << 1 << " | " << v[2] + v[3] << "oppp" << m.read_memory((v[2] + v[3]) / 4, core) << endl;
         k.push_back(m.read_memory((v[2] + v[3]) / 4, core));
         tempReg[v[1]] = m.read_memory((v[2] + v[3]) / 4, core);
         break;
@@ -1193,7 +1139,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
     {
         k.push_back(1);
         k.push_back((v[1] + v[3]) / 4);
-        cout << 1 << " |nene " << (v[1] + v[3]) << " " << v[2] << endl;
+     //   cout << 1 << " |nene " << (v[1] + v[3]) << " " << v[2] << endl;
         k.push_back(v[2]);
         break;
     }
