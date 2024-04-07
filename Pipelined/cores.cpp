@@ -64,6 +64,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
         mem[1] = 0;
         mem[2] = 0;
         mem[3] = 0;
+       // instruction_count--;
         return;
     }
     memoryAccess(k, m, core, pc);
@@ -79,6 +80,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
         execute[1] = 0;
         execute[2] = 0;
         execute[3] = 0;
+      //  instruction_count--;
         return;
     }
 
@@ -93,7 +95,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
         {
             if (branch_bool)
             {
-            
+
                 execute[0] = 0;
                 execute[1] = 0;
                 execute[2] = 0;
@@ -103,6 +105,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
                 decode[2] = 0;
                 decode[3] = 0;
                 branch_bool = false;
+               instruction_count--;
                 return;
             }
         }
@@ -161,8 +164,8 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     // {
     //    cout<<1<<" | "<< m.read_memory(i,1)<<endl;
     // }
-   // cout << core1 << " | " << no_inst_1 << "&&&" << no_inst_2 << endl;
-    while (pc1 < maxim + 4 || pc2 < maxim + 4)
+     cout << core1 << " | " << no_inst_1 << " &&& " << no_inst_2 << endl;
+    while (pc1 < no_inst_1 + 4  || pc2 < no_inst_2 + 4 )
     {
         if (pc1 < no_inst_1 + 4)
         {
@@ -172,24 +175,33 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
             // {
             //     cout << core1<< " | " << i + 1 << " " << m.read_memory(i, 1) << endl;
             // }
-            cout <<core1<<" | "<<"1 | ---------------------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
+            cout << core1 << " | "
+                 << "1 | ---------------------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
             break_execute(1, clockCycles1, count1, pc1, m, r1, tempReg1, tempReg11, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1, branch_bool_1);
-            cout <<core1<<" | "<<"1 | clockCycles1 : " << clockCycles1 << std::endl;
-            cout <<core1<<" | "<<"1 | (((((((((((((((((((((((())))))))))))))))))))))))" << endl;
-            cout <<core1<<" | "<< std::endl;
+            cout << core1 << " | "
+                 << "1 | clockCycles1 : " << clockCycles1 << std::endl;
+            cout << core1 << " | "
+                 << "1 | (((((((((((((((((((((((())))))))))))))))))))))))" << endl;
+            cout << core1 << " | " << std::endl;
             print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
+            
         }
-        if (pc2 < no_inst_2 + 4)
+        if (pc2 < no_inst_2 + 4 )
         {
-            // cout<<2<<" | "<<pc2<<endl;
+             cout<<2<<" | hi hg "<<pc2<<endl;
             //  pc2++;
             clockCycles2++;
-            print_array(2, k2,kk2, v2, fetch2, decode2, execute2, mem2, write2);
             break_execute(2, clockCycles2, count2, pc2, m, r2, tempReg2, tempReg22, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2, branch_bool_2);
-
-            cout <<core2<<" | "<< "2 | clockCycles2 : " << clockCycles2 << std::endl;
-              cout <<core2<<" | "<< std::endl;
+            cout << core2 << " | "
+                 << "2 | clockCycles2 : " << clockCycles2 << std::endl;
+            cout << core2 << " | " << std::endl;
+            print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
+            for (int i = 0; i < 32; i++)
+            {
+                cout << 2 << " | " << i << " : " << m.read_memory(i, 2) << endl;
+            }
         }
+        
     }
     // for (int i = 0; i < 32; i++)
     //     {
@@ -200,9 +212,9 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     // {
     //     cout << 1 << " | " << i << " : " << m.read_memory(i, 1) << endl;
     // }
-    // print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
+    print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
 
-    // print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
+    print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
 
     cout << 3 << " | "
          << "No of instructions for core1 : ";
@@ -852,7 +864,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &
         int rd = r.read(decode[3]);
         int offset = decode[2];
         int ans = r.read(rs1);
-     //   cout << 1 << " |hello " << ans << endl;
+        //   cout << 1 << " |hello " << ans << endl;
         if (dataforwarding1)
         {
             rd = tempReg[decode[3]];
@@ -1067,7 +1079,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         {
             branch_bool = true;
             pc = v[1];
-          //  cout << 1 << " | " << pc << "hi" << endl;
+            //  cout << 1 << " | " << pc << "hi" << endl;
         }
         else
         {
@@ -1130,7 +1142,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
     {
         k.push_back(0);
         k.push_back(v[1]);
-       // cout << 1 << " | " << v[2] + v[3] << "oppp" << m.read_memory((v[2] + v[3]) / 4, core) << endl;
+        // cout << 1 << " | " << v[2] + v[3] << "oppp" << m.read_memory((v[2] + v[3]) / 4, core) << endl;
         k.push_back(m.read_memory((v[2] + v[3]) / 4, core));
         tempReg[v[1]] = m.read_memory((v[2] + v[3]) / 4, core);
         break;
@@ -1139,7 +1151,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
     {
         k.push_back(1);
         k.push_back((v[1] + v[3]) / 4);
-     //   cout << 1 << " |nene " << (v[1] + v[3]) << " " << v[2] << endl;
+        //   cout << 1 << " |nene " << (v[1] + v[3]) << " " << v[2] << endl;
         k.push_back(v[2]);
         break;
     }
