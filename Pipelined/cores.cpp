@@ -56,16 +56,18 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
 {
     // cout << "1 | " << pc1 << "hero" << endl;
     writeBack(k, m, core, pc, r);
-    if (RAW_Hazard(mem, decode) != -1)
+     if (!dataforwarding1)
     {
-        k.clear();
-        kk.clear();
-        mem[0] = 0;
-        mem[1] = 0;
-        mem[2] = 0;
-        mem[3] = 0;
-       // instruction_count--;
-        return;
+        if (RAW_Hazard(mem, decode) != -1)
+        {
+            k.clear();
+            kk.clear();
+            mem[0] = 0;
+            mem[1] = 0;
+            mem[2] = 0;
+            mem[3] = 0;
+            return;
+        }
     }
     memoryAccess(k, m, core, pc);
 
@@ -74,15 +76,29 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
     k = instructionExecute(v, m, r, core, pc, tempReg, clockcyc, branch_bool);
     kk = k;
 
-    if (RAW_Hazard(mem, execute) != -1)
+   if (!dataforwarding1)
     {
-        execute[0] = 0;
-        execute[1] = 0;
-        execute[2] = 0;
-        execute[3] = 0;
-      //  instruction_count--;
-        return;
+        if (RAW_Hazard(mem, execute) != -1)
+        {
+            execute[0] = 0;
+            execute[1] = 0;
+            execute[2] = 0;
+            execute[3] = 0;
+            return;
+        }
     }
+    if (dataforwarding1)
+    {
+        if (RAW_Hazard(mem, execute) != -1)
+        {
+            execute[0] = 0;
+            execute[1] = 0;
+            execute[2] = 0;
+            execute[3] = 0;
+            return;
+        }
+    }
+
 
     v.clear();
 
@@ -157,9 +173,9 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     int maxim = std::max(no_inst_1, no_inst_2);
     std::vector<int> v1, k1, k2, v2, kk1, kk2;
     if (dataforwarding_on)
-        dataforwarding2 = true;
+        dataforwarding1 = true;
     else
-        dataforwarding2 = false;
+        dataforwarding1 = false;
     // for(int i=0;i<32;i++)
     // {
     //    cout<<1<<" | "<< m.read_memory(i,1)<<endl;
