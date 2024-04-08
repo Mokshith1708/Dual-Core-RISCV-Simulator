@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <cstdarg>
 #include "simulator.hpp"
+#include "SharedCache.cpp"
+#include "SharedCache.hpp"
 #include <sstream>
 #include <cctype>
 #include "memory.hpp"
@@ -13,8 +15,7 @@
 #include "cores.hpp"
 #include "registers.hpp"
 #include "registers.cpp"
-#include "SharedCache.hpp"
-#include "SharedCache.cpp"
+
 
 using std::cerr;
 using std::cin;
@@ -694,9 +695,9 @@ int main()
     for (int i = 0; i < 50; ++i)
     {
         if (i < 10)
-            std::cout << "Address " << i << "  : " << m.read_memory(i, 2) << std::endl;
+            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 2) << std::endl;
         else
-            std::cout << "Address " << i << " : " << m.read_memory(i, 2) << std::endl;
+            std::cout << "Address " << i << " : " << m.read_memory_1(i, 2) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 2\n"

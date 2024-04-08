@@ -2,10 +2,10 @@
 #include "simulator.hpp"
 #include "memory.hpp"
 #include "registers.hpp"
-#include "SharedCache.hpp"
 #include <vector>
 #include <map>
 #include <algorithm>
+#include "SharedCache.hpp"
 using std::cout;
 using std::endl;
 using std::string;
@@ -260,27 +260,31 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     //    cout<<1<<" | "<< m.read_memory(i,1)<<endl;
     // }
 
-    cout << core1 << " | " << " coming "<<pc1<<endl;;
-    // for(int i=0;i<4;i++)
-    // {
-    //   cout<<core1<<" | "<<fetch1[i]<<endl;
-    // }
-     for (size_t i = 0; i < c.cache.size(); ++i) {
-        std::cout << core1 << " | " << "Set " << i << ":\n";
-        for (size_t j = 0; j < c.cache[i].size(); ++j) {
-            const SharedCache::CacheEntry& entry = c.cache[i][j];
-            std::cout << core1 << " | " << "  Way " << j << ": ";
+    cout << core1 << " | " << " coming "<<pc1<<endl;
+      for (int setIndex = 0; setIndex < c.sets; ++setIndex) {
+        std::cout <<1<<" | "<< "Set " << setIndex << ":\n";
+        for (int way = 0; way < c.associativity; ++way) {
+            SharedCache::CacheEntry& entry = c.cache[setIndex][way];
+            std::cout <<1<<" | "<<  "  Way " << way << ": ";
             if (entry.valid) {
-                std::cout <<core1 << " | " << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset
-                          << ", CoreBit: " << entry.coreBit << ", ";
+                std::cout <<1<<" | "<<  "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
                 if (entry.isInstruction) {
-                    std::cout <<core1 << " | " << "Instruction\n";
+                    // Print instructions stored in the cache block
+                    std::cout <<1<<" | "<<  "Instructions: ";
+                    for (auto& inst : entry.data_or_instructions) {
+                        std::cout <<1<<" | "<<  inst << " ";
+                    }
                 } else {
-                    std::cout <<core1 << " | " << "Data\n";
+                    // Print data stored in the cache block
+                    std::cout <<1<<" | "<<  "Data: ";
+                    for (auto& d : entry.data_or_instructions) {
+                        std::cout << 1<<" | "<< d << " ";
+                    }
                 }
             } else {
-                std::cout <<core1 << " | " << "Invalid\n";
+                std::cout <<1<<" | "<<  "Invalid";
             }
+            std::cout <<1<<" | "<<  std::endl;
         }
     }
     // for(int i=0;i<40;i++)
@@ -305,29 +309,7 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
    // m.print_needed();
    // cout<<core1 <<std::endl;
     while (pc1 < no_inst_1 + 4 || pc2 < no_inst_2 + 4)
-    {    cout << core1 << " | " << " coming "<<pc1<<endl;;
-    // for(int i=0;i<4;i++)
-    // {
-    //   cout<<core1<<" | "<<fetch1[i]<<endl;
-    // }
-     for (size_t i = 0; i < c.cache.size(); ++i) {
-        std::cout << core1 << " | " << "Set " << i << ":\n";
-        for (size_t j = 0; j < c.cache[i].size(); ++j) {
-            const SharedCache::CacheEntry& entry = c.cache[i][j];
-            std::cout << core1 << " | " << "  Way " << j << ": ";
-            if (entry.valid) {
-                std::cout <<core1 << " | " << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset
-                          << ", CoreBit: " << entry.coreBit << ", ";
-                if (entry.isInstruction) {
-                    std::cout <<core1 << " | " << "Instruction\n";
-                } else {
-                    std::cout <<core1 << " | " << "Data\n";
-                }
-            } else {
-                std::cout <<core1 << " | " << "Invalid\n";
-            }
-        }
-    }
+    {   
         if (pc1 < no_inst_1 + 4)
         {
             clockCycles1++;

@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 #include "memory.hpp"
+#include "SharedCache.hpp"
+
 
 
 int32_t memory::read_memory_1(int32_t address, int core)

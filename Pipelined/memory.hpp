@@ -21,9 +21,9 @@ public:
 
 public:
     memory(int cacheSize, int blockSize, int associativity)
-        : cache(cacheSize, blockSize, associativity) {} // Initialize cache in the constructor
-    SharedCache& getCache() {
-        // Return a reference to the SharedCache object
+        : cache(cacheSize, blockSize, associativity) {}
+    SharedCache &getCache()
+    {
         return cache;
     }
     int32_t read_memory_1(int32_t address, int core);

@@ -1,6 +1,4 @@
 #include "SharedCache.hpp"
-#include "simulator.hpp"
-#include "cores.hpp"
 
 SharedCache::SharedCache(int cacheSize, int blockSize, int associativity)
     : cacheSize(cacheSize), blockSize(blockSize), associativity(associativity),
@@ -18,19 +16,16 @@ bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
     accesses++;
 
     int setIndex = (address / blockSize) % sets;
-    int tag = address * blockSize / cacheSize;
-    int offset = address % blockSize;
+    int tag = (address*blockSize)/cacheSize;
 
-    for (int i = 0; i < associativity; ++i)
-    {
-        if (cache[setIndex][i].valid && cache[setIndex][i].tag == tag && cache[setIndex][i].coreBit == core &&
-            cache[setIndex][i].isInstruction == isInstruction)
-        {
+    // Search for the cache block in the set
+    for (auto& entry : cache[setIndex]) {
+        if (entry.valid && entry.tag == tag && entry.isInstruction == isInstruction) {
             // Cache hit
-            // You can use the offset here if needed
             return true;
         }
     }
+
     // Cache miss
     misses++;
     return false;
@@ -42,46 +37,29 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction)
     accesses++;
 
     int setIndex = (address / blockSize) % sets;
-    int tag = address * blockSize / cacheSize;
-    int offset = address % blockSize;
+    int tag = (address*blockSize)/cacheSize;
 
-    // Find an empty slot or evict one according to replacement policy
-    int emptySlot = -1;
-    for (int i = 0; i < associativity; ++i)
-    {
-        if (!cache[setIndex][i].valid)
-        {
-            emptySlot = i;
-            break;
+    // Search for an empty or invalid entry in the set
+    for (auto& entry : cache[setIndex]) {
+        if (!entry.valid) {
+            // Found an empty slot
+            entry.valid = true;
+            entry.tag = tag;
+            entry.isInstruction = isInstruction;
+            entry.coreBit = core;                // Set the coreBit
+            entry.offset = address % blockSize;  // Set the offset within the cache block
+            // Resize the data_or_instructions vector based on the block size
+            entry.data_or_instructions.resize(blockSize, 0);
+            return;
         }
     }
-    if (emptySlot != -1)
-    {
-        // Found an empty slot
-        cache[setIndex][emptySlot].valid = true;
-        cache[setIndex][emptySlot].tag = tag;
-        cache[setIndex][emptySlot].offset = offset;
-        cache[setIndex][emptySlot].coreBit = core;
-        cache[setIndex][emptySlot].isInstruction = isInstruction;
-    }
-    else
-    {
-        // Evict a block (use LRU or other replacement policy)
-        // Here, let's assume LRU
-        int lruIndex = 0;
-        for (int i = 1; i < associativity; ++i)
-        {
-            if (cache[setIndex][i].valid && cache[setIndex][i].tag < cache[setIndex][lruIndex].tag)
-            {
-                lruIndex = i;
-            }
-        }
-        // Replace the evicted block with new data
-        cache[setIndex][lruIndex].tag = tag;
-        cache[setIndex][lruIndex].offset = offset;
-        cache[setIndex][lruIndex].coreBit = core;
-        cache[setIndex][lruIndex].isInstruction = isInstruction;
-    }
+
+    // If no empty slot found, use a replacement policy (e.g., LRU)
+    // Here, we assume LRU and evict the first entry in the set
+    cache[setIndex].front().tag = tag;
+    cache[setIndex].front().isInstruction = isInstruction;
+    cache[setIndex].front().coreBit = core;                // Set the coreBit
+    cache[setIndex].front().offset = address % blockSize;  // Set the offset within the cache block
 }
 
 double SharedCache::calculate_miss_rate() 
@@ -97,16 +75,24 @@ double SharedCache::calculate_miss_rate()
 void SharedCache::print_cache() {
     // Loop through each set and each way in the cache
     for (int setIndex = 0; setIndex < sets; ++setIndex) {
-        std::cout << "Set " << setIndex << ":" << std::endl;
+        std::cout << "Set " << setIndex << ":\n";
         for (int way = 0; way < associativity; ++way) {
-            const CacheEntry& entry = cache[setIndex][way];
+            CacheEntry& entry = cache[setIndex][way];
             std::cout << "  Way " << way << ": ";
             if (entry.valid) {
                 std::cout << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
                 if (entry.isInstruction) {
-                    std::cout << "Instruction";
+                    // Print instructions stored in the cache block
+                    std::cout << "Instructions: ";
+                    for (auto& inst : entry.data_or_instructions) {
+                        std::cout << inst << " ";
+                    }
                 } else {
-                    std::cout << "Data";
+                    // Print data stored in the cache block
+                    std::cout << "Data: ";
+                    for (auto& d : entry.data_or_instructions) {
+                        std::cout << d << " ";
+                    }
                 }
             } else {
                 std::cout << "Invalid";
