@@ -6,7 +6,7 @@
 #include "memory.hpp"
 
 
-int32_t memory::read_memory(int32_t address, int core)
+int32_t memory::read_memory_1(int32_t address, int core)
 {
     // Check cache for data
     if (cache.read_cache(address, core, false)) {
@@ -41,7 +41,7 @@ int32_t memory::read_memory(int32_t address, int core)
     }
 }
 
-void memory::write_memory(int32_t address, int32_t data, int core)
+void memory::write_memory_1(int32_t address, int32_t data, int core)
 {
     // Write data to memory
     if (core == 1) {
@@ -63,7 +63,7 @@ void memory::write_memory(int32_t address, int32_t data, int core)
     }
 }
 
-std::vector<int> memory::read_instruction(int32_t address, int core)
+std::vector<int> memory::read_instruction_1(int32_t address, int core)
 {
     // Check cache for instruction
     if (cache.read_cache(address, core, true)) {
@@ -110,7 +110,7 @@ std::vector<int> memory::read_instruction(int32_t address, int core)
     }
 }
 
-void memory::write_instruction(int32_t address, int encode[], int core)
+void memory::write_instruction_1(int32_t address, int encode[], int core)
 {
     // Write instruction to memory
     if (core == 1) {
@@ -140,127 +140,127 @@ void memory::write_instruction(int32_t address, int encode[], int core)
 
 
 // Read data from memory based on the address and core
-// int32_t memory::read_memory(int32_t address, int core)
-// {
-//     if (core == 1)
-//     {
-//         if (address < MEMORY_SIZE)
-//         {
-//             return memory_1[address];
-//         }
-//         else
-//         {
-//             throw std::out_of_range("Error: Attempted to read from out of bounds memory address.11");
-//         }
-//     }
-//     if (core == 2)
-//     {
-//         if (address < MEMORY_SIZE)
-//         {
-//             return memory_2[address];
-//         }
-//         else
-//         {
-//             throw std::out_of_range("Error: Attempted to read from out of bounds memory address.12");
-//         }
-//     }
-// }
+int32_t memory::read_memory(int32_t address, int core)
+{
+    if (core == 1)
+    {
+        if (address < MEMORY_SIZE)
+        {
+            return memory_1[address];
+        }
+        else
+        {
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.11");
+        }
+    }
+    if (core == 2)
+    {
+        if (address < MEMORY_SIZE)
+        {
+            return memory_2[address];
+        }
+        else
+        {
+            throw std::out_of_range("Error: Attempted to read from out of bounds memory address.12");
+        }
+    }
+}
 
-// // Write data to memory based on the address, data, and core
-// void memory::write_memory(int32_t address, int32_t data, int core)
-// {
-//     if (core == 1)
-//     {
-//         if (address < MEMORY_SIZE)
-//         {
-//             memory_1[address] = data;
-//         }
-//         else
-//         {
-//             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 13");
-//         }
-//     }
-//     if (core == 2)
-//     {
-//         if (address < MEMORY_SIZE)
-//         {
-//             memory_2[address] = data;
-//         }
-//         else
-//         {
-//             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 14");
-//         }
-//     }
-// }
-// // Read instruction from instruction memory based on the address and core
-// std::vector<int> memory::read_instruction(int32_t address, int core)
-// {
-//     if (core == 1)
-//     {
-//         if (address < MEMORY_SIZE)
-//         {
-//             std::vector<int> v(4, 0);
-//             for (int i = 0; i < 4; i++)
-//             {
-//                 v[i] = instructions_1[address][i];
-//             }
-//             return v;
-//         }
-//         else
-//         {
-//             throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 15");
-//         }
-//     }
-//     if (core == 2)
-//     {
-//         if (address < MEMORY_SIZE)
-//         {
-//             std::vector<int> v(4, 0);
-//             for (int i = 0; i < 4; i++)
-//             {
-//                 v[i] = instructions_2[address][i];
-//             }
-//             return v;
-//         }
-//         else
-//         {
-//             throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 16");
-//         }
-//     }
-// }
+// Write data to memory based on the address, data, and core
+void memory::write_memory(int32_t address, int32_t data, int core)
+{
+    if (core == 1)
+    {
+        if (address < MEMORY_SIZE)
+        {
+            memory_1[address] = data;
+        }
+        else
+        {
+            throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 13");
+        }
+    }
+    if (core == 2)
+    {
+        if (address < MEMORY_SIZE)
+        {
+            memory_2[address] = data;
+        }
+        else
+        {
+            throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 14");
+        }
+    }
+}
+// Read instruction from instruction memory based on the address and core
+std::vector<int> memory::read_instruction(int32_t address, int core)
+{
+    if (core == 1)
+    {
+        if (address < MEMORY_SIZE)
+        {
+            std::vector<int> v(4, 0);
+            for (int i = 0; i < 4; i++)
+            {
+                v[i] = instructions_1[address][i];
+            }
+            return v;
+        }
+        else
+        {
+            throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 15");
+        }
+    }
+    if (core == 2)
+    {
+        if (address < MEMORY_SIZE)
+        {
+            std::vector<int> v(4, 0);
+            for (int i = 0; i < 4; i++)
+            {
+                v[i] = instructions_2[address][i];
+            }
+            return v;
+        }
+        else
+        {
+            throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 16");
+        }
+    }
+}
 
-// // write instruction to instruction memory based on the address and core
-// void memory::write_instruction(int32_t address, int encode[], int core)
-// {
-//     if (core == 1)
-//     {
-//         if (address < MEMORY_SIZE)
-//         {
-//             for (int i = 0; i < 4; i++)
-//             {
-//                 instructions_1[address][i] = encode[i];
-//             }
-//         }
-//         else
-//         {
-//             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 17");
-//         }
-//     }
-//     if (core == 2)
-//     {
-//         if (address < MEMORY_SIZE)
-//         {
-//             for (int i = 0; i < 4; i++)
-//             {
-//                 instructions_2[address][i] = encode[i];
-//             }
-//         }
-//         else
-//         {
-//             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 18");
-//         }
-//     }
-// }
+// write instruction to instruction memory based on the address and core
+void memory::write_instruction(int32_t address, int encode[], int core)
+{
+    if (core == 1)
+    {
+        if (address < MEMORY_SIZE)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                instructions_1[address][i] = encode[i];
+            }
+        }
+        else
+        {
+            throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 17");
+        }
+    }
+    if (core == 2)
+    {
+        if (address < MEMORY_SIZE)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                instructions_2[address][i] = encode[i];
+            }
+        }
+        else
+        {
+            throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 18");
+        }
+    }
+}
 // Write strings to str memory based on the addresses and core
 void memory::write_str(std::string s1, std::string s2, int address_str, int core)
 {

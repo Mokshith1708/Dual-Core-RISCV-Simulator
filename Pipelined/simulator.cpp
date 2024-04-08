@@ -545,7 +545,7 @@ int main()
     map<string, int> dataSizes_1, dataSizes_2;
     pair<int, int> p1, p2;
     registers r1, r2;
-    memory m(512,64,8);
+    memory m(512,64,4);
 
     bool dataforwardin_on;
     cout << "Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **" << endl;

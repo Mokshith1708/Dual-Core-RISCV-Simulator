@@ -6,7 +6,7 @@ x2  : 20
 x3  : 18
 x4  : 0
 x5  : 20
-x6  : 19
+x6  : 17
 x7  : 0
 x8  : 0
 x9  : 0
@@ -46,24 +46,24 @@ Key: start, Value: 3
 Address list code 2
 ================================================================================
 Address 0  : 1
-Address 1  : 2
-Address 2  : 3
+Address 1  : 1
+Address 2  : 2
 Address 3  : 4
 Address 4  : 5
-Address 5  : 6
-Address 6  : 7
+Address 5  : 3
+Address 6  : 6
 Address 7  : 8
-Address 8  : 9
+Address 8  : 7
 Address 9  : 10
 Address 10 : 11
 Address 11 : 12
 Address 12 : 13
-Address 13 : 14
-Address 14 : 15
-Address 15 : 16
+Address 13 : 16
+Address 14 : 14
+Address 15 : 15
 Address 16 : 17
-Address 17 : 18
-Address 18 : 19
+Address 17 : 17
+Address 18 : 17
 Address 19 : 20
 Address 20 : 0
 Address 21 : 0

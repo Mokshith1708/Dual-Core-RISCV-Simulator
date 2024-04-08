@@ -26,7 +26,11 @@ public:
         // Return a reference to the SharedCache object
         return cache;
     }
-    int32_t read_memory(int32_t address, int core);
+    int32_t read_memory_1(int32_t address, int core);
+    void write_memory_1(int32_t address, int32_t data, int core);
+    std::vector<int> read_instruction_1(int32_t address, int core);
+    void write_instruction_1(int32_t address, int encode[], int core);
+     int32_t read_memory(int32_t address, int core);
     void write_memory(int32_t address, int32_t data, int core);
     std::vector<int> read_instruction(int32_t address, int core);
     void write_instruction(int32_t address, int encode[], int core);
