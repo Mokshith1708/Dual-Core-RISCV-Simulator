@@ -1,3 +1,4 @@
+3 | cache miss rate: 0.144147
 3 | No of instructions for core1 : 2821
 3 | No of Clockcycles for core1 : 4877
 3 | IPC_1 : 0.578429

@@ -3,7 +3,7 @@
 #include <vector>
 
 class SharedCache {
-private:
+public:
     struct CacheEntry {
         bool valid;
         int32_t tag;
@@ -17,6 +17,8 @@ private:
     int blockSize; // in bytes
     int associativity;
     int sets;
+    int accesses; // Total cache accesses
+    int misses;   // Cache misses
     std::vector<std::vector<CacheEntry>> cache;
 
 public:
@@ -24,4 +26,6 @@ public:
 
     bool read_cache(int32_t address, int core, bool isInstruction);
     void write_cache(int32_t address, int core, bool isInstruction);
+    double calculate_miss_rate();
+    void print_cache();
 };

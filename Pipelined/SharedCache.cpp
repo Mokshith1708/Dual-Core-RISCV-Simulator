@@ -1,8 +1,10 @@
 #include "SharedCache.hpp"
 #include "simulator.hpp"
 #include "cores.hpp"
+
 SharedCache::SharedCache(int cacheSize, int blockSize, int associativity)
-    : cacheSize(cacheSize), blockSize(blockSize), associativity(associativity)
+    : cacheSize(cacheSize), blockSize(blockSize), associativity(associativity),
+      accesses(0), misses(0)
 {
     // Calculate the number of sets in the cache
     sets = cacheSize / (blockSize * associativity);
@@ -12,6 +14,9 @@ SharedCache::SharedCache(int cacheSize, int blockSize, int associativity)
 
 bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
 {
+    // Increment total cache accesses
+    accesses++;
+
     int setIndex = (address / blockSize) % sets;
     int tag = address * blockSize / cacheSize;
     int offset = address % blockSize;
@@ -27,11 +32,15 @@ bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
         }
     }
     // Cache miss
+    misses++;
     return false;
 }
 
 void SharedCache::write_cache(int32_t address, int core, bool isInstruction)
 {
+    // Increment total cache accesses
+    accesses++;
+
     int setIndex = (address / blockSize) % sets;
     int tag = address * blockSize / cacheSize;
     int offset = address % blockSize;
@@ -72,5 +81,37 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction)
         cache[setIndex][lruIndex].offset = offset;
         cache[setIndex][lruIndex].coreBit = core;
         cache[setIndex][lruIndex].isInstruction = isInstruction;
+    }
+}
+
+double SharedCache::calculate_miss_rate() 
+{
+    // Calculate miss rate as misses divided by total accesses
+    if (accesses == 0) {
+        return 0.0;
+    } else {
+        return static_cast<double>(misses) / accesses;
+    }
+}
+
+void SharedCache::print_cache() {
+    // Loop through each set and each way in the cache
+    for (int setIndex = 0; setIndex < sets; ++setIndex) {
+        std::cout << "Set " << setIndex << ":" << std::endl;
+        for (int way = 0; way < associativity; ++way) {
+            const CacheEntry& entry = cache[setIndex][way];
+            std::cout << "  Way " << way << ": ";
+            if (entry.valid) {
+                std::cout << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
+                if (entry.isInstruction) {
+                    std::cout << "Instruction";
+                } else {
+                    std::cout << "Data";
+                }
+            } else {
+                std::cout << "Invalid";
+            }
+            std::cout << std::endl;
+        }
     }
 }

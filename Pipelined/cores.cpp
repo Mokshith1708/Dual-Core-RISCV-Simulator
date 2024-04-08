@@ -259,7 +259,11 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     // {
     //    cout<<1<<" | "<< m.read_memory(i,1)<<endl;
     // }
+    SharedCache& c = m.getCache();
     cout << core1 << " | " << no_inst_1 << " &&& " << no_inst_2 << endl;
+    cout << core1 << " | " ;
+   // m.print_needed();
+   // cout<<core1 <<std::endl;
     while (pc1 < no_inst_1 + 4 || pc2 < no_inst_2 + 4)
     {
         if (pc1 < no_inst_1 + 4)
@@ -279,6 +283,31 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
                  << "1 | (((((((((((((((((((((((())))))))))))))))))))))))" << endl;
             cout << core1 << " | " << std::endl;
             print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
+
+
+            cout << core1 << " | " << " coming "<<endl;;
+     for (size_t i = 0; i < c.cache.size(); ++i) {
+        std::cout << core1 << " | " << "Set " << i << ":\n";
+        for (size_t j = 0; j < c.cache[i].size(); ++j) {
+            const SharedCache::CacheEntry& entry = c.cache[i][j];
+            std::cout << core1 << " | " << "  Way " << j << ": ";
+            if (entry.valid) {
+                std::cout <<core1 << " | " << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset
+                          << ", CoreBit: " << entry.coreBit << ", ";
+                if (entry.isInstruction) {
+                    std::cout <<core1 << " | " << "Instruction\n";
+                } else {
+                    std::cout <<core1 << " | " << "Data\n";
+                }
+            } else {
+                std::cout <<core1 << " | " << "Invalid\n";
+            }
+        }
+    }
+
+
+            //cache.print_cache();
+            //cout<<std::endl;
         }
         if (pc2 < no_inst_2 + 4)
         {
@@ -309,6 +338,9 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
 
     print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
 
+    cout << 3 << " | " 
+         << "cache miss rate: " ;
+    cout << m.missrate_count()<<endl;
     cout << 3 << " | "
          << "No of instructions for core1 : ";
     cout << count1 << endl;
