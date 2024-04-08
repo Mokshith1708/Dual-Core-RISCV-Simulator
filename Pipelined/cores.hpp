@@ -60,5 +60,4 @@ public:
   int RAW_Hazard(std::vector<int> v1, std::vector<int> v);
   int typeOf(int k);
   bool predictor(int pc, memory &m);
-  void stallManagement(memory &m, int core, registers &r, int &pc, std::vector<int> &tempReg);
 };

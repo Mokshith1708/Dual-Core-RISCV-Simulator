@@ -13,6 +13,8 @@
 #include "cores.hpp"
 #include "registers.hpp"
 #include "registers.cpp"
+#include "SharedCache.hpp"
+#include "SharedCache.cpp"
 
 using std::cerr;
 using std::cin;

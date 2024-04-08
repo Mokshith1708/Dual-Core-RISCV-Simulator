@@ -2,6 +2,7 @@
 #include "simulator.hpp"
 #include "memory.hpp"
 #include "registers.hpp"
+#include "SharedCache.hpp"
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -1044,14 +1045,14 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        //if (core == 1)
-        // {
-        //     clockCycles1 += add_lat - 1;
-        // }
-        // else
-        // {
-        //     clockCycles2 += add_lat - 1;
-        // }
+        // if (core == 1)
+        //  {
+        //      clockCycles1 += add_lat - 1;
+        //  }
+        //  else
+        //  {
+        //      clockCycles2 += add_lat - 1;
+        //  }
         break;
     }
     case RISCV::sub:
@@ -1523,9 +1524,4 @@ void ALU::executeInstructiondummy(std::vector<int> instruction, memory &m, regis
 bool ALU::predictor(int pc, memory &m)
 {
     return true;
-}
-void ALU::stallManagement(memory &m, int core, registers &r, int &pc, std::vector<int> &tempReg)
-{
-    std::vector<int> &execute = (core == 1) ? execute1 : execute2;
-    std::vector<int> &decode = (core == 1) ? decode1 : decode2;
 }
