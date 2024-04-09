@@ -27,7 +27,7 @@ public:
     SharedCache(int cacheSize, int blockSize, int associativity);
 
     bool read_cache(int32_t address, int core, bool isInstruction);
-    void write_cache(int32_t address, int core, bool isInstruction);
+    void write_cache(int32_t address, int core, bool isInstruction,bool lru_bool);
     double calculate_miss_rate();
     void print_cache();
 };

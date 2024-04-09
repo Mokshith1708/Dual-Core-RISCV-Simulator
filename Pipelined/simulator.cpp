@@ -16,7 +16,6 @@
 #include "registers.hpp"
 #include "registers.cpp"
 
-
 using std::cerr;
 using std::cin;
 using std::cout;
@@ -546,7 +545,7 @@ int main()
     map<string, int> dataSizes_1, dataSizes_2;
     pair<int, int> p1, p2;
     registers r1, r2;
-    memory m(512,64,4);
+    memory m(512, 64, 4);
 
     bool dataforwardin_on;
     cout << "Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **" << endl;
@@ -584,8 +583,14 @@ int main()
     {
         cout << "No latencies added.\n";
     }
-
-    // for first file
+    cout << "LRU and Random replacement policies were implemented\nEnter 0 for LRU and any other number for random" << endl;
+    bool lru_bool;
+    cin >> lru_bool;
+    lru_bool = (!lru_bool);
+    if (lru_bool)
+        cout << "LRU policy is used" << endl;
+    else
+        cout << "Random replacement policy is used" << endl; // for first file
     const string file_path = "..\\data_files\\input\\BUBBLE_SORT.s";
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
@@ -639,7 +644,7 @@ int main()
     streambuf *coutbuf3 = cout.rdbuf();
     cout.rdbuf(outputFile3.rdbuf());
 
-    ALU alui(latency_map, p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2, dataforwardin_on);
+    ALU alui(latency_map, p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2, dataforwardin_on, lru_bool);
 
     cout.rdbuf(coutbuf3);
 
@@ -695,9 +700,9 @@ int main()
     for (int i = 0; i < 50; ++i)
     {
         if (i < 10)
-            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 2) << std::endl;
+            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
         else
-            std::cout << "Address " << i << " : " << m.read_memory_1(i, 2) << std::endl;
+            std::cout << "Address " << i << " : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 2\n"

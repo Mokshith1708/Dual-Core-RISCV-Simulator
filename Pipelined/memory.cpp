@@ -8,7 +8,7 @@
 
 
 
-int32_t memory::read_memory_1(int32_t address, int core)
+int32_t memory::read_memory_1(int32_t address, int core,bool lru_bool)
 {
     // Check cache for data
     if (cache.read_cache(address, core, false)) {
@@ -22,7 +22,7 @@ int32_t memory::read_memory_1(int32_t address, int core)
                 // Read data from memory
                 int32_t data = memory_1[address];
                 // Update cache with the retrieved data
-                cache.write_cache(address, core, false);
+                cache.write_cache(address, core, false,lru_bool);
                 // Return data
                 return data;
             } else {
@@ -33,7 +33,7 @@ int32_t memory::read_memory_1(int32_t address, int core)
                 // Read data from memory
                 int32_t data = memory_2[address];
                 // Update cache with the retrieved data
-                cache.write_cache(address, core, false);
+                cache.write_cache(address, core, false,lru_bool);
                 // Return data
                 return data;
             } else {
@@ -43,14 +43,14 @@ int32_t memory::read_memory_1(int32_t address, int core)
     }
 }
 
-void memory::write_memory_1(int32_t address, int32_t data, int core)
+void memory::write_memory_1(int32_t address, int32_t data, int core,bool lru_bool)
 {
     // Write data to memory
     if (core == 1) {
         if (address < MEMORY_SIZE) {
             memory_1[address] = data;
             // Update cache with the written data
-            cache.write_cache(address, core, false);
+            cache.write_cache(address, core, false,lru_bool);
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 13");
         }
@@ -58,14 +58,14 @@ void memory::write_memory_1(int32_t address, int32_t data, int core)
         if (address < MEMORY_SIZE) {
             memory_2[address] = data;
             // Update cache with the written data
-            cache.write_cache(address, core, false);
+            cache.write_cache(address, core, false,lru_bool);
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 14");
         }
     }
 }
 
-std::vector<int> memory::read_instruction_1(int32_t address, int core)
+std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_bool)
 {
     // Check cache for instruction
     if (cache.read_cache(address, core, true)) {
@@ -92,7 +92,7 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core)
                     instruction[i] = instructions_1[address][i];
                 }
                 // Update cache with the retrieved instruction
-                cache.write_cache(address, core, true);
+                cache.write_cache(address, core, true,lru_bool);
             } else {
                 throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 15");
             }
@@ -103,7 +103,7 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core)
                     instruction[i] = instructions_2[address][i];
                 }
                 // Update cache with the retrieved instruction
-                cache.write_cache(address, core, true);
+                cache.write_cache(address, core, true,lru_bool);
             } else {
                 throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 16");
             }
@@ -112,7 +112,7 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core)
     }
 }
 
-void memory::write_instruction_1(int32_t address, int encode[], int core)
+void memory::write_instruction_1(int32_t address, int encode[], int core,bool lru_bool)
 {
     // Write instruction to memory
     if (core == 1) {
@@ -122,7 +122,7 @@ void memory::write_instruction_1(int32_t address, int encode[], int core)
                 instructions_1[address][i] = encode[i];
             }
             // Update cache with the written instruction
-            cache.write_cache(address, core, true);
+            cache.write_cache(address, core, true,lru_bool);
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 17");
         }
@@ -133,7 +133,7 @@ void memory::write_instruction_1(int32_t address, int encode[], int core)
                 instructions_2[address][i] = encode[i];
             }
             // Update cache with the written instruction
-            cache.write_cache(address, core, true);
+            cache.write_cache(address, core, true,lru_bool);
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 18");
         }
