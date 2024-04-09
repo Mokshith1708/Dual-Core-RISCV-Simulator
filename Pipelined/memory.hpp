@@ -38,6 +38,6 @@ public:
     void write_instruction(int32_t address, int encode[], int core);
     void write_str(std::string s1, std::string s2, int address_str, int core);
     std::string read_str(int32_t address, int core);
-    double missrate_count();
+    double missrate_count(int core);
     void print_needed();
 };

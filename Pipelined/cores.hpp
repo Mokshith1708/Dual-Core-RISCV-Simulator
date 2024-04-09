@@ -38,6 +38,8 @@ public:
   void break_execute(int core,int &clockcyc,int &instruction, int &pc, memory &m, registers &r, std::vector<int> &tempReg,std::vector<int> &tempReg1, std::vector<int> &k, std::vector<int> &kk1,std::vector<int> &v, std::vector<int> &fetch, std::vector<int> &decode, std::vector<int> &execute, std::vector<int> &mem, std::vector<int> &write, bool &branch_bool,int &lat,bool lru_bool);
   int clockCycles1 = -1;
   int clockCycles2 = -1;
+  int access1=0,access2=0;
+  int lat_fetch=0;
   int t_f_1, t_f_2;
   int count1 = 0;
   int count2 = 0;

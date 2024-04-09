@@ -23,6 +23,7 @@ int32_t memory::read_memory_1(int32_t address, int core,bool lru_bool)
                 int32_t data = memory_1[address];
                 // Update cache with the retrieved data
                 cache.write_cache(address, core, false,lru_bool);
+                cache.accesses--;
                 // Return data
                 return data;
             } else {
@@ -34,6 +35,7 @@ int32_t memory::read_memory_1(int32_t address, int core,bool lru_bool)
                 int32_t data = memory_2[address];
                 // Update cache with the retrieved data
                 cache.write_cache(address, core, false,lru_bool);
+                cache.accesses--;
                 // Return data
                 return data;
             } else {
@@ -51,6 +53,7 @@ void memory::write_memory_1(int32_t address, int32_t data, int core,bool lru_boo
             memory_1[address] = data;
             // Update cache with the written data
             cache.write_cache(address, core, false,lru_bool);
+           // cache.accesses--;
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 13");
         }
@@ -59,6 +62,7 @@ void memory::write_memory_1(int32_t address, int32_t data, int core,bool lru_boo
             memory_2[address] = data;
             // Update cache with the written data
             cache.write_cache(address, core, false,lru_bool);
+            //cache.accesses--;
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 14");
         }
@@ -68,6 +72,25 @@ void memory::write_memory_1(int32_t address, int32_t data, int core,bool lru_boo
 std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_bool)
 {
     // Check cache for instruction
+    // if(instructions_1[address][1]==-101)
+    // {
+    //     std::vector<int> instruction(4, 0);
+    //     if(core==1)
+    //     {
+    //      instruction[1] = instructions_1[address][1];
+    //     }
+    //     return instruction;
+    // }
+    //     if(instructions_2[address][1]==-101)
+    // {
+    //     std::vector<int> instruction(4, 0);
+    //     if(core==1)
+    //     {
+    //      instruction[1] = instructions_2[address][1];
+    //     }
+    //     return instruction;
+    // }
+
     if (cache.read_cache(address, core, true)) {
         // Cache hit, return instruction from cache
         // No need to access main memory
@@ -93,6 +116,7 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_b
                 }
                 // Update cache with the retrieved instruction
                 cache.write_cache(address, core, true,lru_bool);
+                cache.accesses--;
             } else {
                 throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 15");
             }
@@ -104,6 +128,7 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_b
                 }
                 // Update cache with the retrieved instruction
                 cache.write_cache(address, core, true,lru_bool);
+                cache.accesses--;
             } else {
                 throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 16");
             }
@@ -315,9 +340,9 @@ std::string memory::read_str(int32_t address, int core)
 }
 
 
-double memory::missrate_count()
+double memory::missrate_count(int core)
 {
-    return cache.calculate_miss_rate();
+    return cache.calculate_miss_rate(core);
 }
 
 void memory::print_needed() 

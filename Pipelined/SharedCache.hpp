@@ -19,8 +19,8 @@ public:
     int blockSize;      // in bytes
     int associativity;
     int sets;
-    int accesses;       // Total cache accesses
-    int misses;         // Cache misses
+    int accesses,access1,access2;       // Total cache accesses
+    int misses1,misses2,misses;         // Cache misses
     std::vector<std::vector<CacheEntry>> cache;
 
 public:
@@ -28,6 +28,6 @@ public:
 
     bool read_cache(int32_t address, int core, bool isInstruction);
     void write_cache(int32_t address, int core, bool isInstruction,bool lru_bool);
-    double calculate_miss_rate();
+    double calculate_miss_rate(int core);
     void print_cache();
 };

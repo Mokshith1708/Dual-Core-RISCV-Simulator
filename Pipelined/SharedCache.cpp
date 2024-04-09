@@ -1,8 +1,9 @@
 #include "SharedCache.hpp"
+#include <iostream>
 
 SharedCache::SharedCache(int cacheSize, int blockSize, int associativity)
     : cacheSize(cacheSize), blockSize(blockSize), associativity(associativity),
-      accesses(0), misses(0)
+      accesses(0), misses1(0), misses2(0),misses(0)
 {
     // Calculate the number of sets in the cache
     sets = cacheSize / (blockSize * associativity);
@@ -14,22 +15,32 @@ bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
 {
     // Increment total cache accesses
     accesses++;
-
+ //std::cout<< 1<<" | "<< "its a access "<<core<<" "<< address<<" "<<accesses<<" "<<isInstruction<<std::endl;
     int setIndex = (address / blockSize) % sets;
     int tag = (address * blockSize) / cacheSize;
-
+    int offset = address % blockSize;
     // Search for the cache block in the set
     for (auto &entry : cache[setIndex])
     {
-        if (entry.valid && entry.tag == tag && entry.isInstruction == isInstruction)
+        if (entry.valid && entry.tag == tag && entry.isInstruction == isInstruction && entry.coreBit == core && entry.offset == offset && entry.data_or_instructions[offset]==address)
         {
             // Cache hit
+          //   std::cout<< 1<<" | "<< "its a hit "<<core<<" "<< address<<std::endl;
             return true;
         }
     }
 
     // Cache miss
     misses++;
+    // std::cout<< 1<<" | "<< "its a miss "<<core<<" "<< address<<std::endl;
+    if(core==1)
+    {
+     misses1++;
+    }
+    else if(core==2)
+    {
+        misses2++;
+    }
     return false;
 }
 
@@ -37,7 +48,14 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
 {
     // Increment total cache accesses
     accesses++;
-
+    // if(core==1)
+    // {
+    //     access1++;
+    // }
+    //  if(core==2)
+    // {
+    //     access2++;
+    // }
     int setIndex = (address / blockSize) % sets;
     int tag = (address * blockSize) / cacheSize;
 
@@ -53,7 +71,8 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
             entry.coreBit = core;               // Set the coreBit
             entry.offset = address % blockSize; // Set the offset within the cache block
             // Resize the data_or_instructions vector based on the block size
-            entry.data_or_instructions.resize(blockSize, 0);
+            entry.data_or_instructions.resize(blockSize, -1);
+            entry.data_or_instructions[entry.offset]=address;
             return;
         }
     }
@@ -66,6 +85,7 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
         cache[setIndex].front().isInstruction = isInstruction;
         cache[setIndex].front().coreBit = core;
         cache[setIndex].front().offset = address % blockSize;
+        cache[setIndex].front().data_or_instructions[cache[setIndex].front().offset]=address;
     }
     else
     {
@@ -74,9 +94,10 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
         cache[setIndex][randomIndex].isInstruction = isInstruction;
         cache[setIndex][randomIndex].coreBit = core;
         cache[setIndex][randomIndex].offset = address % blockSize;
+        cache[setIndex][randomIndex].data_or_instructions[cache[setIndex][randomIndex].offset]=address;
     }
 }
-double SharedCache::calculate_miss_rate()
+double SharedCache::calculate_miss_rate(int core)
 {
     // Calculate miss rate as misses divided by total accesses
     if (accesses == 0)
@@ -85,7 +106,19 @@ double SharedCache::calculate_miss_rate()
     }
     else
     {
-        return static_cast<double>(misses) / accesses;
+        // if(core==1)
+        // {
+        // return static_cast<double>(misses1);
+        // }
+        // else if(core==2)
+        // {
+        // return static_cast<double>(misses2);
+        // }
+        // else
+        // {
+        //     return static_cast<double>(misses);
+        // }
+        return static_cast<double>(misses1+misses2)/accesses;
     }
 }
 

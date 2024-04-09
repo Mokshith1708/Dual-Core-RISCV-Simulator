@@ -1,33 +1,24 @@
 .data
-arr: .word 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
-str: .string "nibib,bububu"
-#ninin guug ig
+base: .word 20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1
 .text
-la x5 arr
-add x6 x5 x0 
- addi x7 x0 20
-addi x8 x0 19
-loop1:
-beq x0 x7 exit
-addi x7 x7 -1
-
-# hihifninbi
-loop2:
-addi x1 x1 1
-lw x4 0(x5)
-lw x9 4(x5)
-blt x4 x9 noswap 
-sw x4 4(x5)
-sw x9 0(x5) #irnfitnigb
-noswap:
-addi x5 x5 4
-bne x1 x8 loop2
-add x1 x0 x0
-add x5 x6 x0
-j loop1
-exit:
-add x0 x0 x0
-add x1 x1 x5
-add x1 x1 x8 
-li x31 23
-li x10 1000
+    li x1 0
+    li x2 0
+    li x3 18
+    li x17 20
+    la x16 base
+    loop:
+        addi x1 x1 1
+        la x15 base
+        li x8 0
+        loop1:
+            blt x3 x8 exit
+            lw x5 0(x15)
+            lw x6 4(x15)
+            addi x15 x15 4
+            addi x8 x8 1
+            blt x5 x6 loop1
+            sw x5 0(x15)
+            sw x6 -4(x15)
+            j loop1
+        exit:
+        bne x1 x17 loop

@@ -545,7 +545,7 @@ int main()
     map<string, int> dataSizes_1, dataSizes_2;
     pair<int, int> p1, p2;
     registers r1, r2;
-    memory m(512, 64, 4);
+    memory m(512, 8, 8);
 
     bool dataforwardin_on;
     cout << "Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **" << endl;
@@ -666,9 +666,9 @@ int main()
     for (int i = 0; i < 50; ++i)
     {
         if (i < 10)
-            std::cout << "Address " << i << "  : " << m.read_memory(i, 1) << std::endl;
+            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 1,lru_bool) << std::endl;
         else
-            std::cout << "Address " << i << " : " << m.read_memory(i, 1) << std::endl;
+            std::cout << "Address " << i << " : " << m.read_memory_1(i, 1,lru_bool) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 1\n"
@@ -700,9 +700,9 @@ int main()
     for (int i = 0; i < 50; ++i)
     {
         if (i < 10)
-            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
+            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 2,lru_bool) << std::endl;
         else
-            std::cout << "Address " << i << " : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
+            std::cout << "Address " << i << " : " << m.read_memory_1(i, 2,lru_bool) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 2\n"
