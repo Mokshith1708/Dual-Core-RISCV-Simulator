@@ -29,5 +29,6 @@ public:
     bool read_cache(int32_t address, int core, bool isInstruction);
     void write_cache(int32_t address, int core, bool isInstruction,bool lru_bool);
     double calculate_miss_rate(int core);
+    double calculate_miss(int core);
     void print_cache();
 };

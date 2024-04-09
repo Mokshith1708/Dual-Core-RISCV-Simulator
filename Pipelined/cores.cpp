@@ -354,6 +354,7 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
             cout << core1 << " | "
                  << "1 | ---------------------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
             break_execute(1, clockCycles1, count1, pc1, m, r1, tempReg1, tempReg11, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1, branch_bool_1, lat1,lru_bool);
+
             cout << core1 << " | "
                  << "1 | clockCycles1 : " << clockCycles1 << std::endl;
             cout << core1 << " | "
@@ -369,6 +370,7 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
             //  pc2++;
             clockCycles2++;
             break_execute(2, clockCycles2, count2, pc2, m, r2, tempReg2, tempReg22, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2, branch_bool_2, lat2,lru_bool);
+
             cout << core2 << " | "
                  << "2 | clockCycles2 : " << clockCycles2 << std::endl;
             cout << core2 << " | " << std::endl;
@@ -380,6 +382,9 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
         }
     
     }
+    clockCycles1+=m.miss_count(1);
+    clockCycles1+=m.miss_count(2);
+
     // for (int i = 0; i < 32; i++)
     //     {
     //         cout << 1 << " | " << i << " " << r1.read(i) << endl;

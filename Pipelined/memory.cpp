@@ -25,6 +25,7 @@ int32_t memory::read_memory_1(int32_t address, int core,bool lru_bool)
                 cache.write_cache(address, core, false,lru_bool);
                 cache.accesses--;
                 // Return data
+                ck1=true;
                 return data;
             } else {
                 throw std::out_of_range("Error: Attempted to read from out of bounds memory address.11");
@@ -37,6 +38,7 @@ int32_t memory::read_memory_1(int32_t address, int core,bool lru_bool)
                 cache.write_cache(address, core, false,lru_bool);
                 cache.accesses--;
                 // Return data
+                ck2=true;;
                 return data;
             } else {
                 throw std::out_of_range("Error: Attempted to read from out of bounds memory address.12");
@@ -116,6 +118,7 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_b
                 }
                 // Update cache with the retrieved instruction
                 cache.write_cache(address, core, true,lru_bool);
+                ck3=true;
                 cache.accesses--;
             } else {
                 throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 15");
@@ -128,6 +131,7 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_b
                 }
                 // Update cache with the retrieved instruction
                 cache.write_cache(address, core, true,lru_bool);
+                ck4=true;
                 cache.accesses--;
             } else {
                 throw std::out_of_range("Error: Attempted to read inst from out of bounds memory address. 16");
@@ -343,6 +347,11 @@ std::string memory::read_str(int32_t address, int core)
 double memory::missrate_count(int core)
 {
     return cache.calculate_miss_rate(core);
+}
+
+double memory::miss_count(int core)
+{
+    return cache.calculate_miss(core);
 }
 
 void memory::print_needed() 

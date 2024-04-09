@@ -122,6 +122,31 @@ double SharedCache::calculate_miss_rate(int core)
     }
 }
 
+double SharedCache::calculate_miss(int core)
+{
+    // Calculate miss rate as misses divided by total accesses
+    if (accesses == 0)
+    {
+        return 0.0;
+    }
+    else
+    {
+        if(core==1)
+        {
+        return static_cast<double>(misses1);
+        }
+        else if(core==2)
+        {
+        return static_cast<double>(misses2);
+        }
+        else
+        {
+            return static_cast<double>(misses);
+        }
+        
+    }
+}
+
 void SharedCache::print_cache()
 {
     // Loop through each set and each way in the cache

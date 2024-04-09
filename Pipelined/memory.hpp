@@ -12,7 +12,7 @@ class memory
 {
 public:
     bool find_cache;
-
+    bool ck1=false,ck2=false,ck3=false,ck4=false;
     SharedCache cache;
     int32_t memory_1[MEMORY_SIZE] = {0};
     std::map<std::pair<std::string, std::string>, int> strmap_1;
@@ -39,5 +39,6 @@ public:
     void write_str(std::string s1, std::string s2, int address_str, int core);
     std::string read_str(int32_t address, int core);
     double missrate_count(int core);
+    double miss_count(int core);
     void print_needed();
 };

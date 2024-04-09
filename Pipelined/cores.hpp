@@ -39,7 +39,8 @@ public:
   int clockCycles1 = -1;
   int clockCycles2 = -1;
   int access1=0,access2=0;
-  int lat_fetch=0;
+  int lat_fetch1=3,lat_fetch2=3;
+  int l1,l2;
   int t_f_1, t_f_2;
   int count1 = 0;
   int count2 = 0;
