@@ -1,17 +1,17 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include <stdexcept> // For std::out_of_range
+#include <stdexcept>
 
 class SharedCache {
 public:
     struct CacheEntry {
         bool valid;
         int32_t tag;
-        bool isInstruction; // Indicates whether the cache block stores instructions or data
-        int coreBit;        // Indicates which core the data belongs to (0 for core 1, 1 for core 2)
-        std::vector<int32_t> data_or_instructions; // Data or instructions stored in the cache block
-        int offset;         // Offset within the cache block
+        bool isInstruction;
+        int coreBit;
+        std::vector<int32_t> data_or_instructions; 
+        int offset;
         CacheEntry() : valid(false), tag(-1), isInstruction(false), coreBit(0), offset(-1) {}
     };
 
@@ -19,8 +19,8 @@ public:
     int blockSize;      // in bytes
     int associativity;
     int sets;
-    int accesses,access1,access2;       // Total cache accesses
-    int misses1,misses2,misses;         // Cache misses
+    int accesses,access1,access2;
+    int misses1,misses2,misses;
     std::vector<std::vector<CacheEntry>> cache;
 
 public:

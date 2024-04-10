@@ -15,6 +15,10 @@
 #include "cores.hpp"
 #include "registers.hpp"
 #include "registers.cpp"
+#include <ios>
+#include<fstream>
+#include<limits>
+
 
 using std::cerr;
 using std::cin;
@@ -545,7 +549,29 @@ int main()
     map<string, int> dataSizes_1, dataSizes_2;
     pair<int, int> p1, p2;
     registers r1, r2;
-    memory m(512, 8, 8);
+
+    int cache_size, block_size, associativity, access_latency;
+    ifstream paramFile("parameters.txt");
+    if (!paramFile.is_open())
+    {
+        cout << "Error: Unable to open parameters file." << endl;
+        return 1;
+    }
+    paramFile >> cache_size;                                   // Read the first number of the first line
+    paramFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore rest of the line
+    paramFile >> block_size;                                   // Read the first number of the second line
+    paramFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore rest of the line
+    paramFile >> associativity;                                // Read the first number of the third line
+    paramFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore rest of the line
+    paramFile >> access_latency;                               // Read the first number of the fourth line
+    paramFile.close();
+    cout << "Cache Parameters:" << endl;
+    cout << "Cache Size: " << cache_size << endl;
+    cout << "Block Size: " << block_size << endl;
+    cout << "Associativity: " << associativity << endl;
+    cout << "Access latency: " << access_latency << endl;
+
+    memory m(cache_size, block_size, associativity);
 
     bool dataforwardin_on;
     cout << "Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **" << endl;
@@ -644,7 +670,7 @@ int main()
     streambuf *coutbuf3 = cout.rdbuf();
     cout.rdbuf(outputFile3.rdbuf());
 
-    ALU alui(latency_map, p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2, dataforwardin_on, lru_bool);
+    ALU alui(latency_map, p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2, dataforwardin_on, lru_bool,access_latency);
 
     cout.rdbuf(coutbuf3);
 
@@ -666,9 +692,9 @@ int main()
     for (int i = 0; i < 50; ++i)
     {
         if (i < 10)
-            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 1,lru_bool) << std::endl;
+            std::cout << "Address " << i << "  : " << m.read_memory(i, 1) << std::endl;
         else
-            std::cout << "Address " << i << " : " << m.read_memory_1(i, 1,lru_bool) << std::endl;
+            std::cout << "Address " << i << " : " << m.read_memory(i, 1) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 1\n"
@@ -700,9 +726,9 @@ int main()
     for (int i = 0; i < 50; ++i)
     {
         if (i < 10)
-            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 2,lru_bool) << std::endl;
+            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
         else
-            std::cout << "Address " << i << " : " << m.read_memory_1(i, 2,lru_bool) << std::endl;
+            std::cout << "Address " << i << " : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 2\n"

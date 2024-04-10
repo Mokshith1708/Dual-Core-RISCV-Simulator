@@ -5,32 +5,28 @@ SharedCache::SharedCache(int cacheSize, int blockSize, int associativity)
     : cacheSize(cacheSize), blockSize(blockSize), associativity(associativity),
       accesses(0), misses1(0), misses2(0),misses(0)
 {
-    // Calculate the number of sets in the cache
     sets = cacheSize / (blockSize * associativity);
-    // Initialize cache entries
     cache.resize(sets, std::vector<CacheEntry>(associativity));
 }
 
 bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
 {
-    // Increment total cache accesses
     accesses++;
  //std::cout<< 1<<" | "<< "its a access "<<core<<" "<< address<<" "<<accesses<<" "<<isInstruction<<std::endl;
     int setIndex = (address / blockSize) % sets;
     int tag = (address * blockSize) / cacheSize;
     int offset = address % blockSize;
-    // Search for the cache block in the set
+
     for (auto &entry : cache[setIndex])
     {
-        if (entry.valid && entry.tag == tag && entry.isInstruction == isInstruction && entry.coreBit == core && entry.offset == offset && entry.data_or_instructions[offset]==address)
+        if (entry.valid && entry.tag == tag && entry.isInstruction == isInstruction && entry.coreBit == core && entry.offset == offset )
         {
-            // Cache hit
           //   std::cout<< 1<<" | "<< "its a hit "<<core<<" "<< address<<std::endl;
-            return true;
+            return true; // hit
         }
     }
 
-    // Cache miss
+    // miss
     misses++;
     // std::cout<< 1<<" | "<< "its a miss "<<core<<" "<< address<<std::endl;
     if(core==1)
@@ -46,7 +42,6 @@ bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
 
 void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool lru_bool)
 {
-    // Increment total cache accesses
     accesses++;
     // if(core==1)
     // {
@@ -59,7 +54,6 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
     int setIndex = (address / blockSize) % sets;
     int tag = (address * blockSize) / cacheSize;
 
-    // Search for an empty or invalid entry in the set
     for (auto &entry : cache[setIndex])
     {
         if (!entry.valid)
@@ -68,19 +62,16 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
             entry.valid = true;
             entry.tag = tag;
             entry.isInstruction = isInstruction;
-            entry.coreBit = core;               // Set the coreBit
-            entry.offset = address % blockSize; // Set the offset within the cache block
-            // Resize the data_or_instructions vector based on the block size
+            entry.coreBit = core;
+            entry.offset = address % blockSize;
             entry.data_or_instructions.resize(blockSize, -1);
             entry.data_or_instructions[entry.offset]=address;
             return;
         }
     }
 
-    // If no empty slot found, use a replacement policy (e.g., LRU)
-    // Here, we assume LRU and evict the first entry in the set
     if (lru_bool)
-    {
+    {//LRU
         cache[setIndex].front().tag = tag;
         cache[setIndex].front().isInstruction = isInstruction;
         cache[setIndex].front().coreBit = core;
@@ -89,6 +80,7 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
     }
     else
     {
+        // Random
         int randomIndex = rand() % associativity;
         cache[setIndex][randomIndex].tag = tag;
         cache[setIndex][randomIndex].isInstruction = isInstruction;
@@ -99,7 +91,6 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
 }
 double SharedCache::calculate_miss_rate(int core)
 {
-    // Calculate miss rate as misses divided by total accesses
     if (accesses == 0)
     {
         return 0.0;
@@ -124,7 +115,6 @@ double SharedCache::calculate_miss_rate(int core)
 
 double SharedCache::calculate_miss(int core)
 {
-    // Calculate miss rate as misses divided by total accesses
     if (accesses == 0)
     {
         return 0.0;
@@ -149,7 +139,6 @@ double SharedCache::calculate_miss(int core)
 
 void SharedCache::print_cache()
 {
-    // Loop through each set and each way in the cache
     for (int setIndex = 0; setIndex < sets; ++setIndex)
     {
         std::cout << "Set " << setIndex << ":\n";
@@ -162,7 +151,6 @@ void SharedCache::print_cache()
                 std::cout << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
                 if (entry.isInstruction)
                 {
-                    // Print instructions stored in the cache block
                     std::cout << "Instructions: ";
                     for (auto &inst : entry.data_or_instructions)
                     {
@@ -171,7 +159,6 @@ void SharedCache::print_cache()
                 }
                 else
                 {
-                    // Print data stored in the cache block
                     std::cout << "Data: ";
                     for (auto &d : entry.data_or_instructions)
                     {

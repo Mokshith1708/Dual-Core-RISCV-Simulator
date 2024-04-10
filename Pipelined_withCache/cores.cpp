@@ -53,7 +53,7 @@ void print_array(int core, std::vector<int> k, std::vector<int> kk, std::vector<
     cout << endl;
     cout << core << " |------------------------ " << endl;
 }
-void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc, memory &m, registers &r, std::vector<int> &tempReg, std::vector<int> &tempReg1, std::vector<int> &k, std::vector<int> &kk, std::vector<int> &v, std::vector<int> &fetch, std::vector<int> &decode, std::vector<int> &execute, std::vector<int> &mem, std::vector<int> &write, bool &branch_bool, int &lat,bool lru_bool)
+void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc, memory &m, registers &r, std::vector<int> &tempReg, std::vector<int> &tempReg1, std::vector<int> &k, std::vector<int> &kk, std::vector<int> &v, std::vector<int> &fetch, std::vector<int> &decode, std::vector<int> &execute, std::vector<int> &mem, std::vector<int> &write, bool &branch_bool, int &lat, bool lru_bool)
 {
     // cout << "1 | " << pc1 << "hero" << endl;
     writeBack(k, m, core, pc, r);
@@ -70,11 +70,11 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
             return;
         }
     }
-    memoryAccess(k, m, core, pc,lru_bool);
+    memoryAccess(k, m, core, pc, lru_bool);
 
     k.clear();
     kk.clear();
-    k = instructionExecute(v, m, r, core, pc, tempReg, clockcyc, branch_bool,lru_bool);
+    k = instructionExecute(v, m, r, core, pc, tempReg, clockcyc, branch_bool, lru_bool);
     kk = k;
     if (!mem.empty())
     {
@@ -181,14 +181,14 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
 
     v.clear();
 
-    v = instructionDecode(m, core, r, pc, tempReg,lru_bool);
+    v = instructionDecode(m, core, r, pc, tempReg, lru_bool);
 
-    instructionFetch(m, core, pc, instruction_count, r, tempReg,lru_bool);
-    if(core==1)
+    instructionFetch(m, core, pc, instruction_count, r, tempReg, lru_bool);
+    if (core == 1)
     {
         access1++;
     }
-    if(core==2)
+    if (core == 2)
     {
         access2++;
     }
@@ -216,7 +216,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
     cout << core << " | " << instruction_count << endl;
     instruction_count++;
 }
-ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int no_inst_22, memory &m, registers &r1, registers &r2, int core1, int core2, bool dataforwarding_on,bool lru_bool)
+ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_11, int no_inst_22, memory &m, registers &r1, registers &r2, int core1, int core2, bool dataforwarding_on, bool lru_bool, int access_latency)
 {
     pc1 = p1.second;
     pc2 = p2.second;
@@ -250,7 +250,7 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
             muli_lat = latency_map["muli"];
         }
     }
-    SharedCache& c = m.getCache();
+    SharedCache &c = m.getCache();
     std::vector<int> tempReg1(32);
     std::vector<int> tempReg2(32);
     std::vector<int> tempReg11(32);
@@ -268,31 +268,48 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     //    cout<<1<<" | "<< m.read_memory(i,1)<<endl;
     // }
 
-    cout << core1 << " | " << " coming "<<pc1<<endl;
-      for (int setIndex = 0; setIndex < c.sets; ++setIndex) {
-        std::cout <<1<<" | "<< "Set " << setIndex << ":\n";
-        for (int way = 0; way < c.associativity; ++way) {
-            SharedCache::CacheEntry& entry = c.cache[setIndex][way];
-            std::cout <<1<<" | "<<  "  Way " << way << ": ";
-            if (entry.valid) {
-                std::cout <<1<<" | "<<  "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
-                if (entry.isInstruction) {
+    cout << core1 << " | "
+         << " coming " << pc1 << endl;
+    for (int setIndex = 0; setIndex < c.sets; ++setIndex)
+    {
+        std::cout << 1 << " | "
+                  << "Set " << setIndex << ":\n";
+        for (int way = 0; way < c.associativity; ++way)
+        {
+            SharedCache::CacheEntry &entry = c.cache[setIndex][way];
+            std::cout << 1 << " | "
+                      << "  Way " << way << ": ";
+            if (entry.valid)
+            {
+                std::cout << 1 << " | "
+                          << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
+                if (entry.isInstruction)
+                {
                     // Print instructions stored in the cache block
-                    std::cout <<1<<" | "<<  "Instructions: ";
-                    for (auto& inst : entry.data_or_instructions) {
-                        std::cout <<1<<" | "<<  inst << " ";
-                    }
-                } else {
-                    // Print data stored in the cache block
-                    std::cout <<1<<" | "<<  "Data: ";
-                    for (auto& d : entry.data_or_instructions) {
-                        std::cout << 1<<" | "<< d << " ";
+                    std::cout << 1 << " | "
+                              << "Instructions: ";
+                    for (auto &inst : entry.data_or_instructions)
+                    {
+                        std::cout << 1 << " | " << inst << " ";
                     }
                 }
-            } else {
-                std::cout <<1<<" | "<<  "Invalid";
+                else
+                {
+                    // Print data stored in the cache block
+                    std::cout << 1 << " | "
+                              << "Data: ";
+                    for (auto &d : entry.data_or_instructions)
+                    {
+                        std::cout << 1 << " | " << d << " ";
+                    }
+                }
             }
-            std::cout <<1<<" | "<<  std::endl;
+            else
+            {
+                std::cout << 1 << " | "
+                          << "Invalid";
+            }
+            std::cout << 1 << " | " << std::endl;
         }
     }
     // for(int i=0;i<40;i++)
@@ -311,38 +328,55 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     //     }
     //      cout<<2<<" | "<<std::endl;
     // }
-    
+
     cout << core1 << " | " << no_inst_1 << " &&& " << no_inst_2 << endl;
-    //cout << core1 << " | " ;
-   // m.print_needed();
-   // cout<<core1 <<std::endl;
+    // cout << core1 << " | " ;
+    // m.print_needed();
+    // cout<<core1 <<std::endl;
     while (pc1 < no_inst_1 + 4 || pc2 < no_inst_2 + 4)
-    {         for (int setIndex = 0; setIndex < c.sets; ++setIndex) {
-        std::cout <<1<<" | "<< "Set " << setIndex << ":\n";
-        for (int way = 0; way < c.associativity; ++way) {
-            SharedCache::CacheEntry& entry = c.cache[setIndex][way];
-            std::cout <<1<<" | "<<  "  Way " << way << ": ";
-            if (entry.valid) {
-                std::cout <<1<<" | "<<  "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
-                if (entry.isInstruction) {
-                    // Print instructions stored in the cache block
-                    std::cout <<1<<" | "<<  "Instructions: ";
-                    for (auto& inst : entry.data_or_instructions) {
-                        std::cout <<  inst << " ";
+    {
+        for (int setIndex = 0; setIndex < c.sets; ++setIndex)
+        {
+            std::cout << 1 << " | "
+                      << "Set " << setIndex << ":\n";
+            for (int way = 0; way < c.associativity; ++way)
+            {
+                SharedCache::CacheEntry &entry = c.cache[setIndex][way];
+                std::cout << 1 << " | "
+                          << "  Way " << way << ": ";
+                if (entry.valid)
+                {
+                    std::cout << 1 << " | "
+                              << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
+                    if (entry.isInstruction)
+                    {
+                        // Print instructions stored in the cache block
+                        std::cout << 1 << " | "
+                                  << "Instructions: ";
+                        for (auto &inst : entry.data_or_instructions)
+                        {
+                            std::cout << inst << " ";
+                        }
                     }
-                } else {
-                    // Print data stored in the cache block
-                    std::cout <<1<<" | "<<  "Data: ";
-                    for (auto& d : entry.data_or_instructions) {
-                        std::cout<< d << " ";
+                    else
+                    {
+                        // Print data stored in the cache block
+                        std::cout << 1 << " | "
+                                  << "Data: ";
+                        for (auto &d : entry.data_or_instructions)
+                        {
+                            std::cout << d << " ";
+                        }
                     }
                 }
-            } else {
-                std::cout <<1<<" | "<<  "Invalid";
+                else
+                {
+                    std::cout << 1 << " | "
+                              << "Invalid";
+                }
+                std::cout << std::endl;
             }
-            std::cout<<  std::endl;
         }
-    }
         if (pc1 < no_inst_1 + 4)
         {
             clockCycles1++;
@@ -353,7 +387,7 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
             // }
             cout << core1 << " | "
                  << "1 | ---------------------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
-            break_execute(1, clockCycles1, count1, pc1, m, r1, tempReg1, tempReg11, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1, branch_bool_1, lat1,lru_bool);
+            break_execute(1, clockCycles1, count1, pc1, m, r1, tempReg1, tempReg11, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1, branch_bool_1, lat1, lru_bool);
 
             cout << core1 << " | "
                  << "1 | clockCycles1 : " << clockCycles1 << std::endl;
@@ -361,15 +395,15 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
                  << "1 | (((((((((((((((((((((((())))))))))))))))))))))))" << endl;
             cout << core1 << " | " << std::endl;
             print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
-            //cache.print_cache();
-            //cout<<std::endl;
+            // cache.print_cache();
+            // cout<<std::endl;
         }
         if (pc2 < no_inst_2 + 4)
         {
             cout << 2 << " | hi hg " << pc2 << endl;
             //  pc2++;
             clockCycles2++;
-            break_execute(2, clockCycles2, count2, pc2, m, r2, tempReg2, tempReg22, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2, branch_bool_2, lat2,lru_bool);
+            break_execute(2, clockCycles2, count2, pc2, m, r2, tempReg2, tempReg22, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2, branch_bool_2, lat2, lru_bool);
 
             cout << core2 << " | "
                  << "2 | clockCycles2 : " << clockCycles2 << std::endl;
@@ -380,10 +414,9 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
                 cout << 2 << " | " << i << " : " << m.read_memory(i, 2) << endl;
             }
         }
-    
     }
-    clockCycles1+=m.miss_count(1);
-    clockCycles1+=m.miss_count(2);
+    clockCycles1 += (access_latency-1) * m.miss_count(1);
+    clockCycles2 += (access_latency-1) * m.miss_count(2);
 
     // for (int i = 0; i < 32; i++)
     //     {
@@ -397,11 +430,11 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
 
     print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
-    // cout << 3 << " | " 
-    //      << "cache access: "<<access1<<" "<<access2<<endl ;
-    cout << 3 << " | " 
-         << "cache miss rate: " ;
-    cout << m.missrate_count(1)<<" "<<m.missrate_count(2)<<" "<<m.missrate_count(3)<<endl;
+    cout << 3 << " | "
+         << "cache access: "<<access1<<" "<<access2<<endl ;
+    cout << 3 << " | "
+         << "cache miss rate: ";
+    cout << m.missrate_count(3) << endl;
     cout << 3 << " | "
          << "No of instructions for core1 : ";
     cout << count1 << endl;
@@ -569,7 +602,7 @@ int ALU::RAW_Hazard(std::vector<int> v1, std::vector<int> v2)
     }
     return -1;
 }
-void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &r, std::vector<int> &tempReg,bool lru_bool)
+void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &r, std::vector<int> &tempReg, bool lru_bool)
 {
     std::vector<int> &fetch = (core == 1) ? fetch1 : fetch2;
     int no_inst = (core == 1) ? no_inst_1 : no_inst_2;
@@ -580,7 +613,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         std::vector<int> instruction(4, 0);
         if (pc < no_inst)
         {
-            instruction = m.read_instruction_1(pc, core,lru_bool);
+            instruction = m.read_instruction_1(pc, core, lru_bool);
             while (instruction[1] == -101)
             {
                 if (pc + 1 > no_inst)
@@ -589,7 +622,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
                 }
                 instruction.clear();
                 pc++;
-                instruction = m.read_instruction_1(pc, core,lru_bool);
+                instruction = m.read_instruction_1(pc, core, lru_bool);
             }
         }
         int tempry = pc;
@@ -727,7 +760,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         std::vector<int> instruction(4, 0);
         if (pc < no_inst)
         {
-            instruction = m.read_instruction_1(pc, core,lru_bool);
+            instruction = m.read_instruction_1(pc, core, lru_bool);
             while (instruction[1] == -101)
             {
                 if (pc + 1 > no_inst)
@@ -736,7 +769,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
                 }
                 instruction.clear();
                 pc++;
-                instruction = m.read_instruction_1(pc, core,lru_bool);
+                instruction = m.read_instruction_1(pc, core, lru_bool);
             }
         }
         int tempry = pc;
@@ -821,7 +854,7 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         fetch.insert(fetch.end(), instruction.begin(), instruction.end());
     }
 }
-std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &pc, std::vector<int> &tempReg,bool lru_bool)
+std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &pc, std::vector<int> &tempReg, bool lru_bool)
 {
     std::vector<int> &fetch = (core == 1) ? fetch1 : fetch2;
     std::vector<int> &decode = (core == 1) ? decode1 : decode2;
@@ -1065,7 +1098,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &
     case RISCV::la:
     {
         int rd = decode[1];
-        std::vector<int> v11 = m.read_instruction_1(decode[2], core,lru_bool);
+        std::vector<int> v11 = m.read_instruction_1(decode[2], core, lru_bool);
         int rs1 = v11[1];
         v.push_back(decode[0]);
         v.push_back(rd);
@@ -1100,7 +1133,7 @@ std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &
     }
     return v;
 }
-std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registers &r, int core, int &pc, std::vector<int> &tempReg, int &clockcycles, bool &branch_bool,bool lru_bool)
+std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registers &r, int core, int &pc, std::vector<int> &tempReg, int &clockcycles, bool &branch_bool, bool lru_bool)
 {
     std::vector<int> &execute = (core == 1) ? execute1 : execute2;
     std::vector<int> &decode = (core == 1) ? decode1 : decode2;
@@ -1329,12 +1362,12 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(0);
         k.push_back(v[1]);
         // cout << 1 << " | " << v[2] + v[3] << "oppp" << m.read_memory((v[2] + v[3]) / 4, core) << endl;
-         tempReg[v[1]] = m.read_memory_1((v[2] + v[3]) / 4, core,lru_bool);
-        k.push_back(tempReg[v[1]] );
-       
-         if(core==1)
+        tempReg[v[1]] = m.read_memory_1((v[2] + v[3]) / 4, core, lru_bool);
+        k.push_back(tempReg[v[1]]);
+
+        if (core == 1)
         {
-            access1 ++;
+            access1++;
         }
         else
         {
@@ -1388,7 +1421,7 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
     execute = decode;
     return k;
 }
-void ALU::memoryAccess(std::vector<int> &k, memory &m, int core, int &pc,bool lru_bool)
+void ALU::memoryAccess(std::vector<int> &k, memory &m, int core, int &pc, bool lru_bool)
 {
     std::vector<int> &execute = (core == 1) ? execute1 : execute2;
     std::vector<int> &mem = (core == 1) ? mem1 : mem2;
@@ -1406,9 +1439,9 @@ void ALU::memoryAccess(std::vector<int> &k, memory &m, int core, int &pc,bool lr
     if (k[0] == 1)
     {
         m.write_memory_1(k[1], k[2], core,lru_bool);
-        cout << core << " | " << m.read_memory_1(k[1], core,lru_bool) << "see" << core << endl;
-        cout << core << " | "
-             << " hi" << k[1] << k[2] << endl;
+      //  cout << core << " | " << m.read_memory_1(k[1], core, lru_bool) << "see" << core << endl;
+       // cout << core << " | "
+       //      << " hi" << k[1] << k[2] << endl;
     }
     mem.clear();
     mem = execute;
@@ -1437,7 +1470,7 @@ void ALU::writeBack(std::vector<int> &k, memory &m, int core, int &pc, registers
     write.clear();
     write = mem;
 }
-void ALU::executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc, std::vector<int> &tempReg,bool lru_bool)
+void ALU::executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc, std::vector<int> &tempReg, bool lru_bool)
 {
     if (instruction[1] == 0 && instruction[2] == 0 && instruction[3] == 0)
     {
@@ -1577,7 +1610,7 @@ void ALU::executeInstructiondummy(std::vector<int> instruction, memory &m, regis
         int rd = instruction[1];
         int rs1 = tempReg[instruction[3]];
         int offset = instruction[2];
-        tempReg[rd, m.read_memory_1((rs1 + offset) / 4, core,lru_bool)];
+        tempReg[rd, m.read_memory_1((rs1 + offset) / 4, core, lru_bool)];
         break;
     }
     case RISCV::sw:
@@ -1591,7 +1624,7 @@ void ALU::executeInstructiondummy(std::vector<int> instruction, memory &m, regis
     case RISCV::la:
     {
         int rd = instruction[1];
-        std::vector<int> v = m.read_instruction_1(instruction[2], core,lru_bool);
+        std::vector<int> v = m.read_instruction_1(instruction[2], core, lru_bool);
         int rs1 = v[1];
         tempReg[rd] = rs1;
         break;

@@ -34,7 +34,7 @@ private:
 
 public:
   void executeInstruction(std::vector<int> instructions, memory &m, registers &r, int core, int &pc);
-  ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2, bool dataforwarding_on,bool lru_bool);
+  ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2, bool dataforwarding_on,bool lru_bool,int access_latency);
   void break_execute(int core,int &clockcyc,int &instruction, int &pc, memory &m, registers &r, std::vector<int> &tempReg,std::vector<int> &tempReg1, std::vector<int> &k, std::vector<int> &kk1,std::vector<int> &v, std::vector<int> &fetch, std::vector<int> &decode, std::vector<int> &execute, std::vector<int> &mem, std::vector<int> &write, bool &branch_bool,int &lat,bool lru_bool);
   int clockCycles1 = -1;
   int clockCycles2 = -1;

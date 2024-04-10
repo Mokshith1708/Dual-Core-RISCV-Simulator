@@ -10,21 +10,14 @@
 
 int32_t memory::read_memory_1(int32_t address, int core,bool lru_bool)
 {
-    // Check cache for data
     if (cache.read_cache(address, core, false)) {
-        // Cache hit, return data from cache
-        // No need to access main memory
         return memory_1[address];
     } else {
-        // Cache miss, access main memory
         if (core == 1) {
             if (address < MEMORY_SIZE) {
-                // Read data from memory
                 int32_t data = memory_1[address];
-                // Update cache with the retrieved data
                 cache.write_cache(address, core, false,lru_bool);
                 cache.accesses--;
-                // Return data
                 ck1=true;
                 return data;
             } else {
@@ -32,12 +25,9 @@ int32_t memory::read_memory_1(int32_t address, int core,bool lru_bool)
             }
         } else if (core == 2) {
             if (address < MEMORY_SIZE) {
-                // Read data from memory
                 int32_t data = memory_2[address];
-                // Update cache with the retrieved data
                 cache.write_cache(address, core, false,lru_bool);
                 cache.accesses--;
-                // Return data
                 ck2=true;;
                 return data;
             } else {
@@ -53,8 +43,7 @@ void memory::write_memory_1(int32_t address, int32_t data, int core,bool lru_boo
     if (core == 1) {
         if (address < MEMORY_SIZE) {
             memory_1[address] = data;
-            // Update cache with the written data
-            cache.write_cache(address, core, false,lru_bool);
+          //  cache.write_cache(address, core, false,lru_bool);
            // cache.accesses--;
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 13");
@@ -62,8 +51,7 @@ void memory::write_memory_1(int32_t address, int32_t data, int core,bool lru_boo
     } else if (core == 2) {
         if (address < MEMORY_SIZE) {
             memory_2[address] = data;
-            // Update cache with the written data
-            cache.write_cache(address, core, false,lru_bool);
+           // cache.write_cache(address, core, false,lru_bool);
             //cache.accesses--;
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 14");
@@ -94,8 +82,6 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_b
     // }
 
     if (cache.read_cache(address, core, true)) {
-        // Cache hit, return instruction from cache
-        // No need to access main memory
         std::vector<int> instruction(4, 0);
         if (core == 1) {
             for (int i = 0; i < 4; i++) {
@@ -108,15 +94,12 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_b
         }
         return instruction;
     } else {
-        // Cache miss, access main memory
         std::vector<int> instruction(4, 0);
         if (core == 1) {
             if (address < MEMORY_SIZE / 4) {
-                // Read instruction from memory
                 for (int i = 0; i < 4; i++) {
                     instruction[i] = instructions_1[address][i];
                 }
-                // Update cache with the retrieved instruction
                 cache.write_cache(address, core, true,lru_bool);
                 ck3=true;
                 cache.accesses--;
@@ -125,11 +108,9 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_b
             }
         } else if (core == 2) {
             if (address < MEMORY_SIZE / 4) {
-                // Read instruction from memory
                 for (int i = 0; i < 4; i++) {
                     instruction[i] = instructions_2[address][i];
                 }
-                // Update cache with the retrieved instruction
                 cache.write_cache(address, core, true,lru_bool);
                 ck4=true;
                 cache.accesses--;
@@ -143,34 +124,27 @@ std::vector<int> memory::read_instruction_1(int32_t address, int core,bool lru_b
 
 void memory::write_instruction_1(int32_t address, int encode[], int core,bool lru_bool)
 {
-    // Write instruction to memory
     if (core == 1) {
         if (address < MEMORY_SIZE / 4) {
-            // Write instruction to memory
             for (int i = 0; i < 4; i++) {
                 instructions_1[address][i] = encode[i];
             }
-            // Update cache with the written instruction
-            cache.write_cache(address, core, true,lru_bool);
+           // cache.write_cache(address, core, true,lru_bool);
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 17");
         }
     } else if (core == 2) {
         if (address < MEMORY_SIZE / 4) {
-            // Write instruction to memory
             for (int i = 0; i < 4; i++) {
                 instructions_2[address][i] = encode[i];
             }
-            // Update cache with the written instruction
-            cache.write_cache(address, core, true,lru_bool);
+          //  cache.write_cache(address, core, true,lru_bool);
         } else {
             throw std::out_of_range("Error: Attempted to write from out of bounds memory address. 18");
         }
     }
 }
 
-
-// Read data from memory based on the address and core
 int32_t memory::read_memory(int32_t address, int core)
 {
     if (core == 1)
@@ -197,7 +171,6 @@ int32_t memory::read_memory(int32_t address, int core)
     }
 }
 
-// Write data to memory based on the address, data, and core
 void memory::write_memory(int32_t address, int32_t data, int core)
 {
     if (core == 1)
@@ -223,7 +196,6 @@ void memory::write_memory(int32_t address, int32_t data, int core)
         }
     }
 }
-// Read instruction from instruction memory based on the address and core
 std::vector<int> memory::read_instruction(int32_t address, int core)
 {
     if (core == 1)
@@ -260,7 +232,6 @@ std::vector<int> memory::read_instruction(int32_t address, int core)
     }
 }
 
-// write instruction to instruction memory based on the address and core
 void memory::write_instruction(int32_t address, int encode[], int core)
 {
     if (core == 1)
@@ -292,7 +263,6 @@ void memory::write_instruction(int32_t address, int encode[], int core)
         }
     }
 }
-// Write strings to str memory based on the addresses and core
 void memory::write_str(std::string s1, std::string s2, int address_str, int core)
 {
     std::pair<std::string, std::string> p;
@@ -307,20 +277,17 @@ void memory::write_str(std::string s1, std::string s2, int address_str, int core
         strmap_2[p] = address_str;
     }
 }
-// read strings from memory based on the addresses and core
 std::string memory::read_str(int32_t address, int core)
 {
     std::pair<std::string, std::string> p;
-    std::string result = ""; // Initialize an empty string to store the result
+    std::string result = "";
 
     if (core == 1)
     {
-        // Search for the string in strmap_1 using the given address
         for (auto &entry : strmap_1)
         {
             if (entry.second == address)
             {
-                // Found the string associated with the address
                 result = entry.first.second;
                 break;
             }
@@ -328,12 +295,10 @@ std::string memory::read_str(int32_t address, int core)
     }
     else if (core == 2)
     {
-        // Search for the string in strmap_2 using the given address
         for (auto &entry : strmap_2)
         {
             if (entry.second == address)
             {
-                // Found the string associated with the address
                 result = entry.first.second;
                 break;
             }
