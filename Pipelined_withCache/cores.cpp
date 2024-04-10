@@ -297,7 +297,7 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
         }
         if (pc2 < no_inst_2 + 4)
         {
-            cout << 2 << " | hi hg " << pc2 << endl;
+            // cout << 2 << " | hi hg " << pc2 << endl;
             //  pc2++;
             clockCycles2++;
             break_execute(2, clockCycles2, count2, pc2, m, r2, tempReg2, tempReg22, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2, branch_bool_2, lat2, lru_bool);
