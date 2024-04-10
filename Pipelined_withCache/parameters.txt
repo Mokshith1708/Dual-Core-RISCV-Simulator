@@ -1,4 +1,4 @@
-512    // Cache size (in bytes)
-16     // Block size (in bytes)
+128    // Cache size (in bytes)
+4     // Block size (in bytes)
 32       // Associativity
-1       // Access latency (in cycles)
+3       // Access latency (in cycles)

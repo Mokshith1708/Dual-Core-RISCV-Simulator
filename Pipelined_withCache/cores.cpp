@@ -67,6 +67,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
             mem[1] = 0;
             mem[2] = 0;
             mem[3] = 0;
+            cout << core << " | !!!!   STALL    !!!!" << endl;
             return;
         }
     }
@@ -164,6 +165,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
             execute[1] = 0;
             execute[2] = 0;
             execute[3] = 0;
+            cout << core << " | !!!!   STALL    !!!!" << endl;
             return;
         }
     }
@@ -175,6 +177,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
             execute[1] = 0;
             execute[2] = 0;
             execute[3] = 0;
+            cout << core << " | !!!!   STALL    !!!!" << endl;
             return;
         }
     }
@@ -209,6 +212,7 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
                 decode[3] = 0;
                 branch_bool = false;
                 instruction_count--;
+                cout << core << " | !!!!   STALL    !!!!" << endl;
                 return;
             }
         }
@@ -263,120 +267,13 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
         dataforwarding1 = true;
     else
         dataforwarding1 = false;
-    // for(int i=0;i<32;i++)
-    // {
-    //    cout<<1<<" | "<< m.read_memory(i,1)<<endl;
-    // }
-
-    cout << core1 << " | "
-         << " coming " << pc1 << endl;
-    for (int setIndex = 0; setIndex < c.sets; ++setIndex)
-    {
-        std::cout << 1 << " | "
-                  << "Set " << setIndex << ":\n";
-        for (int way = 0; way < c.associativity; ++way)
-        {
-            SharedCache::CacheEntry &entry = c.cache[setIndex][way];
-            std::cout << 1 << " | "
-                      << "  Way " << way << ": ";
-            if (entry.valid)
-            {
-                std::cout << 1 << " | "
-                          << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
-                if (entry.isInstruction)
-                {
-                    // Print instructions stored in the cache block
-                    std::cout << 1 << " | "
-                              << "Instructions: ";
-                    for (auto &inst : entry.data_or_instructions)
-                    {
-                        std::cout << 1 << " | " << inst << " ";
-                    }
-                }
-                else
-                {
-                    // Print data stored in the cache block
-                    std::cout << 1 << " | "
-                              << "Data: ";
-                    for (auto &d : entry.data_or_instructions)
-                    {
-                        std::cout << 1 << " | " << d << " ";
-                    }
-                }
-            }
-            else
-            {
-                std::cout << 1 << " | "
-                          << "Invalid";
-            }
-            std::cout << 1 << " | " << std::endl;
-        }
-    }
-    // for(int i=0;i<40;i++)
-    // {
-    //     for(auto &jj: m.read_instruction_1(i,1))
-    //     {
-    //         cout<<1<<" | "<<jj<<" ";
-    //     }
-    //     cout<<1<<" | "<<std::endl;
-    // }
-    // for(int i=0;i<40;i++)
-    // {
-    //     for(auto &jj: m.read_instruction_1(i,2))
-    //     {
-    //         cout<<2<<" | "<<jj<<" ";
-    //     }
-    //      cout<<2<<" | "<<std::endl;
-    // }
-
-    cout << core1 << " | " << no_inst_1 << " &&& " << no_inst_2 << endl;
+    
+    //cout << core1 << " | " << no_inst_1 << " &&& " << no_inst_2 << endl;
     // cout << core1 << " | " ;
     // m.print_needed();
     // cout<<core1 <<std::endl;
     while (pc1 < no_inst_1 + 4 || pc2 < no_inst_2 + 4)
     {
-        for (int setIndex = 0; setIndex < c.sets; ++setIndex)
-        {
-            std::cout << 1 << " | "
-                      << "Set " << setIndex << ":\n";
-            for (int way = 0; way < c.associativity; ++way)
-            {
-                SharedCache::CacheEntry &entry = c.cache[setIndex][way];
-                std::cout << 1 << " | "
-                          << "  Way " << way << ": ";
-                if (entry.valid)
-                {
-                    std::cout << 1 << " | "
-                              << "Valid, Tag: " << entry.tag << ", Offset: " << entry.offset << ", CoreBit: " << entry.coreBit << ", ";
-                    if (entry.isInstruction)
-                    {
-                        // Print instructions stored in the cache block
-                        std::cout << 1 << " | "
-                                  << "Instructions: ";
-                        for (auto &inst : entry.data_or_instructions)
-                        {
-                            std::cout << inst << " ";
-                        }
-                    }
-                    else
-                    {
-                        // Print data stored in the cache block
-                        std::cout << 1 << " | "
-                                  << "Data: ";
-                        for (auto &d : entry.data_or_instructions)
-                        {
-                            std::cout << d << " ";
-                        }
-                    }
-                }
-                else
-                {
-                    std::cout << 1 << " | "
-                              << "Invalid";
-                }
-                std::cout << std::endl;
-            }
-        }
         if (pc1 < no_inst_1 + 4)
         {
             clockCycles1++;
@@ -409,14 +306,14 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
                  << "2 | clockCycles2 : " << clockCycles2 << std::endl;
             cout << core2 << " | " << std::endl;
             print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
-            for (int i = 0; i < 32; i++)
-            {
-                cout << 2 << " | " << i << " : " << m.read_memory(i, 2) << endl;
-            }
+            // for (int i = 0; i < 32; i++)
+            // {
+            //     cout << 2 << " | " << i << " : " << m.read_memory(i, 2) << endl;
+            // }
         }
     }
-    clockCycles1 += (access_latency-1) * m.miss_count(1);
-    clockCycles2 += (access_latency-1) * m.miss_count(2);
+    clockCycles1 += (access_latency - 1) * m.miss_count(1);
+    clockCycles2 += (access_latency - 1) * m.miss_count(2);
 
     // for (int i = 0; i < 32; i++)
     //     {
@@ -430,8 +327,8 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
 
     print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
-    cout << 3 << " | "
-         << "cache access: "<<access1<<" "<<access2<<endl ;
+    // cout << 3 << " | "
+    //      << "cache access: "<<access1<<" "<<access2<<endl ;
     cout << 3 << " | "
          << "cache miss rate: ";
     cout << m.missrate_count(3) << endl;
@@ -1438,10 +1335,10 @@ void ALU::memoryAccess(std::vector<int> &k, memory &m, int core, int &pc, bool l
     }
     if (k[0] == 1)
     {
-        m.write_memory_1(k[1], k[2], core,lru_bool);
-      //  cout << core << " | " << m.read_memory_1(k[1], core, lru_bool) << "see" << core << endl;
-       // cout << core << " | "
-       //      << " hi" << k[1] << k[2] << endl;
+        m.write_memory_1(k[1], k[2], core, lru_bool);
+        //  cout << core << " | " << m.read_memory_1(k[1], core, lru_bool) << "see" << core << endl;
+        // cout << core << " | "
+        //      << " hi" << k[1] << k[2] << endl;
     }
     mem.clear();
     mem = execute;

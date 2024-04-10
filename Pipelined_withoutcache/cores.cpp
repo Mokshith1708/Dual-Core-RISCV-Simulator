@@ -289,10 +289,10 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
                  << "2 | clockCycles2 : " << clockCycles2 << std::endl;
             cout << core2 << " | " << std::endl;
             print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
-            for (int i = 0; i < 32; i++)
-            {
-                cout << 2 << " | " << i << " : " << m.read_memory(i, 2) << endl;
-            }
+            // for (int i = 0; i < 32; i++)
+            // {
+            //     cout << 2 << " | " << i << " : " << m.read_memory(i, 2) << endl;
+            // }
         }
     }
     // for (int i = 0; i < 32; i++)
@@ -1303,9 +1303,9 @@ void ALU::memoryAccess(std::vector<int> &k, memory &m, int core, int &pc)
     if (k[0] == 1)
     {
         m.write_memory(k[1], k[2], core);
-        cout << core << " | " << m.read_memory(k[1], core) << "see" << core << endl;
-        cout << core << " | "
-             << " hi" << k[1] << k[2] << endl;
+        // cout << core << " | " << m.read_memory(k[1], core) << "see" << core << endl;
+        // cout << core << " | "
+        //      << " hi" << k[1] << k[2] << endl;
     }
     mem.clear();
     mem = execute;

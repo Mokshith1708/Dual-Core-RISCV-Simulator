@@ -35,7 +35,6 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
 - At the end of execution, the simulator outputs the number of stalls, cache miss rate, and the IPC and CPI in `OUTPUTS.txt` file in `data_files/output` folder.
 - Registers and memory values were printed in `terminal1.txt` and `terminal2.txt` for core1 and core 2 respectively in `data_files/output` folder.
 - ecall outputs and all 5 arrays in pipelined will be printed in `console1.txt` and `console2.txt` for core1 and core2 respectively in `data_files/output` folder.
-
 - for parameters in cache can change in parameters.txt file in folder pipelined_withcache.
 
 ### implemented functions
@@ -59,14 +58,45 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
   ecall
   ```
 
-- Phase 3
+# - Phase 3
   - We changed the way we implemented the Pipelined stage.
   - Mistakes in phase 2 were rectified.
   - The simulator now includes a cache that is shared between both cores
   - LRU and random policies were used for cache and it is user based.
   - Parameters such as cache size, block size, associativity, access latency of the cache, and main memory access time are provided in a separate file as input.
+  
+### Meeting-19(Date: 10/4/24)
+- Made some minor changes in cache.
+- Added file in which inputs can be given.
+- Readme is updated.
 
-- Phase 2 lag
+### Meeting-18(Date: 9/4/24)
+- In the previous code offset was not implemented properly.
+- It was coorected in this code.
+- Random replacement policy is implemented.
+  
+### Meeting-17(Date: 8/4/24)
+- Started to implement the cache
+- The two replacement policies we used were LRU and random.
+- Made changes for memory class to combine cache.
+ - LRU is implemented
+
+### Meeting-16(Date: 7/4/24)
+- We removed the idea of using temporary registers for managing stalls.
+- We decided to push dummy instructions in place of stalls to make it match the actual pipeline.
+- Made changes for dataforwarding
+- Added code for latency
+
+### Meeting-15(Date: 2/4/24)
+- There was a problem with the stalls from phase-2.
+- So we cahnged the approach of how to deal with the stalls.
+
+### Meeting-14(Date: 1/4/24)
+-Discussed about the implementation of cache and made some cahnges for pipeline of phase-2.
+
+
+# Phase 2
+### - Phase 2 lag
 
   - We implemented Clock cycles.But we were not getting the count exactly same as in the ripes simulator. Maybe our approach towards stalls should be changed. It is giving some near value but not the exact value.
   - In next phase we would first like to change the detection of stalls process.
@@ -107,6 +137,8 @@ Developing a  simulator on the lines of Ripes. The simulator will have two cores
 - seperated execute function in Non-Pipelined into 5 steps as required in pipeline.
 - Implemented pipelining by adding all the five stages seperately. We did it using Backward execution of pieline stages.
 - We created seperate vectors for both cores for all 5 stages.
+   
+# Phase 1
   
 ### Meeting-9(Date: 25/2/24)
 
