@@ -12,7 +12,8 @@ public:
         int coreBit;
         std::vector<int32_t> data_or_instructions; 
         int offset;
-        CacheEntry() : valid(false), tag(-1), isInstruction(false), coreBit(0), offset(-1) {}
+        int lastUsed;
+        CacheEntry() : valid(false), tag(-1), isInstruction(false), coreBit(0), offset(-1),lastUsed(0) {}
     };
 
     int cacheSize;      // in bytes

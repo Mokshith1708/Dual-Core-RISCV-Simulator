@@ -3,7 +3,7 @@
 
 SharedCache::SharedCache(int cacheSize, int blockSize, int associativity)
     : cacheSize(cacheSize), blockSize(blockSize), associativity(associativity),
-      accesses(0), misses1(0), misses2(0),misses(0)
+      accesses(0), misses1(0), misses2(0), misses(0)
 {
     sets = cacheSize / (blockSize * associativity);
     cache.resize(sets, std::vector<CacheEntry>(associativity));
@@ -12,16 +12,16 @@ SharedCache::SharedCache(int cacheSize, int blockSize, int associativity)
 bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
 {
     accesses++;
- //std::cout<< 1<<" | "<< "its a access "<<core<<" "<< address<<" "<<accesses<<" "<<isInstruction<<std::endl;
+    // std::cout<< 1<<" | "<< "its a access "<<core<<" "<< address<<" "<<accesses<<" "<<isInstruction<<std::endl;
     int setIndex = (address / blockSize) % sets;
     int tag = (address * blockSize) / cacheSize;
     int offset = address % blockSize;
 
     for (auto &entry : cache[setIndex])
     {
-        if (entry.valid && entry.tag == tag && entry.isInstruction == isInstruction && entry.coreBit == core && entry.offset == offset )
+        if (entry.valid && entry.tag == tag && entry.isInstruction == isInstruction && entry.coreBit == core && entry.offset == offset)
         {
-          //   std::cout<< 1<<" | "<< "its a hit "<<core<<" "<< address<<std::endl;
+            //   std::cout<< 1<<" | "<< "its a hit "<<core<<" "<< address<<std::endl;
             return true; // hit
         }
     }
@@ -29,18 +29,18 @@ bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
     // miss
     misses++;
     // std::cout<< 1<<" | "<< "its a miss "<<core<<" "<< address<<std::endl;
-    if(core==1)
+    if (core == 1)
     {
-     misses1++;
+        misses1++;
     }
-    else if(core==2)
+    else if (core == 2)
     {
         misses2++;
     }
     return false;
 }
 
-void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool lru_bool)
+void SharedCache::write_cache(int32_t address, int core, bool isInstruction, bool lru_bool)
 {
     accesses++;
     // if(core==1)
@@ -65,28 +65,38 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction,bool
             entry.coreBit = core;
             entry.offset = address % blockSize;
             entry.data_or_instructions.resize(blockSize, -1);
-            entry.data_or_instructions[entry.offset]=address;
+            entry.data_or_instructions[entry.offset] = address;
             return;
         }
     }
 
-    if (lru_bool)
-    {//LRU
-        cache[setIndex].front().tag = tag;
-        cache[setIndex].front().isInstruction = isInstruction;
-        cache[setIndex].front().coreBit = core;
-        cache[setIndex].front().offset = address % blockSize;
-        cache[setIndex].front().data_or_instructions[cache[setIndex].front().offset]=address;
-    }
-    else
-    {
-        // Random
+    if (!lru_bool)
+    { // Random
         int randomIndex = rand() % associativity;
         cache[setIndex][randomIndex].tag = tag;
         cache[setIndex][randomIndex].isInstruction = isInstruction;
         cache[setIndex][randomIndex].coreBit = core;
         cache[setIndex][randomIndex].offset = address % blockSize;
-        cache[setIndex][randomIndex].data_or_instructions[cache[setIndex][randomIndex].offset]=address;
+        cache[setIndex][randomIndex].data_or_instructions[cache[setIndex][randomIndex].offset] = address;
+    }
+    else
+    {
+        // LRU
+        int lruIndex = 0;
+        for (int i = 0; i < associativity; ++i)
+        {
+            if (cache[setIndex][i].lastUsed < cache[setIndex][lruIndex].lastUsed)
+            {
+                lruIndex = i;
+            }
+        }
+        cache[setIndex][lruIndex].tag = tag;
+        cache[setIndex][lruIndex].isInstruction = isInstruction;
+        cache[setIndex][lruIndex].coreBit = core;
+        cache[setIndex][lruIndex].offset = address % blockSize;
+        cache[setIndex][lruIndex].data_or_instructions[cache[setIndex].front().offset] = address;
+
+        cache[setIndex][lruIndex].lastUsed = accesses;
     }
 }
 double SharedCache::calculate_miss_rate(int core)
@@ -109,7 +119,7 @@ double SharedCache::calculate_miss_rate(int core)
         // {
         //     return static_cast<double>(misses);
         // }
-        return static_cast<double>(misses1+misses2)/accesses;
+        return static_cast<double>(misses1 + misses2) / accesses;
     }
 }
 
@@ -121,19 +131,18 @@ double SharedCache::calculate_miss(int core)
     }
     else
     {
-        if(core==1)
+        if (core == 1)
         {
-        return static_cast<double>(misses1);
+            return static_cast<double>(misses1);
         }
-        else if(core==2)
+        else if (core == 2)
         {
-        return static_cast<double>(misses2);
+            return static_cast<double>(misses2);
         }
         else
         {
             return static_cast<double>(misses);
         }
-        
     }
 }
 
