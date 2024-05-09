@@ -1,0 +1,10 @@
+<!-- templates/gui/index.html -->
+{% extends 'base.html' %}
+
+{% block title %}Janova Codesynth - SIM{% endblock %}
+
+{% block content %}
+    <h2>Welcome to the Dual-Core RISC-V Simulator!</h2>
+    <button onclick="window.location.href='{{ url_for('main_page') }}'">Go to Another Page</button>
+    <!-- Add more content here -->
+{% endblock %}

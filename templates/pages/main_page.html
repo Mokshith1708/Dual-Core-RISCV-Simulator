@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RISC V SIMULATOR</title>
+    <!-- Add any CSS or other meta tags here -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        #core1,
+        #core2 {
+            display: inline-block;
+            width: 45%;
+            margin-right: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            resize: vertical;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+        }
+        #outputs-box {
+            border: 1px solid #ccc; /* Border around the box */
+            border-radius: 5px; /* Rounded corners */
+            padding: 10px; /* Padding inside the box */
+            margin-top: 20px; /* Spacing between the line and the box */
+        }
+    
+        #outputs-box h3 {
+            margin-top: 0; /* Remove default margin for the heading */
+        }
+    
+        #outputs-box button {
+            margin-right: 10px; /* Add spacing between buttons */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Janova Codesynth - SIMULATOR</h1>
+    </header>
+    <main>
+        <div id="core1">
+            <h2>Core 1</h2>
+            <textarea name="core1_text" id="core1_text" rows="10">.data
+.text</textarea>
+        </div>
+        <div id="core2">
+            <h2>Core 2</h2>
+            <textarea name="core2_text" id="core2_text" rows="10">.data
+.text</textarea>
+        </div>
+        <br>
+        <hr>
+        Data Forwarding:
+        <select id="forwarding" name="forwarding">
+            <option value="1">ON</option>
+            <option value="0">OFF</option>
+        </select><br>
+        Cache Replacement Policy:
+        <select id="policy" name="policy">
+            <option value="1">LRU</option>
+            <option value="0">Random</option>
+        </select><br>
+        Instruction Latencies:<br>
+        Add: <input type="number" id="add_latency" name="add_latency" min="0" value="0"><br>
+        Sub: <input type="number" id="sub_latency" name="sub_latency" min="0" value="0"><br>
+        Mul: <input type="number" id="mul_latency" name="mul_latency" min="0" value="0"><br>
+        Addi: <input type="number" id="addi_latency" name="addi_latency" min="0" value="0"><br>
+        Muli: <input type="number" id="muli_latency" name="muli_latency" min="0" value="0"><br>
+        <hr>
+        <button onclick="updateCore1()">Update Core 1</button>
+        <button onclick="updateCore2()">Update Core 2</button>
+        <button onclick="compileSimulator()">Compile Simulator</button>
+        <section>
+            <hr> <!-- Line separator -->
+            <div id="outputs-box">
+                <h3>Outputs</h3>
+                <button onclick="showRegisterValues()">Register Values</button>
+                <button onclick="showMemoryValues()">Memory Values</button>
+                <button onclick="showOutputs()">Outputs</button>
+            </div>
+        </section>
+        
+            
+    </main>
+    <footer>
+        <p></p>
+    </footer>
+
+    <!-- JavaScript functions for updating cores and compiling simulator -->
+    <script>
+        function updateCore1() {
+            var core1Text = document.getElementById("core1_text").value;
+            // Send core1Text to Flask route for updating core1.s
+            fetch('/update_core1', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'core1_text=' + encodeURIComponent(core1Text)
+            })
+            .then(response => response.text())
+            .then(message => alert(message));
+        }
+
+        function updateCore2() {
+            var core2Text = document.getElementById("core2_text").value;
+            // Send core2Text to Flask route for updating core2.s
+            fetch('/update_core2', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'core2_text=' + encodeURIComponent(core2Text)
+            })
+            .then(response => response.text())
+            .then(message => alert(message));
+        }
+
+        function compileSimulator() {
+            var forwarding = document.getElementById("forwarding").value;
+            var policy = document.getElementById("policy").value;
+            var addLatency = document.getElementById("add_latency").value;
+            var subLatency = document.getElementById("sub_latency").value;
+            var mulLatency = document.getElementById("mul_latency").value;
+            var addiLatency = document.getElementById("addi_latency").value;
+            var muliLatency = document.getElementById("muli_latency").value;
+        
+            fetch('/compile_simulator', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'forwarding=' + forwarding +
+                      '&policy=' + policy +
+                      '&add_latency=' + addLatency +
+                      '&sub_latency=' + subLatency +
+                      '&mul_latency=' + mulLatency +
+                      '&addi_latency=' + addiLatency +
+                      '&muli_latency=' + muliLatency
+            })
+            .then(response => response.text())
+            .then(message => alert(message));
+        }
+        function showRegisterValues() {
+            window.location.href = '/register_values'; // URL for the register values page
+        }
+    
+        function showMemoryValues() {
+            window.location.href = '/memory_values'; // URL for the memory values page
+        }
+    
+        function showOutputs() {
+            window.location.href = '/outputs'; // URL for the outputs page
+        }
+    </script>
+</body>
+</html>

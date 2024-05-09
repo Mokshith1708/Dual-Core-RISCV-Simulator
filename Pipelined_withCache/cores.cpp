@@ -330,7 +330,7 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     // cout << 3 << " | "
     //      << "cache access: "<<access1<<" "<<access2<<endl ;
     cout << 3 << " | "
-         << "cache miss rate: ";
+         << "cache miss rate : ";
     cout << m.missrate_count(3) << endl;
     cout << 3 << " | "
          << "No of instructions for core1 : ";
@@ -344,13 +344,13 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
     cout << 3 << " | "
          << "CPI_1 : ";
     cout << (double)clockCycles1 / count1 << endl;
+    // cout << 3 << " | "
+    //      << "     *****       " << endl;
     cout << 3 << " | "
-         << "     *****       " << endl;
-    cout << 3 << " | "
-         << "No of instructions for core2:";
+         << "No of instructions for core2 : ";
     cout << count2 << endl;
     cout << 3 << " | "
-         << "No of Clockcycles for core2:";
+         << "No of Clockcycles for core2 : ";
     cout << clockCycles2 << endl;
     cout << 3 << " | "
          << "IPC_2 : ";

@@ -2,26 +2,26 @@ Register Table : 1
 ================================================================================
 x0  : 0
 x1  : 19
-x2  : 0
-x3  : 0
+x2  : 20
+x3  : 18
 x4  : 0
-x5  : 0
-x6  : 0
+x5  : 20
+x6  : 19
 x7  : 0
-x8  : 19
-x9  : 20
+x8  : 0
+x9  : 0
 x10 : 0
 x11 : 0
 x12 : 0
 x13 : 0
 x14 : 0
-x15 : 0
-x16 : 0
-x17 : 4
-x18 : 0
-x19 : 0
-x20 : 0
-x21 : 19
+x15 : 80
+x16 : 72
+x17 : 0
+x18 : 20
+x19 : 19
+x20 : 76
+x21 : 0
 x22 : 0
 x23 : 0
 x24 : 0
@@ -31,72 +31,533 @@ x27 : 0
 x28 : 0
 x29 : 0
 x30 : 0
-x31 : 23
+x31 : 0
 ================================================================================
 ================================================================================
 Label map code 1
 ================================================================================
-Key: arr, Value: 1
-Key: exit, Value: 24
-Key: loop1, Value: 8
-Key: loop2, Value: 11
-Key: noswap, Value: 18
-Key: str, Value: 2
+Key: base, Value: 1
+Key: exit, Value: 28
+Key: exit2, Value: 24
+Key: loop, Value: 13
+Key: loop1, Value: 17
+Key: start, Value: 3
 ================================================================================
 Address list code 1
 ================================================================================
-Address 0  : 1
-Address 1  : 2
-Address 2  : 3
-Address 3  : 4
-Address 4  : 5
-Address 5  : 6
-Address 6  : 7
-Address 7  : 8
-Address 8  : 9
-Address 9  : 10
-Address 10 : 11
-Address 11 : 12
-Address 12 : 13
-Address 13 : 14
-Address 14 : 15
-Address 15 : 16
-Address 16 : 17
-Address 17 : 18
-Address 18 : 19
-Address 19 : 20
-Address 20 : 0
-Address 21 : 0
-Address 22 : 0
-Address 23 : 0
-Address 24 : 0
-Address 25 : 0
-Address 26 : 0
-Address 27 : 0
-Address 28 : 0
-Address 29 : 0
-Address 30 : 0
-Address 31 : 0
-Address 32 : 0
-Address 33 : 0
-Address 34 : 0
-Address 35 : 0
-Address 36 : 0
-Address 37 : 0
-Address 38 : 0
-Address 39 : 0
-Address 40 : 0
-Address 41 : 0
-Address 42 : 0
-Address 43 : 0
-Address 44 : 0
-Address 45 : 0
-Address 46 : 0
-Address 47 : 0
-Address 48 : 0
-Address 49 : 0
+Address0  : 1
+Address1  : 2
+Address2  : 3
+Address3  : 4
+Address4  : 5
+Address5  : 6
+Address6  : 7
+Address7  : 8
+Address8  : 9
+Address9  : 10
+Address10 : 11
+Address11 : 12
+Address12 : 13
+Address13 : 14
+Address14 : 15
+Address15 : 16
+Address16 : 17
+Address17 : 18
+Address18 : 19
+Address19 : 20
+Address20 : 0
+Address21 : 0
+Address22 : 0
+Address23 : 0
+Address24 : 0
+Address25 : 0
+Address26 : 0
+Address27 : 0
+Address28 : 0
+Address29 : 0
+Address30 : 0
+Address31 : 0
+Address32 : 0
+Address33 : 0
+Address34 : 0
+Address35 : 0
+Address36 : 0
+Address37 : 0
+Address38 : 0
+Address39 : 0
+Address40 : 0
+Address41 : 0
+Address42 : 0
+Address43 : 0
+Address44 : 0
+Address45 : 0
+Address46 : 0
+Address47 : 0
+Address48 : 0
+Address49 : 0
+Address50 : 0
+Address51 : 0
+Address52 : 0
+Address53 : 0
+Address54 : 0
+Address55 : 0
+Address56 : 0
+Address57 : 0
+Address58 : 0
+Address59 : 0
+Address60 : 0
+Address61 : 0
+Address62 : 0
+Address63 : 0
+Address64 : 0
+Address65 : 0
+Address66 : 0
+Address67 : 0
+Address68 : 0
+Address69 : 0
+Address70 : 0
+Address71 : 0
+Address72 : 0
+Address73 : 0
+Address74 : 0
+Address75 : 0
+Address76 : 0
+Address77 : 0
+Address78 : 0
+Address79 : 0
+Address80 : 0
+Address81 : 0
+Address82 : 0
+Address83 : 0
+Address84 : 0
+Address85 : 0
+Address86 : 0
+Address87 : 0
+Address88 : 0
+Address89 : 0
+Address90 : 0
+Address91 : 0
+Address92 : 0
+Address93 : 0
+Address94 : 0
+Address95 : 0
+Address96 : 0
+Address97 : 0
+Address98 : 0
+Address99 : 0
+Address100 : 0
+Address101 : 0
+Address102 : 0
+Address103 : 0
+Address104 : 0
+Address105 : 0
+Address106 : 0
+Address107 : 0
+Address108 : 0
+Address109 : 0
+Address110 : 0
+Address111 : 0
+Address112 : 0
+Address113 : 0
+Address114 : 0
+Address115 : 0
+Address116 : 0
+Address117 : 0
+Address118 : 0
+Address119 : 0
+Address120 : 0
+Address121 : 0
+Address122 : 0
+Address123 : 0
+Address124 : 0
+Address125 : 0
+Address126 : 0
+Address127 : 0
+Address128 : 0
+Address129 : 0
+Address130 : 0
+Address131 : 0
+Address132 : 0
+Address133 : 0
+Address134 : 0
+Address135 : 0
+Address136 : 0
+Address137 : 0
+Address138 : 0
+Address139 : 0
+Address140 : 0
+Address141 : 0
+Address142 : 0
+Address143 : 0
+Address144 : 0
+Address145 : 0
+Address146 : 0
+Address147 : 0
+Address148 : 0
+Address149 : 0
+Address150 : 0
+Address151 : 0
+Address152 : 0
+Address153 : 0
+Address154 : 0
+Address155 : 0
+Address156 : 0
+Address157 : 0
+Address158 : 0
+Address159 : 0
+Address160 : 0
+Address161 : 0
+Address162 : 0
+Address163 : 0
+Address164 : 0
+Address165 : 0
+Address166 : 0
+Address167 : 0
+Address168 : 0
+Address169 : 0
+Address170 : 0
+Address171 : 0
+Address172 : 0
+Address173 : 0
+Address174 : 0
+Address175 : 0
+Address176 : 0
+Address177 : 0
+Address178 : 0
+Address179 : 0
+Address180 : 0
+Address181 : 0
+Address182 : 0
+Address183 : 0
+Address184 : 0
+Address185 : 0
+Address186 : 0
+Address187 : 0
+Address188 : 0
+Address189 : 0
+Address190 : 0
+Address191 : 0
+Address192 : 0
+Address193 : 0
+Address194 : 0
+Address195 : 0
+Address196 : 0
+Address197 : 0
+Address198 : 0
+Address199 : 0
+Address200 : 0
+Address201 : 0
+Address202 : 0
+Address203 : 0
+Address204 : 0
+Address205 : 0
+Address206 : 0
+Address207 : 0
+Address208 : 0
+Address209 : 0
+Address210 : 0
+Address211 : 0
+Address212 : 0
+Address213 : 0
+Address214 : 0
+Address215 : 0
+Address216 : 0
+Address217 : 0
+Address218 : 0
+Address219 : 0
+Address220 : 0
+Address221 : 0
+Address222 : 0
+Address223 : 0
+Address224 : 0
+Address225 : 0
+Address226 : 0
+Address227 : 0
+Address228 : 0
+Address229 : 0
+Address230 : 0
+Address231 : 0
+Address232 : 0
+Address233 : 0
+Address234 : 0
+Address235 : 0
+Address236 : 0
+Address237 : 0
+Address238 : 0
+Address239 : 0
+Address240 : 0
+Address241 : 0
+Address242 : 0
+Address243 : 0
+Address244 : 0
+Address245 : 0
+Address246 : 0
+Address247 : 0
+Address248 : 0
+Address249 : 0
+Address250 : 0
+Address251 : 0
+Address252 : 0
+Address253 : 0
+Address254 : 0
+Address255 : 0
+Address256 : 0
+Address257 : 0
+Address258 : 0
+Address259 : 0
+Address260 : 0
+Address261 : 0
+Address262 : 0
+Address263 : 0
+Address264 : 0
+Address265 : 0
+Address266 : 0
+Address267 : 0
+Address268 : 0
+Address269 : 0
+Address270 : 0
+Address271 : 0
+Address272 : 0
+Address273 : 0
+Address274 : 0
+Address275 : 0
+Address276 : 0
+Address277 : 0
+Address278 : 0
+Address279 : 0
+Address280 : 0
+Address281 : 0
+Address282 : 0
+Address283 : 0
+Address284 : 0
+Address285 : 0
+Address286 : 0
+Address287 : 0
+Address288 : 0
+Address289 : 0
+Address290 : 0
+Address291 : 0
+Address292 : 0
+Address293 : 0
+Address294 : 0
+Address295 : 0
+Address296 : 0
+Address297 : 0
+Address298 : 0
+Address299 : 0
+Address300 : 0
+Address301 : 0
+Address302 : 0
+Address303 : 0
+Address304 : 0
+Address305 : 0
+Address306 : 0
+Address307 : 0
+Address308 : 0
+Address309 : 0
+Address310 : 0
+Address311 : 0
+Address312 : 0
+Address313 : 0
+Address314 : 0
+Address315 : 0
+Address316 : 0
+Address317 : 0
+Address318 : 0
+Address319 : 0
+Address320 : 0
+Address321 : 0
+Address322 : 0
+Address323 : 0
+Address324 : 0
+Address325 : 0
+Address326 : 0
+Address327 : 0
+Address328 : 0
+Address329 : 0
+Address330 : 0
+Address331 : 0
+Address332 : 0
+Address333 : 0
+Address334 : 0
+Address335 : 0
+Address336 : 0
+Address337 : 0
+Address338 : 0
+Address339 : 0
+Address340 : 0
+Address341 : 0
+Address342 : 0
+Address343 : 0
+Address344 : 0
+Address345 : 0
+Address346 : 0
+Address347 : 0
+Address348 : 0
+Address349 : 0
+Address350 : 0
+Address351 : 0
+Address352 : 0
+Address353 : 0
+Address354 : 0
+Address355 : 0
+Address356 : 0
+Address357 : 0
+Address358 : 0
+Address359 : 0
+Address360 : 0
+Address361 : 0
+Address362 : 0
+Address363 : 0
+Address364 : 0
+Address365 : 0
+Address366 : 0
+Address367 : 0
+Address368 : 0
+Address369 : 0
+Address370 : 0
+Address371 : 0
+Address372 : 0
+Address373 : 0
+Address374 : 0
+Address375 : 0
+Address376 : 0
+Address377 : 0
+Address378 : 0
+Address379 : 0
+Address380 : 0
+Address381 : 0
+Address382 : 0
+Address383 : 0
+Address384 : 0
+Address385 : 0
+Address386 : 0
+Address387 : 0
+Address388 : 0
+Address389 : 0
+Address390 : 0
+Address391 : 0
+Address392 : 0
+Address393 : 0
+Address394 : 0
+Address395 : 0
+Address396 : 0
+Address397 : 0
+Address398 : 0
+Address399 : 0
+Address400 : 0
+Address401 : 0
+Address402 : 0
+Address403 : 0
+Address404 : 0
+Address405 : 0
+Address406 : 0
+Address407 : 0
+Address408 : 0
+Address409 : 0
+Address410 : 0
+Address411 : 0
+Address412 : 0
+Address413 : 0
+Address414 : 0
+Address415 : 0
+Address416 : 0
+Address417 : 0
+Address418 : 0
+Address419 : 0
+Address420 : 0
+Address421 : 0
+Address422 : 0
+Address423 : 0
+Address424 : 0
+Address425 : 0
+Address426 : 0
+Address427 : 0
+Address428 : 0
+Address429 : 0
+Address430 : 0
+Address431 : 0
+Address432 : 0
+Address433 : 0
+Address434 : 0
+Address435 : 0
+Address436 : 0
+Address437 : 0
+Address438 : 0
+Address439 : 0
+Address440 : 0
+Address441 : 0
+Address442 : 0
+Address443 : 0
+Address444 : 0
+Address445 : 0
+Address446 : 0
+Address447 : 0
+Address448 : 0
+Address449 : 0
+Address450 : 0
+Address451 : 0
+Address452 : 0
+Address453 : 0
+Address454 : 0
+Address455 : 0
+Address456 : 0
+Address457 : 0
+Address458 : 0
+Address459 : 0
+Address460 : 0
+Address461 : 0
+Address462 : 0
+Address463 : 0
+Address464 : 0
+Address465 : 0
+Address466 : 0
+Address467 : 0
+Address468 : 0
+Address469 : 0
+Address470 : 0
+Address471 : 0
+Address472 : 0
+Address473 : 0
+Address474 : 0
+Address475 : 0
+Address476 : 0
+Address477 : 0
+Address478 : 0
+Address479 : 0
+Address480 : 0
+Address481 : 0
+Address482 : 0
+Address483 : 0
+Address484 : 0
+Address485 : 0
+Address486 : 0
+Address487 : 0
+Address488 : 0
+Address489 : 0
+Address490 : 0
+Address491 : 0
+Address492 : 0
+Address493 : 0
+Address494 : 0
+Address495 : 0
+Address496 : 0
+Address497 : 0
+Address498 : 0
+Address499 : 0
+Address500 : 0
+Address501 : 0
+Address502 : 0
+Address503 : 0
+Address504 : 0
+Address505 : 0
+Address506 : 0
+Address507 : 0
+Address508 : 0
+Address509 : 0
+Address510 : 0
+Address511 : 0
 ================================================================================
 String Map : code 1
 ================================================================================
-Key: str, Value: "nibib bububu", Address: 0
 ================================================================================

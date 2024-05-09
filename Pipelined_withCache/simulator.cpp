@@ -16,9 +16,8 @@
 #include "registers.hpp"
 #include "registers.cpp"
 #include <ios>
-#include<fstream>
-#include<limits>
-
+#include <fstream>
+#include <limits>
 
 using std::cerr;
 using std::cin;
@@ -533,15 +532,30 @@ void segregateLines(const std::string &inputFilename, const std::string &outputF
     outputFile2.close();
     outputFile3.close();
 }
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc != 8)
+    {
+        std::cerr << "Usage: " << argv[0] << " forwarding policy add_latency sub_latency mul_latency addi_latency muli_latency" << std::endl;
+        return 1;
+    }
+
+    // Extracting command-line arguments
+    int forwarding = std::stoi(argv[1]);
+    int policy = std::stoi(argv[2]);
+    int add_latency = std::stoi(argv[3]);
+    int sub_latency = std::stoi(argv[4]);
+    int mul_latency = std::stoi(argv[5]);
+    int addi_latency = std::stoi(argv[6]);
+    int muli_latency = std::stoi(argv[7]);
+
     ofstream outputFile1("..\\data_files\\output\\terminal1.txt");
     ofstream outputFile2("..\\data_files\\output\\terminal2.txt");
     ofstream outputFile3("..\\data_files\\output\\console.txt");
 
     if (!outputFile1.is_open() || !outputFile2.is_open() || !outputFile3.is_open())
     {
-        cerr << "Error: Unable to open the output files." << endl;
+        cerr << "Error: Unable to open the output files .nkjk" << endl;
         return 1;
     }
 
@@ -557,67 +571,83 @@ int main()
         cout << "Error: Unable to open parameters file." << endl;
         return 1;
     }
-    paramFile >> cache_size;                                   // Read the first number of the first line
+    paramFile >> cache_size;                                             // Read the first number of the first line
     paramFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore rest of the line
-    paramFile >> block_size;                                   // Read the first number of the second line
+    paramFile >> block_size;                                             // Read the first number of the second line
     paramFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore rest of the line
-    paramFile >> associativity;                                // Read the first number of the third line
+    paramFile >> associativity;                                          // Read the first number of the third line
     paramFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore rest of the line
-    paramFile >> access_latency;                               // Read the first number of the fourth line
+    paramFile >> access_latency;                                         // Read the first number of the fourth line
     paramFile.close();
-    cout << "Cache Parameters:" << endl;
-    cout << "Cache Size: " << cache_size << endl;
-    cout << "Block Size: " << block_size << endl;
-    cout << "Associativity: " << associativity << endl;
-    cout << "Access latency: " << access_latency << endl;
+    // cout << "Cache Parameters:" << endl;
+    // cout << "Cache Size: " << cache_size << endl;
+    // cout << "Block Size: " << block_size << endl;
+    // cout << "Associativity: " << associativity << endl;
+    // cout << "Access latency: " << access_latency << endl;
 
     memory m(cache_size, block_size, associativity);
 
     bool dataforwardin_on;
-    cout << "Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **" << endl;
-    cin >> dataforwardin_on;
+    if (forwarding)
+        dataforwardin_on = true;
+    else
+        dataforwardin_on = false;
+    // cout << "Should data forwarding be allowed??\nIf no enter ** 0 ** \nElse enter ** 1 **" << endl;
+    // cin >> dataforwardin_on;
     map<string, int> latency_map;
-    int is_Latency;
-    cout << "Do you want to add latencies to instructions : \nEnter ** 1 ** for yes\nEnter ** 0 ** for no\n";
-    cin >> is_Latency;
-    if (is_Latency)
+    for (int i = 0; i < 5; i++)
     {
-        int num_instructions;
-        cout << "Enter the number of instructions you want to add latencies for: ";
-        cin >> num_instructions;
+        latency_map["add"] = add_latency;
+        latency_map["sub"] = sub_latency;
+        latency_map["mul"] = mul_latency;
+        latency_map["addi"] = addi_latency;
+        latency_map["muli"] = muli_latency;
+    }
+    // int is_Latency;
+    // cout << "Do you want to add latencies to instructions : \nEnter ** 1 ** for yes\nEnter ** 0 ** for no\n";
+    // cin >> is_Latency;
+    // if (is_Latency)
+    // {
+    //     int num_instructions;
+    //     cout << "Enter the number of instructions you want to add latencies for: ";
+    //     cin >> num_instructions;
 
-        for (int i = 0; i < num_instructions; ++i)
-        {
-            string instruction;
-            int latency;
-            cout << "Enter instruction type (use only add,sub,mul,addi,muli) : ";
-            cin >> instruction;
-            cout << "Enter latency for " << instruction << " instruction: ";
-            cin >> latency;
-            latency_map[instruction] = latency;
-        }
-    }
-    if (!latency_map.empty())
-    {
-        cout << "Instruction latencies:\n";
-        for (const auto &pair : latency_map)
-        {
-            cout << pair.first << ": " << pair.second << endl;
-        }
-    }
-    else
-    {
-        cout << "No latencies added.\n";
-    }
-    cout << "LRU and Random replacement policies were implemented\nEnter 0 for LRU and any other number for random" << endl;
+    //     for (int i = 0; i < num_instructions; ++i)
+    //     {
+    //         string instruction;
+    //         int latency;
+    //         cout << "Enter instruction type (use only add,sub,mul,addi,muli) : ";
+    //         cin >> instruction;
+    //         cout << "Enter latency for " << instruction << " instruction: ";
+    //         cin >> latency;
+    //         latency_map[instruction] = latency;
+    //     }
+    // }
+    // if (!latency_map.empty())
+    // {
+    //     cout << "Instruction latencies:\n";
+    //     for (const auto &pair : latency_map)
+    //     {
+    //         cout << pair.first << ": " << pair.second << endl;
+    //     }
+    // }
+    // else
+    // {
+    //     cout << "No latencies added.\n";
+    // }
+    // cout << "LRU and Random replacement policies were implemented\nEnter 0 for LRU and any other number for random" << endl;
     bool lru_bool;
-    cin >> lru_bool;
-    lru_bool = (!lru_bool);
-    if (lru_bool)
-        cout << "LRU policy is used" << endl;
+    if (policy == 1)
+        lru_bool = true;
     else
-        cout << "Random replacement policy is used" << endl; // for first file
-    const string file_path = "..\\data_files\\input\\BUBBLE_SORT.s";
+        lru_bool = false;
+    // cin >> lru_bool;
+    lru_bool = (!lru_bool);
+    // if (lru_bool)
+    //     cout << "LRU policy is used" << endl;
+    // else
+    //     cout << "Random replacement policy is used" << endl; // for first file
+    const string file_path = "..\\data_files\\input\\core1.s";
     ifstream instructions_prog_1(file_path);
     if (!instructions_prog_1.is_open())
     {
@@ -640,7 +670,7 @@ int main()
     int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m, p1, 1);
 
     // for second file
-    const string file_path_2 = "..\\data_files\\input\\SELECTION_SORT.s";
+    const string file_path_2 = "..\\data_files\\input\\core2.s";
     ifstream instructions_prog_2(file_path_2);
     if (!instructions_prog_2.is_open())
     {
@@ -670,7 +700,7 @@ int main()
     streambuf *coutbuf3 = cout.rdbuf();
     cout.rdbuf(outputFile3.rdbuf());
 
-    ALU alui(latency_map, p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2, dataforwardin_on, lru_bool,access_latency);
+    ALU alui(latency_map, p1, p2, no_inst_1, no_inst_2, m, r1, r2, 1, 2, dataforwardin_on, lru_bool, access_latency);
 
     cout.rdbuf(coutbuf3);
 
@@ -689,12 +719,12 @@ int main()
     std::cout << "================================================================================\n"
               << "Address list code 1\n"
               << "================================================================================" << std::endl;
-    for (int i = 0; i < 50; ++i)
+    for (int i = 0; i < 512; ++i)
     {
         if (i < 10)
-            std::cout << "Address " << i << "  : " << m.read_memory(i, 1) << std::endl;
+            std::cout << "Address" << i << "  : " << m.read_memory(i, 1) << std::endl;
         else
-            std::cout << "Address " << i << " : " << m.read_memory(i, 1) << std::endl;
+            std::cout << "Address" << i << " : " << m.read_memory(i, 1) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 1\n"
@@ -723,12 +753,12 @@ int main()
     std::cout << "================================================================================\n"
               << "Address list code 2\n"
               << "================================================================================" << std::endl;
-    for (int i = 0; i < 50; ++i)
+    for (int i = 0; i < 512; ++i)
     {
         if (i < 10)
-            std::cout << "Address " << i << "  : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
+            std::cout << "Address" << i << "  : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
         else
-            std::cout << "Address " << i << " : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
+            std::cout << "Address" << i << " : " << m.read_memory_1(i, 2, lru_bool) << std::endl;
     }
     std::cout << "================================================================================\n"
               << "String Map : code 2\n"

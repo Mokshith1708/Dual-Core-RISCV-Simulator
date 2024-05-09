@@ -1,0 +1,23 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Website{% endblock %}</title>
+    <!-- Add any CSS or other meta tags here -->
+</head>
+<body>
+    <header>
+        <h1>Website</h1>
+        <!-- Add navigation links or other header content here -->
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+        <!-- Add any content here -->
+    </main>
+    <footer>
+        <p>&copy; 2024 Website</p>
+    </footer>
+</body>
+</html>
