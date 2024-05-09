@@ -1,32 +1,35 @@
 .data
-base: .word 11 1 12 2 13 3 14 4 15 5 16 6 17 7 18 8 19 9 20 10
+arr: .word 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+str: .string "nibib,bububu"
 .text
-start:
-    li x1 0
-    li x2 0
-    li x3 18
-    li x19 19
-    li x18 20
-    la x16 base
-    la x17 base
-    la x21 base
-    la x20 base
-    loop:
-        addi x2 x1 1
-        addi x16 x20 0
-        addi x15 x20 4
-        loop1:
-            beq x18 x2 exit
-            lw x5 0(x16)
-            lw x6 0(x15)
-            blt x5 x6 exit2
-            sw x5 0(x15)
-            sw x6 0(x16)
-            exit2: 
-            addi x15 x15 4
-            addi x2 x2 1
-            j loop1
-        exit:
-        addi x1 x1 1
-        addi x20 x20 4
-        bne x1 x19 loop
+la x5 arr
+add x6 x5 x0 
+addi x7 x0 20
+addi x8 x0 19
+loop1:
+beq x0 x7 exit
+addi x7 x7 -1
+loop2:
+addi x1 x1 1
+lw x21 0(x5)
+lw x9 4(x5)
+blt x21 x9 noswap 
+sw x21 4(x5)
+sw x9 0(x5) #irnfitnigb
+noswap:
+addi x5 x5 4
+bne x1 x8 loop2
+add x1 x0 x0
+add x5 x6 x0
+j loop1
+exit:
+add x0 x0 x0
+add x1 x1 x5
+add x1 x1 x8 
+li x31 23
+li x10 1000
+addi x17 x0 1
+ecall
+la x10 str
+addi x17 x0 4
+ecall

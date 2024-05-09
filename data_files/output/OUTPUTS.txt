@@ -1,9 +1,9 @@
-3 | cache miss rate : 0.00273879
-3 | No of instructions for core1 : 1587
-3 | No of Clockcycles for core1 : 2270
-3 | IPC_1 : 0.699119
-3 | CPI_1 : 1.43037
-3 | No of instructions for core2 : 1587
-3 | No of Clockcycles for core2 : 2270
-3 | IPC_2 : 0.699119
-3 | CPI_2 : 1.43037
+3 | cache miss rate : 0.00241638
+3 | No of instructions for core1 : 2780
+3 | No of Clockcycles for core1 : 4095
+3 | IPC_1 : 0.678877
+3 | CPI_1 : 1.47302
+3 | No of instructions for core2 : 1647
+3 | No of Clockcycles for core2 : 2240
+3 | IPC_2 : 0.735268
+3 | CPI_2 : 1.36005

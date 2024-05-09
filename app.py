@@ -1,12 +1,29 @@
 import subprocess
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,send_from_directory
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('pages/main_page.html')
+    # Read the content of core1.s and core2.s from the 'data_files/input/' directory
+    core1_path = os.path.join(app.root_path, 'data_files', 'input', 'core1.s')
+    with open(core1_path, 'r') as f:
+        core1_text = f.read()
+    
+    core2_path = os.path.join(app.root_path, 'data_files', 'input', 'core2.s')
+    with open(core2_path, 'r') as f:
+        core2_text = f.read()
+    
+    return render_template('pages/main_page.html', core1_text=core1_text, core2_text=core2_text)
+
+@app.route('/core1.s')
+def get_core1_file():
+    return send_from_directory(os.path.join(app.root_path, 'data_files', 'input'), 'core1.s')
+
+@app.route('/core2.s')
+def get_core2_file():
+    return send_from_directory(os.path.join(app.root_path, 'data_files', 'input'), 'core2.s')
 
 @app.route('/update_core1', methods=['POST'])
 def update_core1():
@@ -31,23 +48,12 @@ def compile_simulator():
     mul_latency = request.form.get('mul_latency', type=int)
     addi_latency = request.form.get('addi_latency', type=int)
     muli_latency = request.form.get('muli_latency', type=int)
-    
-    # print('Received values:')
-    # print('Forwarding:', forwarding)
-    # print('Policy:', policy)
-    # print('Add Latency:', add_latency)
-    # print('Sub Latency:', sub_latency)
-    # print('Mul Latency:', mul_latency)
-    # print('Addi Latency:', addi_latency)
-    # print('Muli Latency:', muli_latency)
-    # Change directory to Pipelined_withCache
     os.chdir('Pipelined_withCache')
     
-    # Compile the simulator.cpp file
     compile_result = subprocess.run(['g++', 'simulator.cpp', '-o', 'a'], capture_output=True)
-    # os.chdir('..')
+
     if compile_result.returncode == 0:
-        # Execute the compiled simulator
+
         execute_result = subprocess.run(['./a', str(forwarding), str(policy), str(add_latency), str(sub_latency), str(mul_latency), str(addi_latency), str(muli_latency)], capture_output=True)
         if execute_result.returncode == 0:
             os.chdir('..')
@@ -61,18 +67,17 @@ def read_register_values(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
         register_values = {}
-        for line in lines[2:34]:  # Extract lines 3 to 34
+        for line in lines[2:34]:
             key, value = line.strip().split(':')
             register_values[key.strip()] = value.strip()
         return register_values
 
 @app.route('/register_values')
 def register_values():
-    # Read register values from terminal1.txt and terminal2.txt
+
     terminal1_content = read_register_values('data_files/output/terminal1.txt')
     terminal2_content = read_register_values('data_files/output/terminal2.txt')
 
-    # Pass the extracted information to the template
     return render_template('pages/register_values.html', terminal1_content=terminal1_content, terminal2_content=terminal2_content)
 
 def read_memory_values(file_path):
@@ -81,14 +86,12 @@ def read_memory_values(file_path):
         memory_values = {}
         start_index = None
         
-        # Find the start index for extracting address values
         for i, line_mem in enumerate(lines_mem):
             if 'Address0' in line_mem:
                 start_index = i
                 break
         
         if start_index is not None:
-            # Extract address values from the start index
             for line_mem in lines_mem[start_index : start_index + 512]:
                 key_mem, value_mem = line_mem.strip().split(':')
                 memory_values[key_mem.strip()] = value_mem.strip()
@@ -96,11 +99,9 @@ def read_memory_values(file_path):
 
 @app.route('/memory_values')
 def memory_values():
-    # Read memory values from terminal1.txt and terminal2.txt
     terminal1_content_mem = read_memory_values('data_files/output/terminal1.txt')
     terminal2_content_mem = read_memory_values('data_files/output/terminal2.txt')
 
-    # Pass the extracted information to the template
     return render_template('pages/memory_values.html', terminal1_content_mem=terminal1_content_mem, terminal2_content_mem=terminal2_content_mem)
 def read_outputs(file_path):
     with open(file_path, 'r') as file:

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RISC V SIMULATOR</title>
-    <!-- Add any CSS or other meta tags here -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -114,13 +113,11 @@
     <main>
         <div id="core1">
             <h2>Core 1</h2>
-            <textarea name="core1_text" id="core1_text" rows="10">.data
-.text</textarea>
+            <textarea name="core1_text" id="core1_text" rows="10"></textarea>
         </div>
         <div id="core2">
             <h2>Core 2</h2>
-            <textarea name="core2_text" id="core2_text" rows="10">.data
-.text</textarea>
+            <textarea name="core2_text" id="core2_text" rows="10"></textarea>
         </div>
         <br>
         <hr>
@@ -153,15 +150,25 @@
                 <button onclick="showOutputs()">Outputs</button>
             </div>
         </section>
-        
-            
     </main>
     <footer>
         <p></p>
     </footer>
-
-    <!-- JavaScript functions for updating cores and compiling simulator -->
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/core1.s')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('core1_text').value = data;
+                });
+        
+            fetch('/core2.s')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('core2_text').value = data;
+                });
+        });
+        
         function updateCore1() {
             var core1Text = document.getElementById("core1_text").value;
             // Send core1Text to Flask route for updating core1.s
@@ -216,15 +223,15 @@
             .then(message => alert(message));
         }
         function showRegisterValues() {
-            window.location.href = '/register_values'; // URL for the register values page
+            window.location.href = '/register_values';
         }
     
         function showMemoryValues() {
-            window.location.href = '/memory_values'; // URL for the memory values page
+            window.location.href = '/memory_values';
         }
     
         function showOutputs() {
-            window.location.href = '/outputs'; // URL for the outputs page
+            window.location.href = '/outputs';
         }
     </script>
 </body>
