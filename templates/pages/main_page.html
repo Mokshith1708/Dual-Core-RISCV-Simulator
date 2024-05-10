@@ -30,7 +30,7 @@
         #core1,
         #core2 {
             display: inline-block;
-            width: 45%;
+            width: 48.4%;
             margin-right: 20px;
             background-color: #fff;
             padding: 20px;
@@ -104,6 +104,22 @@
         #outputs-box button {
             margin-right: 10px; /* Add spacing between buttons */
         }
+        .container {
+            display: inline-block;
+            width: 40%;
+            margin-right: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+        .custom-hr {
+            width: 1500px; /* Adjust the width to your desired length */
+            height: 1px; /* Thickness of the line */
+            background-color: #333;
+            margin: 20px auto; /* Adjust the margin as needed */
+          }
     </style>
 </head>
 <body>
@@ -114,42 +130,49 @@
         <div id="core1">
             <h2>Core 1</h2>
             <textarea name="core1_text" id="core1_text" rows="10"></textarea>
+        <button onclick="updateCore1()">Update Core 1</button>
+
         </div>
         <div id="core2">
             <h2>Core 2</h2>
             <textarea name="core2_text" id="core2_text" rows="10"></textarea>
-        </div>
-        <br>
-        <hr>
-        Data Forwarding:
-        <select id="forwarding" name="forwarding">
-            <option value="1">ON</option>
-            <option value="0">OFF</option>
-        </select><br>
-        Cache Replacement Policy:
-        <select id="policy" name="policy">
-            <option value="1">LRU</option>
-            <option value="0">Random</option>
-        </select><br>
-        Instruction Latencies:<br>
-        Add: <input type="number" id="add_latency" name="add_latency" min="0" value="0"><br>
-        Sub: <input type="number" id="sub_latency" name="sub_latency" min="0" value="0"><br>
-        Mul: <input type="number" id="mul_latency" name="mul_latency" min="0" value="0"><br>
-        Addi: <input type="number" id="addi_latency" name="addi_latency" min="0" value="0"><br>
-        Muli: <input type="number" id="muli_latency" name="muli_latency" min="0" value="0"><br>
-        <hr>
-        <button onclick="updateCore1()">Update Core 1</button>
         <button onclick="updateCore2()">Update Core 2</button>
-        <button onclick="compileSimulator()">Compile Simulator</button>
+        </div>
+        <div class="custom-hr"></div>
+
         <section>
-            <hr> <!-- Line separator -->
+            <div class="container"> 
+                Data Forwarding:
+                <select id="forwarding" name="forwarding">
+                    <option value="1">ON</option>
+                    <option value="0">OFF</option>
+                </select><br>
+                Cache Replacement Policy:
+                <select id="policy" name="policy">
+                    <option value="1">LRU</option>
+                    <option value="0">Random</option>
+                </select><br>
+                Instruction Latencies:<br>
+                Add: <input type="number" id="add_latency" name="add_latency" min="0" value="0"><br>
+                Sub: <input type="number" id="sub_latency" name="sub_latency" min="0" value="0"><br>
+                Mul: <input type="number" id="mul_latency" name="mul_latency" min="0" value="0"><br>
+                Addi: <input type="number" id="addi_latency" name="addi_latency" min="0" value="0"><br>
+                Muli: <input type="number" id="muli_latency" name="muli_latency" min="0" value="0"><br>
+                <hr>  <!-- Line separator -->
+                <button onclick="compileSimulator()">Compile Simulator</button>
+            </div>
+        </section>
+        <div class="custom-hr"></div>
+        <div class="container">
+        <section>
             <div id="outputs-box">
                 <h3>Outputs</h3>
                 <button onclick="showRegisterValues()">Register Values</button>
                 <button onclick="showMemoryValues()">Memory Values</button>
-                <button onclick="showOutputs()">Outputs</button>
+                <button onclick="showOutputs()">Execution info</button>
             </div>
         </section>
+    </div>
     </main>
     <footer>
         <p></p>
