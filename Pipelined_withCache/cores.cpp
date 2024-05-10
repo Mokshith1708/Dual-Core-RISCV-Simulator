@@ -267,11 +267,6 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
         dataforwarding1 = true;
     else
         dataforwarding1 = false;
-    
-    //cout << core1 << " | " << no_inst_1 << " &&& " << no_inst_2 << endl;
-    // cout << core1 << " | " ;
-    // m.print_needed();
-    // cout<<core1 <<std::endl;
     while (pc1 < no_inst_1 + 4 || pc2 < no_inst_2 + 4)
     {
         if (pc1 < no_inst_1 + 4)
@@ -292,13 +287,10 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
                  << "1 | (((((((((((((((((((((((())))))))))))))))))))))))" << endl;
             cout << core1 << " | " << std::endl;
             print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
-            // cache.print_cache();
-            // cout<<std::endl;
+
         }
         if (pc2 < no_inst_2 + 4)
         {
-            // cout << 2 << " | hi hg " << pc2 << endl;
-            //  pc2++;
             clockCycles2++;
             break_execute(2, clockCycles2, count2, pc2, m, r2, tempReg2, tempReg22, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2, branch_bool_2, lat2, lru_bool);
 
@@ -306,29 +298,13 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
                  << "2 | clockCycles2 : " << clockCycles2 << std::endl;
             cout << core2 << " | " << std::endl;
             print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
-            // for (int i = 0; i < 32; i++)
-            // {
-            //     cout << 2 << " | " << i << " : " << m.read_memory(i, 2) << endl;
-            // }
         }
     }
     clockCycles1 += (access_latency - 1) * m.miss_count(1);
     clockCycles2 += (access_latency - 1) * m.miss_count(2);
-
-    // for (int i = 0; i < 32; i++)
-    //     {
-    //         cout << 1 << " | " << i << " " << r1.read(i) << endl;
-    //     }
-    // cout << 1 << " | " << pc2 << std::endl;
-    // for (int i = 0; i < 32; i++)
-    // {
-    //     cout << 1 << " | " << i << " : " << m.read_memory(i, 1) << endl;
-    // }
     print_array(1, k1, kk1, v1, fetch1, decode1, execute1, mem1, write1);
 
     print_array(2, k2, kk2, v2, fetch2, decode2, execute2, mem2, write2);
-    // cout << 3 << " | "
-    //      << "cache access: "<<access1<<" "<<access2<<endl ;
     cout << 3 << " | "
          << "cache miss rate : ";
     cout << m.missrate_count(3) << endl;
@@ -452,17 +428,6 @@ int ALU::RAW_Hazard(std::vector<int> v1, std::vector<int> v2)
             return -1;
         }
     }
-    // if (typeOf(v1[0]) == 5 && typeOf(v2[0]) == 1)
-    // {
-    //     if (v1[1] == v2[2] || v1[1] == v2[3])
-    //     {
-    //         return 5;
-    //     }
-    //     else
-    //     {
-    //         return -1;
-    //     }
-    // }
     if (typeOf(v1[0]) == 1 && typeOf(v2[0]) == 4)
     {
         if (v1[1] == v2[3])
@@ -478,7 +443,6 @@ int ALU::RAW_Hazard(std::vector<int> v1, std::vector<int> v2)
     {
         if (v1[1] == v2[3] || v1[1] == v2[2])
         {
-            // cout<<"/////////////core"<<endl;
             return 7;
         }
         else
@@ -524,130 +488,6 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         }
         int tempry = pc;
         pc++;
-
-        // if (branchtrue)
-        // {
-        //     if (instruction[1] != 0 || instruction[2] != 0 || instruction[3] != 0)
-        //     {
-        //         if (instruction[0] == 20)
-        //         {
-        //             pc = instruction[1];
-        //         }
-        //         else if (instruction[0] == 3)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(ggg3, core), m, r, core, ggg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg2, core), m, r, core, ggg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg1, core), m, r, core, ggg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg, core), m, r, core, ggg, tempReg);
-        //             if (RAW_Hazard(m.read_instruction_1(ggg, core), m.read_instruction_1(tempry, core)) != -1 && dataforwarding1 == false)
-        //             {
-        //                 if (tempReg[rs1] == tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (tempReg[rs1] == tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //         }
-        //         else if (instruction[0] == 4)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(ggg3, core), m, r, core, ggg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg2, core), m, r, core, ggg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg1, core), m, r, core, ggg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg, core), m, r, core, ggg, tempReg);
-        //             // cout<<tempReg[rs1]<<"hbyhbyhb"<<tempReg[rs2]<<"hi"<<ggg<<" "<<tempry<<" "<<RAW_Hazard(instruction,m.read_instruction_1(ggg, core))<<endl;
-        //             if (RAW_Hazard(instruction, m.read_instruction_1(ggg, core)) != -1 && dataforwarding1 == false)
-        //             {
-        //                 if (tempReg[rs1] != tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (tempReg[rs1] != tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //         }
-        //         else if (instruction[0] == 5)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(ggg3, core), m, r, core, ggg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg2, core), m, r, core, ggg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg1, core), m, r, core, ggg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg, core), m, r, core, ggg, tempReg);
-        //             cout << core << " | " << tempReg[rs1] << "hbyhbyhb" << tempReg[rs2] << "hi" << ggg << " " << tempry << " " << RAW_Hazard(m.read_instruction_1(ggg, core), instruction) << endl;
-        //             if (RAW_Hazard(m.read_instruction_1(ggg, core), m.read_instruction_1(tempry, core)) != -1 && dataforwarding1 == false)
-        //             {
-        //                 cout << core << " | " << tempReg[rs1] << "ERROR" << tempReg[rs2] << endl;
-        //                 if (tempReg[rs1] < tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (tempReg[rs1] < tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //         }
-        //         else if (instruction[0] == 6)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(ggg3, core), m, r, core, ggg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg2, core), m, r, core, ggg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg1, core), m, r, core, ggg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg, core), m, r, core, ggg, tempReg);
-        //             if (RAW_Hazard(m.read_instruction_1(ggg, core), m.read_instruction_1(tempry, core)) != -1 && dataforwarding1 == false)
-        //             {
-        //                 if (tempReg[rs1] >= tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (tempReg[rs1] >= tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        // ggg4 = ggg3;
-        // ggg3 = ggg2;
-        // ggg2 = ggg1;
-        // ggg1 = ggg;
-        // ggg = tempry;
-
         fetch.insert(fetch.end(), instruction.begin(), instruction.end());
     }
 
@@ -670,84 +510,6 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
             }
         }
         int tempry = pc;
-        pc++;
-
-        // if (branchtrue)
-        // {
-        //     if (instruction[1] != 0 || instruction[2] != 0 || instruction[3] != 0)
-        //     {
-        //         if (instruction[0] == 20)
-        //         {
-        //             pc = instruction[1];
-        //         }
-        //         else if (instruction[0] == 3)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(gg3, core), m, r, core, gg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg2, core), m, r, core, gg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg1, core), m, r, core, gg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg, core), m, r, core, gg, tempReg);
-        //             if (tempReg[rs1] == tempReg[rs2])
-        //             {
-        //                 pc = rd;
-        //                 t_f_2 = 2;
-        //             }
-        //         }
-        //         else if (instruction[0] == 4)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(gg3, core), m, r, core, gg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg2, core), m, r, core, gg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg1, core), m, r, core, gg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg, core), m, r, core, gg, tempReg);
-        //             if (tempReg[rs1] != tempReg[rs2])
-        //             {
-        //                 pc = rd;
-        //                 t_f_2 = 2;
-        //             }
-        //         }
-        //         else if (instruction[0] == 5)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(gg3, core), m, r, core, gg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg2, core), m, r, core, gg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg1, core), m, r, core, gg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg, core), m, r, core, gg, tempReg);
-        //             if (tempReg[rs1] > tempReg[rs2])
-        //             {
-        //                 pc = rd;
-        //                 t_f_2 = 2;
-        //             }
-        //         }
-        //         else if (instruction[0] == 6)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(gg3, core), m, r, core, gg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg2, core), m, r, core, gg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg1, core), m, r, core, gg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg, core), m, r, core, gg, tempReg);
-        //             if (tempReg[rs1] >= tempReg[rs2])
-        //             {
-        //                 pc = rd;
-        //                 t_f_2 = 2;
-        //             }
-        //         }
-        //     }
-        // }
-        // gg4 = gg3;
-        // gg3 = gg2;
-        // gg2 = gg1;
-        // gg1 = gg;
-        // gg = tempry;
-
         fetch.insert(fetch.end(), instruction.begin(), instruction.end());
     }
 }
@@ -980,7 +742,6 @@ std::vector<int> ALU::instructionDecode(memory &m, int core, registers &r, int &
         int rd = r.read(decode[3]);
         int offset = decode[2];
         int ans = r.read(rs1);
-        //   cout << 1 << " |hello " << ans << endl;
         if (dataforwarding1)
         {
             rd = tempReg[decode[3]];
@@ -1068,14 +829,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        // if (core == 1)
-        //  {
-        //      clockCycles1 += add_lat - 1;
-        //  }
-        //  else
-        //  {
-        //      clockCycles2 += add_lat - 1;
-        //  }
         break;
     }
     case RISCV::sub:
@@ -1085,14 +838,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        // if (core == 1)
-        // {
-        //     clockCycles1 += sub_lat - 1;
-        // }
-        // else
-        // {
-        //     clockCycles2 += sub_lat - 1;
-        // }
         break;
     }
     case RISCV::mul:
@@ -1102,14 +847,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        // if (core == 1)
-        // {
-        //     clockCycles1 += mul_lat - 1;
-        // }
-        // else
-        // {
-        //     clockCycles2 += mul_lat - 1;
-        // }
         break;
     }
     case RISCV::addi:
@@ -1119,14 +856,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        // if (core == 1)
-        // {
-        //     clockCycles1 += addi_lat - 1;
-        // }
-        // else
-        // {
-        //     clockCycles2 += addi_lat - 1;
-        // }
         break;
     }
     case RISCV::muli:
@@ -1136,14 +865,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(v[1]);
         k.push_back(ans);
         tempReg[v[1]] = ans;
-        // if (core == 1)
-        // {
-        //     clockCycles1 += muli_lat - 1;
-        // }
-        // else
-        // {
-        //     clockCycles2 += muli_lat - 1;
-        // }
         break;
     }
     case RISCV::jal:
@@ -1151,7 +872,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(pc + 1);
-        // pc = v[2];
         tempReg[v[1]] = v[2] + 1;
         break;
     }
@@ -1160,7 +880,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         k.push_back(0);
         k.push_back(v[1]);
         k.push_back(pc + 1);
-        // pc = v[2] + v[3] - 1;
         tempReg[v[1]] = v[2] + v[3];
         break;
     }
@@ -1195,7 +914,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         {
             branch_bool = true;
             pc = v[1];
-            //  cout << 1 << " | " << pc << "hi" << endl;
         }
         else
         {
@@ -1258,7 +976,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
     {
         k.push_back(0);
         k.push_back(v[1]);
-        // cout << 1 << " | " << v[2] + v[3] << "oppp" << m.read_memory((v[2] + v[3]) / 4, core) << endl;
         tempReg[v[1]] = m.read_memory_1((v[2] + v[3]) / 4, core, lru_bool);
         k.push_back(tempReg[v[1]]);
 
@@ -1276,7 +993,6 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
     {
         k.push_back(1);
         k.push_back((v[1] + v[3]) / 4);
-        //   cout << 1 << " |nene " << (v[1] + v[3]) << " " << v[2] << endl;
         k.push_back(v[2]);
         break;
     }
@@ -1336,9 +1052,6 @@ void ALU::memoryAccess(std::vector<int> &k, memory &m, int core, int &pc, bool l
     if (k[0] == 1)
     {
         m.write_memory_1(k[1], k[2], core, lru_bool);
-        //  cout << core << " | " << m.read_memory_1(k[1], core, lru_bool) << "see" << core << endl;
-        // cout << core << " | "
-        //      << " hi" << k[1] << k[2] << endl;
     }
     mem.clear();
     mem = execute;
@@ -1361,198 +1074,11 @@ void ALU::writeBack(std::vector<int> &k, memory &m, int core, int &pc, registers
     if (k[0] == 0)
     {
         r.write(k[1], k[2]);
-        // cout<<core<<" | "<<r.read(k[1])<<"see"<<endl;
-        // cout <<core<<" | "<< " hi" << k[1] << k[2] << endl;
     }
     write.clear();
     write = mem;
 }
-void ALU::executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc, std::vector<int> &tempReg, bool lru_bool)
-{
-    if (instruction[1] == 0 && instruction[2] == 0 && instruction[3] == 0)
-    {
-        return;
-    }
-    if (instruction[0] == -1 || instruction[0] == -2)
-    {
-        return;
-    }
-    RISCV::Inst opcode = static_cast<RISCV::Inst>(instruction[0]);
-    switch (opcode)
-    {
-    case RISCV::add:
-    {
-        int rd = instruction[1];
-        int rs1 = instruction[2];
-        int rs2 = instruction[3];
-        int ans1 = tempReg[rs1];
-        int ans2 = tempReg[rs2];
-        tempReg[rd] = ans1 + ans2;
-        break;
-    }
-    case RISCV::sub:
-    {
-        int rd = instruction[1];
-        int rs1 = instruction[2];
-        int rs2 = instruction[3];
-        int ans1 = tempReg[rs1];
-        int ans2 = tempReg[rs2];
-        tempReg[rd] = ans1 - ans2;
-        break;
-    }
-    case RISCV::mul:
-    {
-        int rd = instruction[1];
-        int rs1 = instruction[2];
-        int rs2 = instruction[3];
-        int ans1 = tempReg[rs1];
-        int ans2 = tempReg[rs2];
-        tempReg[rd] = ans1 * ans2;
-        break;
-    }
-    case RISCV::addi:
-    {
-        int rd = instruction[1];
-        int rs1 = instruction[2];
-        int temp2 = instruction[3];
-        tempReg[rd] = tempReg[rs1] + temp2;
-        break;
-    }
-    case RISCV::muli:
-    {
-        int rd = instruction[1];
-        int rs1 = instruction[2];
-        int temp2 = instruction[3];
-        tempReg[rd] = tempReg[rs1] * temp2;
-        break;
-    }
-    case RISCV::jal:
-    {
-        int rd = instruction[1];
-        int rs1 = instruction[2];
-        tempReg[rd] = pc + 1;
-        break;
-    }
-    case RISCV::jalr:
-    {
-        int rd = instruction[1];
-        int rs1 = tempReg[instruction[2]];
-        int offset = instruction[3];
-        tempReg[rd] = pc + 1;
-        break;
-    }
-    case RISCV::beq:
-    {
-        int rs1 = instruction[1];
-        int rs2 = instruction[2];
-        int rd = instruction[3];
-        if (r.read(rs1) == r.read(rs2))
-        {
-            break;
-        }
-        else
-        {
-            break;
-        }
-    }
-    case RISCV::bne:
-    {
-        int rs1 = instruction[1];
-        int rs2 = instruction[2];
-        int rd = instruction[3];
-        if (r.read(rs1) != r.read(rs2))
-        {
-            break;
-        }
-        else
-        {
-            break;
-        }
-    }
-    case RISCV::blt:
-    {
-        int rs1 = instruction[1];
-        int rs2 = instruction[2];
-        int rd = instruction[3];
-        if (r.read(rs1) < r.read(rs2))
-        {
-            break;
-        }
-        else
-        {
-            break;
-        }
-    }
-    case RISCV::bge:
-    {
-        int rs1 = instruction[1];
-        int rs2 = instruction[2];
-        int rd = instruction[3];
-        if (r.read(rs1) >= r.read(rs2))
-        {
-            break;
-        }
-        else
-        {
-            break;
-        }
-    }
-    case RISCV::j:
-    {
-        int rd = instruction[1];
-        break;
-    }
-    case RISCV::lw:
-    {
-        int rd = instruction[1];
-        int rs1 = tempReg[instruction[3]];
-        int offset = instruction[2];
-        tempReg[rd, m.read_memory_1((rs1 + offset) / 4, core, lru_bool)];
-        break;
-    }
-    case RISCV::sw:
-    {
-        int rs1 = instruction[1];
-        int rd = tempReg[instruction[3]];
-        int offset = instruction[2];
-        // m.write_memory((rd + offset) / 4, tempReg[rs1], core);
-        break;
-    }
-    case RISCV::la:
-    {
-        int rd = instruction[1];
-        std::vector<int> v = m.read_instruction_1(instruction[2], core, lru_bool);
-        int rs1 = v[1];
-        tempReg[rd] = rs1;
-        break;
-    }
-    case RISCV::li:
-    {
-        int rd = instruction[1];
-        int rs1 = instruction[2];
-        tempReg[rd] = rs1;
-        break;
-    }
-    case RISCV::ecall:
-    {
-        int n = r.read(17);
-        int k = r.read(10);
-        if (n == 1)
-        {
-            //  std::cout << k;
-        }
-        if (n == 4)
-        {
-            // std::string st_temp = m.read_str(k, core);
-            // std::cout << st_temp.substr(1, st_temp.size() - 2);
-        }
-        break;
-    }
 
-    default:
-        break;
-    }
-}
 bool ALU::predictor(int pc, memory &m)
 {
     return true;
