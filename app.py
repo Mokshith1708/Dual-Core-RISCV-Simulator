@@ -107,14 +107,17 @@ def read_outputs(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
         output_data = []
-        for line in lines[:-1]:  # Exclude the last line
-            if line.strip():
-                line = line[4:]  # Ignore the first 4 characters
-                line_parts = line.strip().split(':')
-                if len(line_parts) == 2:
-                    key, value = line_parts
-                    output_data.append((key.strip(), value.strip()))
+        for line in lines:
+            if not line.strip():
+                break
+            line = line[4:]
+            line_parts = line.strip().split(':')
+            if len(line_parts) == 2:
+                key, value = line_parts
+                output_data.append((key.strip(), value.strip()))
         return output_data
+
+
 
 @app.route('/outputs')
 def outputs():
