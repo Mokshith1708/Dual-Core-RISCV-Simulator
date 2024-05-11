@@ -1,3 +1,19 @@
+# Phasre-4
+### (Date: 11/5/2024)
+- 1 bit branch predictor is added.
+- Code is cleaned up.
+- Some changes in the GUI were made.
+- All things were checked and updated for the last time.
+### (Date: 10/5/2024)
+- There was an error with the memory values of core-2 , it was always showing values of memory-1. So it was rectified.
+- Work for predictor is started.
+
+### (Date: 09/5/2024)
+- Made a small correction in Cache.
+- Started to work to create GUI.
+- Flask was used to create GUI.
+- A new folder called templates was added which contains the code for all the four pages of GUI.
+- App.cpp was created which is the final file to render everthing into a webpage.
 
 ## Dual-Core-RISCV-Simulator
 
