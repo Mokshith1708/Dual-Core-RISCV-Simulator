@@ -1,11 +1,11 @@
 ## Dual-Core-RISCV-Simulator
 
 - Developing a  simulator on the lines of Ripes. The simulator will have two cores and will be able to simulate a multi-core environment.
-- This is a Dual Core-RISCV-Simulator wchich consists of 4 phases. 
-- The first phase is about creating a 5 stage processor.
-- In the second Phase pipelining is introduced with data forwarding and stall management.
-- In the third Phase of the project Cache with LRU and Random replacement policy was added to the simulator.
-- In the fourth Phase of the project Graphical User Interface and 1 bit predictor were added to the simulator.
+- This is a Dual Core-RISCV-Simulator wchich consists of 4 parts. 
+- The first part a 5 stage processor was created.
+- In the second Part pipelining is introduced with data forwarding and stall management.
+- In the third Part of the project Cache with LRU and Random replacement policy was added to the simulator.
+- In the fourth Part of the project Graphical User Interface and 1 bit predictor were added to the simulator.
 
 ### How to run
 
@@ -42,15 +42,13 @@
   cd pipelined_withcache
   python app.py
   Note: Click on the link to open the Webpage.
-  ![alt text](image.png)
-
   - In the GUI before checking the register or memory or output values Update core 1 , update core 2 and compile simulator should be clicked.
   - Also we need to wait until this message is displayed:
-   ![alt text](image-1.png)
+   " Simulator compiled and executed successfully. "
 
   ```
  
-
+- After the Simulator is compiled we can check the register, memory and output values by clicking on the respective buttons in the GUI.
 - At the end of execution, the simulator outputs the number of stalls, cache miss rate, and the IPC and CPI in `OUTPUTS.txt` file in `data_files/output` folder.
 - Registers and memory values were printed in `terminal1.txt` and `terminal2.txt` for core1 and core 2 respectively in `data_files/output` folder.
 - ecall outputs and all 5 arrays in pipelined will be printed in `console1.txt` and `console2.txt` for core1 and core2 respectively in `data_files/output` folder.
