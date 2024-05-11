@@ -41,128 +41,26 @@ using vs = vector<string>;
 using vss = vector<vector<string>>;
 using vi = vector<int>;
 
-RISCV::Inst stringToInst(const string &s) // converting strings inputs to instructions
+RISCV::Inst stringToInst(const string &s)
 {
-    static const map<string, RISCV::Inst> instMap = {
-        {"jal", RISCV::jal},
-        {"jalr", RISCV::jalr},
-        {"beq", RISCV::beq},
-        {"bne", RISCV::bne},
-        {"blt", RISCV::blt},
-        {"bge", RISCV::bge},
-        {"bltu", RISCV::bltu},
-        {"begu", RISCV::begu},
-        {"lb", RISCV::lb},
-        {"lw", RISCV::lw},
-        {"sb", RISCV::sb},
-        {"sw", RISCV::sw},
-        {"addi", RISCV::addi},
-        {"add", RISCV::add},
-        {"sub", RISCV::sub},
-        {"ecall", RISCV::ecall},
-        {"lbu", RISCV::lbu},
-        {"lwu", RISCV::lwu},
-        {"j", RISCV::j},
-        {"la", RISCV::la},
-        {"li", RISCV::li},
-        {"mul", RISCV::mul},
-        {"muli", RISCV::muli},
-    };
+    static const map<string, RISCV::Inst> instMap = {{"jal", RISCV::jal},{"jalr", RISCV::jalr},{"beq", RISCV::beq},{"bne", RISCV::bne},{"blt", RISCV::blt},{"bge", RISCV::bge},{"bltu", RISCV::bltu},{"begu", RISCV::begu},{"lb", RISCV::lb},{"lw", RISCV::lw},{"sb", RISCV::sb},{"sw", RISCV::sw},{"addi", RISCV::addi},{"add", RISCV::add},{"sub", RISCV::sub},{"ecall", RISCV::ecall},{"lbu", RISCV::lbu},{"lwu", RISCV::lwu},{"j", RISCV::j},{"la", RISCV::la},{"li", RISCV::li},{"mul", RISCV::mul},{"muli", RISCV::muli},};
 
     auto it = instMap.find(s);
     if (it != instMap.end())
-    {
         return it->second;
-    }
     else
-    {
-        // handling unknown instruction
         return RISCV::lwu;
-    }
 }
-
-// Function to convert a string to the corresponding RISCV::reg value
 RISCV::reg stringToReg(const string &s)
 {
-    static const map<string, RISCV::reg> regMap = {
-        {"x0", RISCV::x0},
-        {"x1", RISCV::x1},
-        {"x2", RISCV::x2},
-        {"x3", RISCV::x3},
-        {"x4", RISCV::x4},
-        {"x5", RISCV::x5},
-        {"x6", RISCV::x6},
-        {"x7", RISCV::x7},
-        {"x8", RISCV::x8},
-        {"x9", RISCV::x9},
-        {"x10", RISCV::x10},
-        {"x11", RISCV::x11},
-        {"x12", RISCV::x12},
-        {"x13", RISCV::x13},
-        {"x14", RISCV::x14},
-        {"x15", RISCV::x15},
-        {"x16", RISCV::x16},
-        {"x17", RISCV::x17},
-        {"x18", RISCV::x18},
-        {"x19", RISCV::x19},
-        {"x20", RISCV::x20},
-        {"x21", RISCV::x21},
-        {"x22", RISCV::x22},
-        {"x23", RISCV::x23},
-        {"x24", RISCV::x24},
-        {"x25", RISCV::x25},
-        {"x26", RISCV::x26},
-        {"x27", RISCV::x27},
-        {"x28", RISCV::x28},
-        {"x29", RISCV::x29},
-        {"x30", RISCV::x30},
-        {"x31", RISCV::x31},
-        {"zero", RISCV::x0},
-        {"ra", RISCV::x1},
-        {"sp", RISCV::x2},
-        {"gp", RISCV::x3},
-        {"tp", RISCV::x4},
-        {"to", RISCV::x5},
-        {"t1", RISCV::x6},
-        {"t2", RISCV::x7},
-        {"s0", RISCV::x8},
-        {"s1", RISCV::x9},
-        {"a0", RISCV::x10},
-        {"a1", RISCV::x11},
-        {"a2", RISCV::x12},
-        {"a3", RISCV::x13},
-        {"a4", RISCV::x14},
-        {"a5", RISCV::x15},
-        {"a6", RISCV::x16},
-        {"a7", RISCV::x17},
-        {"s2", RISCV::x18},
-        {"s3", RISCV::x19},
-        {"s4", RISCV::x20},
-        {"s5", RISCV::x21},
-        {"s6", RISCV::x22},
-        {"s7", RISCV::x23},
-        {"s8", RISCV::x24},
-        {"s9", RISCV::x25},
-        {"s10", RISCV::x26},
-        {"s11", RISCV::x27},
-        {"t3", RISCV::x28},
-        {"t4", RISCV::x29},
-        {"t5", RISCV::x30},
-        {"t6", RISCV::x31},
-    };
+    static const map<string, RISCV::reg> regMap = {{"x0", RISCV::x0},{"x1", RISCV::x1},{"x2", RISCV::x2},{"x3", RISCV::x3},{"x4", RISCV::x4},{"x5", RISCV::x5},{"x6", RISCV::x6},{"x7", RISCV::x7},{"x8", RISCV::x8},{"x9", RISCV::x9},{"x10", RISCV::x10},{"x11", RISCV::x11},{"x12", RISCV::x12},{"x13", RISCV::x13},{"x14", RISCV::x14},{"x15", RISCV::x15},{"x16", RISCV::x16},{"x17", RISCV::x17},{"x18", RISCV::x18},{"x19", RISCV::x19},{"x20", RISCV::x20},{"x21", RISCV::x21},{"x22", RISCV::x22},{"x23", RISCV::x23},{"x24", RISCV::x24},{"x25", RISCV::x25},{"x26", RISCV::x26},{"x27", RISCV::x27},{"x28", RISCV::x28},{"x29", RISCV::x29},{"x30", RISCV::x30},{"x31", RISCV::x31},{"zero", RISCV::x0},{"ra", RISCV::x1},{"sp", RISCV::x2},{"gp", RISCV::x3},{"tp", RISCV::x4},{"to", RISCV::x5},{"t1", RISCV::x6},{"t2", RISCV::x7},{"s0", RISCV::x8},{"s1", RISCV::x9},{"a0", RISCV::x10},{"a1", RISCV::x11},{"a2", RISCV::x12},{"a3", RISCV::x13},{"a4", RISCV::x14},{"a5", RISCV::x15},{"a6", RISCV::x16},{"a7", RISCV::x17},{"s2", RISCV::x18},{"s3", RISCV::x19},{"s4", RISCV::x20},{"s5", RISCV::x21},{"s6", RISCV::x22},{"s7", RISCV::x23},{"s8", RISCV::x24},{"s9", RISCV::x25},{"s10", RISCV::x26},{"s11", RISCV::x27},{"t3", RISCV::x28},{"t4", RISCV::x29},{"t5", RISCV::x30},{"t6", RISCV::x31},};
 
     auto it = regMap.find(s);
     if (it != regMap.end())
-    {
         return it->second;
-    }
     else
-    {
-        // Handle unknown register
         return RISCV::x31;
-    }
 }
-
 vector<string> split_string(const string &line)
 {
     istringstream iss(line);
@@ -174,27 +72,19 @@ vector<string> split_string(const string &line)
         // Remove leading and trailing whitespaces
         word.erase(0, word.find_first_not_of(" \t\n\r\f\v"));
         word.erase(word.find_last_not_of(" \t\n\r\f\v") + 1);
-
         // Split the word by comma if present
         size_t pos;
         while ((pos = word.find(',')) != string::npos)
         {
             if (pos > 0)
-            {
                 words.push_back(word.substr(0, pos));
-            }
             word.erase(0, pos + 1);
         }
         if (!word.empty())
-        {
             words.push_back(word);
-        }
     }
-
     return words;
 }
-
-// First Pass for Collecting Labels and Addresses
 void collectLabels(vs &lines, map<string, int> &labelMap, map<string, int> &dataSizes, pair<int, int> &p)
 {
     int address = 0;
@@ -228,7 +118,6 @@ void collectLabels(vs &lines, map<string, int> &labelMap, map<string, int> &data
                 string label = words[0].substr(0, words[0].size() - 1);
                 labelMap[label] = address;
                 dataSizes[label] = words.size() - 2;
-                // cout<<dataSizes[label]<<endl;
                 address++;
             }
 
@@ -249,10 +138,7 @@ void collectLabels(vs &lines, map<string, int> &labelMap, map<string, int> &data
                 address++;
             }
             else
-            {
-                // Increment address for non-label lines
                 address++;
-            }
         }
     }
 }
@@ -283,7 +169,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
             }
             if (!words.empty() && words[0].back() == ':')
             {
-                if (words[1] == ".word") // identifying .word
+                if (words[1] == ".word")
                 {
                     string label = words[0].substr(0, words[0].size() - 1);
                     encode[1] = address_memory;
@@ -298,7 +184,7 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                     address++;
                     continue;
                 }
-                else if (words[1] == ".string") // for storing strings in data section
+                else if (words[1] == ".string")
                 {
                     string str;
                     for (size_t j = 2; j < words.size(); ++j)
@@ -317,10 +203,8 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                 }
             }
         }
-        if (address >= p.second) // running from .text section
+        if (address >= p.second)
         {
-
-            // Used to store instructions in numerical form.
             if (words[0] == ".text")
             {
                 m.write_instruction(address, encode, core);
@@ -336,25 +220,23 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                 address++;
                 continue;
             }
-
-            for (int i = 0; i < (int)words.size(); i++) // wrote all cases to store in instruction set
+            for (int i = 0; i < (int)words.size(); i++)
             {
                 if (i == 0)
                 {
-                    // Handle instruction
                     switch (stringToInst(words[i]))
                     {
                     case RISCV::la:
                         encode[0] = stringToInst(words[i]);
                         encode[1] = stringToReg(words[i + 1]);
                         encode[2] = labelMap[words[i + 2]];
-                        i += 3; // Skip label and operands
+                        i += 3;
                         break;
                     case RISCV::li:
                         encode[0] = stringToInst(words[i]);
                         encode[1] = stringToReg(words[i + 1]);
                         encode[2] = stoi(words[i + 2]);
-                        i += 3; // Skip label and operands
+                        i += 3;
                         break;
                     case RISCV::ecall:
                         encode[0] = stringToInst(words[i]);
@@ -367,54 +249,39 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                     case RISCV::bge:
                     case RISCV::bltu:
                     case RISCV::begu:
-                        // Label cases
                         encode[0] = stringToInst(words[i]);
                         encode[1] = stringToReg(words[i + 1]);
                         encode[2] = stringToReg(words[i + 2]);
                         if (labelMap.find(words[i + 3]) != labelMap.end())
-                        {
                             encode[3] = labelMap[words[i + 3]] + 1;
-                        }
                         else
-                        {
                             throw invalid_argument("Label not found: " + words[i + 3]);
-                        }
-                        i += 3; // Skip label and operands
+                        i += 3;
                         break;
                     case RISCV::j:
                         encode[0] = stringToInst(words[i]);
 
                         if (labelMap.find(words[i + 1]) != labelMap.end())
-                        {
                             encode[1] = labelMap[words[i + 1]] + 1;
-                        }
                         else
-                        {
                             throw invalid_argument("Label not found: " + words[i + 1]);
-                        }
-                        // cout<<encode[0]<<" "<<encode[1]<<endl;
                         i += 3;
                         break;
                     case RISCV::jal:
                         encode[0] = stringToInst(words[i]);
                         encode[1] = stringToReg(words[i + 1]);
                         if (labelMap.find(words[i + 2]) != labelMap.end())
-                        {
                             encode[2] = labelMap[words[i + 2]] + 1;
-                        }
                         else
-                        {
                             throw invalid_argument("Label not found: " + words[i + 2]);
-                        }
-                        i += 3; // Skip label and operands
+                        i += 3;
                         break;
                     case RISCV::jalr:
-                        // Label cases
                         encode[0] = stringToInst(words[i]);
                         encode[1] = stringToReg(words[i + 1]);
                         encode[2] = stringToReg(words[i + 2]);
                         encode[3] = stoi(words[i + 3]);
-                        i += 3; // Skip label and operands
+                        i += 3;
                         break;
                     case RISCV::lw:
                     case RISCV::sw:
@@ -443,26 +310,22 @@ int generateMachineCode(vs &lines, map<string, int> &labelMap, memory &m, pair<i
                         i += 3;
                         break;
                     default:
-                        // Handle non-branch instructions
                         encode[0] = stringToInst(words[i]);
                         break;
                     }
                 }
                 else
                 {
-                    // Handle registers
                     RISCV::reg r = stringToReg(words[i]);
                     encode[i] = r;
                 }
             }
         }
-
         m.write_instruction(address, encode, core);
         address++;
     }
     return address;
 }
-
 void printRegisterTable(registers r, int core)
 {
     std::cout << "Register Table : " << core << std::endl;
@@ -669,7 +532,6 @@ int main(int argc, char *argv[])
     collectLabels(lines_prog_1, labelMap_1, dataSizes_1, p1);
     int no_inst_1 = generateMachineCode(lines_prog_1, labelMap_1, m, p1, 1);
 
-    // for second file
     const string file_path_2 = "..\\data_files\\input\\core2.s";
     ifstream instructions_prog_2(file_path_2);
     if (!instructions_prog_2.is_open())
@@ -713,9 +575,7 @@ int main(int argc, char *argv[])
               << "Label map code 1\n"
               << "================================================================================" << std::endl;
     for (const auto &pair : labelMap_1)
-    {
         std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
-    } // labels
     std::cout << "================================================================================\n"
               << "Address list code 1\n"
               << "================================================================================" << std::endl;
@@ -730,9 +590,7 @@ int main(int argc, char *argv[])
               << "String Map : code 1\n"
               << "================================================================================" << std::endl;
     for (const auto &pair : m.strmap_1)
-    {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
-    }
     std::cout << "================================================================================" << std::endl;
 
     cout.rdbuf(coutbuf1);
@@ -747,9 +605,7 @@ int main(int argc, char *argv[])
               << "================================================================================" << std::endl;
 
     for (const auto &pair : labelMap_2)
-    {
         std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
-    }
     std::cout << "================================================================================\n"
               << "Address list code 2\n"
               << "================================================================================" << std::endl;
@@ -764,18 +620,9 @@ int main(int argc, char *argv[])
               << "String Map : code 2\n"
               << "================================================================================" << std::endl;
     for (const auto &pair : m.strmap_2)
-    {
         std::cout << "Key: " << pair.first.first << ", Value: " << pair.first.second << ", Address: " << pair.second << std::endl;
-    }
     std::cout << "================================================================================" << std::endl;
-
-    // for (int i = 0; i < 30; i++)
-    // {
-    //     cout << m.instructions_1[i][0] << " " << m.instructions_1[i][1] << " " << m.instructions_1[i][2] << " " << m.instructions_1[i][3] << " " << endl;
-    // }
-
     cout.rdbuf(coutbuf2);
-
     outputFile1.close();
     outputFile2.close();
     outputFile3.close();
