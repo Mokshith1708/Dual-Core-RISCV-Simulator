@@ -32,6 +32,7 @@ private:
   std::vector<int> tempReg11;
   std::vector<int> tempReg22;
 
+
 public:
   void executeInstruction(std::vector<int> instructions, memory &m, registers &r, int core, int &pc);
   ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<int, int> &p2, int no_inst_1, int no_inst_2, memory &m, registers &r1, registers &r2, int core1, int core2, bool dataforwarding_on,bool lru_bool,int access_latency);
@@ -53,6 +54,14 @@ public:
   bool dataforwarding1 = false;
   bool dataforwarding2;
   bool branchtrue = true;
+  std::map<std::vector<int>,int> Dpredictor1,Dpredictor2;
+  std::map<std::vector<int>,int> btaken1, btaken2 ;
+  int pc1old;
+  int pc2old;
+  bool branchT1 = false;
+  bool branchT2 = false;
+  int pcc1;
+  int pcc2;
   void executeInstructiondummy(std::vector<int> instruction, memory &m, registers &r, int core, int pc, std::vector<int> &tempReg,bool lru_bool);
   std::vector<int> prevpc1, prevpc2;
   void instructionFetch(memory &m, int core, int &pc,int &count, registers &r, std::vector<int> &tempReg,bool lru_bool);

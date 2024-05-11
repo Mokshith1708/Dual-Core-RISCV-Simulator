@@ -6,6 +6,7 @@
 #include <map>
 #include <algorithm>
 #include "SharedCache.hpp"
+#include <bits/stdc++.h>
 using std::cout;
 using std::endl;
 using std::string;
@@ -54,8 +55,10 @@ void print_array(int core, std::vector<int> k, std::vector<int> kk, std::vector<
     cout << core << " |------------------------ " << endl;
 }
 void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc, memory &m, registers &r, std::vector<int> &tempReg, std::vector<int> &tempReg1, std::vector<int> &k, std::vector<int> &kk, std::vector<int> &v, std::vector<int> &fetch, std::vector<int> &decode, std::vector<int> &execute, std::vector<int> &mem, std::vector<int> &write, bool &branch_bool, int &lat, bool lru_bool)
-{
+{   std::map<std::vector<int>,int> Dpredictor = (core == 1) ? Dpredictor1 : Dpredictor2;
+    std::map<std::vector<int>,int>  btaken = (core == 1) ? btaken1 : btaken2;
     // cout << "1 | " << pc1 << "hero" << endl;
+    bool branchT = (core == 1) ? branchT1 : branchT2;
     writeBack(k, m, core, pc, r);
     if (!dataforwarding1)
     {
@@ -195,25 +198,60 @@ void ALU::break_execute(int core, int &clockcyc, int &instruction_count, int &pc
     {
         access2++;
     }
-    if (!mem.empty())
+    if (branchT == false)
     {
-        if (isBranch(mem[0]))
+        if (!mem.empty())
         {
-            if (branch_bool)
+            if (isBranch(mem[0]))
             {
+                if (branch_bool)
+                {
 
-                execute[0] = 0;
-                execute[1] = 0;
-                execute[2] = 0;
-                execute[3] = 0;
-                decode[0] = 0;
-                decode[1] = 0;
-                decode[2] = 0;
-                decode[3] = 0;
-                branch_bool = false;
-                instruction_count--;
-                cout << core << " | !!!!   STALL    !!!!" << endl;
-                return;
+                    execute[0] = 0;
+                    execute[1] = 0;
+                    execute[2] = 0;
+                    execute[3] = 0;
+                    decode[0] = 0;
+                    decode[1] = 0;
+                    decode[2] = 0;
+                    decode[3] = 0;
+                    branch_bool = false;
+                    instruction_count--;
+                    cout << core << " | !!!!   STALL    !!!!" << endl;
+                    return;
+                }
+            }
+        }
+    }
+    if (branchT == true)
+    {
+        if (!mem.empty())
+        {
+            if (isBranch(mem[0]))
+            {
+                if (btaken[mem] == 1)
+                {
+                    btaken[mem] =0;
+                    execute[0] = 0;
+                    execute[1] = 0;
+                    execute[2] = 0;
+                    execute[3] = 0;
+                    decode[0] = 0;
+                    decode[1] = 0;
+                    decode[2] = 0;
+                    decode[3] = 0;
+                    if (core == 1)
+                    {
+                        pc = pcc1;
+                    }
+                    else
+                    {
+                        pc = pcc2;
+                    }
+                    instruction_count--;
+                    cout << core << " | !!!!   STALL    !!!!" << endl;
+                    return;
+                }
             }
         }
     }
@@ -267,11 +305,11 @@ ALU::ALU(std::map<string, int> &latency_map, std::pair<int, int> &p1, std::pair<
         dataforwarding1 = true;
     else
         dataforwarding1 = false;
-    
-    //cout << core1 << " | " << no_inst_1 << " &&& " << no_inst_2 << endl;
-    // cout << core1 << " | " ;
-    // m.print_needed();
-    // cout<<core1 <<std::endl;
+
+    // cout << core1 << " | " << no_inst_1 << " &&& " << no_inst_2 << endl;
+    //  cout << core1 << " | " ;
+    //  m.print_needed();
+    //  cout<<core1 <<std::endl;
     while (pc1 < no_inst_1 + 4 || pc2 < no_inst_2 + 4)
     {
         if (pc1 < no_inst_1 + 4)
@@ -500,7 +538,8 @@ int ALU::RAW_Hazard(std::vector<int> v1, std::vector<int> v2)
     return -1;
 }
 void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &r, std::vector<int> &tempReg, bool lru_bool)
-{
+{   std::map<std::vector<int>,int> Dpredictor = (core == 1) ? Dpredictor1 : Dpredictor2;
+    std::map<std::vector<int>,int>  btaken = (core == 1) ? btaken1 : btaken2;
     std::vector<int> &fetch = (core == 1) ? fetch1 : fetch2;
     int no_inst = (core == 1) ? no_inst_1 : no_inst_2;
     std::vector<int> &prevpc = (core == 1) ? prevpc1 : prevpc2;
@@ -524,130 +563,14 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         }
         int tempry = pc;
         pc++;
-
-        // if (branchtrue)
-        // {
-        //     if (instruction[1] != 0 || instruction[2] != 0 || instruction[3] != 0)
-        //     {
-        //         if (instruction[0] == 20)
-        //         {
-        //             pc = instruction[1];
-        //         }
-        //         else if (instruction[0] == 3)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(ggg3, core), m, r, core, ggg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg2, core), m, r, core, ggg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg1, core), m, r, core, ggg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg, core), m, r, core, ggg, tempReg);
-        //             if (RAW_Hazard(m.read_instruction_1(ggg, core), m.read_instruction_1(tempry, core)) != -1 && dataforwarding1 == false)
-        //             {
-        //                 if (tempReg[rs1] == tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (tempReg[rs1] == tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //         }
-        //         else if (instruction[0] == 4)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(ggg3, core), m, r, core, ggg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg2, core), m, r, core, ggg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg1, core), m, r, core, ggg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg, core), m, r, core, ggg, tempReg);
-        //             // cout<<tempReg[rs1]<<"hbyhbyhb"<<tempReg[rs2]<<"hi"<<ggg<<" "<<tempry<<" "<<RAW_Hazard(instruction,m.read_instruction_1(ggg, core))<<endl;
-        //             if (RAW_Hazard(instruction, m.read_instruction_1(ggg, core)) != -1 && dataforwarding1 == false)
-        //             {
-        //                 if (tempReg[rs1] != tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (tempReg[rs1] != tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //         }
-        //         else if (instruction[0] == 5)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(ggg3, core), m, r, core, ggg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg2, core), m, r, core, ggg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg1, core), m, r, core, ggg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg, core), m, r, core, ggg, tempReg);
-        //             cout << core << " | " << tempReg[rs1] << "hbyhbyhb" << tempReg[rs2] << "hi" << ggg << " " << tempry << " " << RAW_Hazard(m.read_instruction_1(ggg, core), instruction) << endl;
-        //             if (RAW_Hazard(m.read_instruction_1(ggg, core), m.read_instruction_1(tempry, core)) != -1 && dataforwarding1 == false)
-        //             {
-        //                 cout << core << " | " << tempReg[rs1] << "ERROR" << tempReg[rs2] << endl;
-        //                 if (tempReg[rs1] < tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (tempReg[rs1] < tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //         }
-        //         else if (instruction[0] == 6)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(ggg3, core), m, r, core, ggg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg2, core), m, r, core, ggg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg1, core), m, r, core, ggg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(ggg, core), m, r, core, ggg, tempReg);
-        //             if (RAW_Hazard(m.read_instruction_1(ggg, core), m.read_instruction_1(tempry, core)) != -1 && dataforwarding1 == false)
-        //             {
-        //                 if (tempReg[rs1] >= tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (tempReg[rs1] >= tempReg[rs2])
-        //                 {
-        //                     pc = rd;
-        //                     t_f_1 = 2;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        // ggg4 = ggg3;
-        // ggg3 = ggg2;
-        // ggg2 = ggg1;
-        // ggg1 = ggg;
-        // ggg = tempry;
-
+        pcc1 = pc;
+        if (Dpredictor.find(instruction) != Dpredictor.end())
+        {
+            if (Dpredictor[instruction] == 1)
+            {
+                pc = instruction[3];
+            }
+        }
         fetch.insert(fetch.end(), instruction.begin(), instruction.end());
     }
 
@@ -671,83 +594,14 @@ void ALU::instructionFetch(memory &m, int core, int &pc, int &count, registers &
         }
         int tempry = pc;
         pc++;
-
-        // if (branchtrue)
-        // {
-        //     if (instruction[1] != 0 || instruction[2] != 0 || instruction[3] != 0)
-        //     {
-        //         if (instruction[0] == 20)
-        //         {
-        //             pc = instruction[1];
-        //         }
-        //         else if (instruction[0] == 3)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(gg3, core), m, r, core, gg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg2, core), m, r, core, gg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg1, core), m, r, core, gg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg, core), m, r, core, gg, tempReg);
-        //             if (tempReg[rs1] == tempReg[rs2])
-        //             {
-        //                 pc = rd;
-        //                 t_f_2 = 2;
-        //             }
-        //         }
-        //         else if (instruction[0] == 4)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(gg3, core), m, r, core, gg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg2, core), m, r, core, gg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg1, core), m, r, core, gg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg, core), m, r, core, gg, tempReg);
-        //             if (tempReg[rs1] != tempReg[rs2])
-        //             {
-        //                 pc = rd;
-        //                 t_f_2 = 2;
-        //             }
-        //         }
-        //         else if (instruction[0] == 5)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(gg3, core), m, r, core, gg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg2, core), m, r, core, gg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg1, core), m, r, core, gg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg, core), m, r, core, gg, tempReg);
-        //             if (tempReg[rs1] > tempReg[rs2])
-        //             {
-        //                 pc = rd;
-        //                 t_f_2 = 2;
-        //             }
-        //         }
-        //         else if (instruction[0] == 6)
-        //         {
-        //             int rs1 = instruction[1];
-        //             int rs2 = instruction[2];
-        //             int rd = instruction[3];
-        //             executeInstructiondummy(m.read_instruction_1(gg3, core), m, r, core, gg3, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg2, core), m, r, core, gg2, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg1, core), m, r, core, gg1, tempReg);
-        //             executeInstructiondummy(m.read_instruction_1(gg, core), m, r, core, gg, tempReg);
-        //             if (tempReg[rs1] >= tempReg[rs2])
-        //             {
-        //                 pc = rd;
-        //                 t_f_2 = 2;
-        //             }
-        //         }
-        //     }
-        // }
-        // gg4 = gg3;
-        // gg3 = gg2;
-        // gg2 = gg1;
-        // gg1 = gg;
-        // gg = tempry;
-
+        pcc2 = pc;
+        if (Dpredictor.find(instruction) != Dpredictor.end())
+        {
+            if (Dpredictor[instruction] == 1)
+            {
+                pc = instruction[3];
+            }
+        }
         fetch.insert(fetch.end(), instruction.begin(), instruction.end());
     }
 }
@@ -1034,6 +888,9 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
 {
     std::vector<int> &execute = (core == 1) ? execute1 : execute2;
     std::vector<int> &decode = (core == 1) ? decode1 : decode2;
+    std::map<std::vector<int>,int> Dpredictor = (core == 1) ? Dpredictor1 : Dpredictor2;
+    std::map<std::vector<int>,int>  btaken = (core == 1) ? btaken1 : btaken2;
+    int pcc = (core == 1) ? pcc1 : pcc2;
     std::vector<int> k;
     if (execute.empty())
     {
@@ -1170,15 +1027,37 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         int rs2 = v[3];
         int rd = v[1];
         bool i = predictor(pc, m);
+        auto it = Dpredictor.find(execute);
+        if (it == Dpredictor.end())
+        {
+            std::vector<int> dp;
+            for (int i = 0; i < 4; i++)
+            {
+                dp.push_back(execute[i]);
+            }
+            Dpredictor[dp] = 0;
+        }
+
         if (rs1 == rs2)
         {
             branch_bool = true;
             pc = v[1];
+            pcc = pc;
+            if (Dpredictor[execute] == 0)
+            {
+                btaken[execute] = 1;
+            }
+            Dpredictor[execute] = 1;
             break;
         }
         else
         {
             clockcycles--;
+            if (Dpredictor[execute] == 1)
+            {
+                btaken[execute] = 1;
+            }
+            Dpredictor[execute] = 0;
             cout << core << " | "
                  << "*** Wrong Prediction ***" << endl;
             break;
@@ -1191,10 +1070,26 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         int rs2 = v[3];
         int rd = v[1];
         bool i = predictor(pc, m);
+       auto it = Dpredictor.find(execute);
+        if (it == Dpredictor.end())
+        {
+            std::vector<int> dp;
+            for (int i = 0; i < 4; i++)
+            {
+                dp.push_back(execute[i]);
+            }
+            Dpredictor[dp] = 0;
+        }
         if (rs1 != rs2)
         {
             branch_bool = true;
             pc = v[1];
+            pcc = pc;
+            if (Dpredictor[execute] == 0)
+            {
+                btaken[execute] = 1;
+            }
+            Dpredictor[execute] = 1;
             //  cout << 1 << " | " << pc << "hi" << endl;
         }
         else
@@ -1202,6 +1097,11 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
             clockcycles--;
             cout << core << " | "
                  << "*** Wrong Prediction ***" << endl;
+            if (Dpredictor[execute] == 1)
+            {
+                btaken[execute] = 1;
+            }
+            Dpredictor[execute] = 0;
             break;
         }
         break;
@@ -1212,16 +1112,37 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         int rs2 = v[3];
         int rd = v[1];
         bool i = predictor(pc, m);
+       auto it = Dpredictor.find(execute);
+        if (it == Dpredictor.end())
+        {
+            std::vector<int> dp;
+            for (int i = 0; i < 4; i++)
+            {
+                dp.push_back(execute[i]);
+            }
+            Dpredictor[dp] = 0;
+        }
         if (rs1 < rs2)
         {
             pc = v[1];
+            pcc = pc;
             branch_bool = true;
+            if (Dpredictor[execute] == 0)
+            {
+                btaken[execute] = 1;
+            }
+            Dpredictor[execute] = 1;
         }
         else
         {
             clockcycles--;
             cout << core << " | "
                  << "*** Wrong Prediction ***" << endl;
+            if (Dpredictor[execute] == 1)
+            {
+                btaken[execute] = 1;
+            }
+            Dpredictor[execute] = 0;
             break;
         }
         break;
@@ -1232,16 +1153,37 @@ std::vector<int> ALU::instructionExecute(std::vector<int> &v, memory &m, registe
         int rs2 = v[3];
         int rd = v[1];
         bool i = predictor(pc, m);
+       auto it = Dpredictor.find(execute);
+        if (it == Dpredictor.end())
+        {
+            std::vector<int> dp;
+            for (int i = 0; i < 4; i++)
+            {
+                dp.push_back(execute[i]);
+            }
+            Dpredictor[dp] = 0;
+        }
         if (rs1 >= rs2)
         {
             pc = v[1];
+            pcc = pc;
             branch_bool = true;
+            if (Dpredictor[execute] == 0)
+            {
+                btaken[execute] = 1;
+            }
+            Dpredictor[execute] = 1;
         }
         else
         {
             clockcycles--;
             cout << core << " | "
                  << "*** Wrong Prediction ***" << endl;
+            if (Dpredictor[execute] == 1)
+            {
+                btaken[execute] = 1;
+            }
+            Dpredictor[execute] = 0;
             break;
         }
         break;
