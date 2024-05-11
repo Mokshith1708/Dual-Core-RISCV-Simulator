@@ -12,7 +12,6 @@ SharedCache::SharedCache(int cacheSize, int blockSize, int associativity)
 bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
 {
     accesses++;
-    // std::cout<< 1<<" | "<< "its a access "<<core<<" "<< address<<" "<<accesses<<" "<<isInstruction<<std::endl;
     int setIndex = (address / blockSize) % sets;
     int tag = (address * blockSize) / cacheSize;
     int offset = address % blockSize;
@@ -21,14 +20,10 @@ bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
     {
         if (entry.valid && entry.tag == tag && entry.isInstruction == isInstruction && entry.coreBit == core && entry.offset == offset)
         {
-            //   std::cout<< 1<<" | "<< "its a hit "<<core<<" "<< address<<std::endl;
-            return true; // hit
+            return true;
         }
     }
-
-    // miss
     misses++;
-    // std::cout<< 1<<" | "<< "its a miss "<<core<<" "<< address<<std::endl;
     if (core == 1)
     {
         misses1++;
@@ -43,14 +38,6 @@ bool SharedCache::read_cache(int32_t address, int core, bool isInstruction)
 void SharedCache::write_cache(int32_t address, int core, bool isInstruction, bool lru_bool)
 {
     accesses++;
-    // if(core==1)
-    // {
-    //     access1++;
-    // }
-    //  if(core==2)
-    // {
-    //     access2++;
-    // }
     int setIndex = (address / blockSize) % sets;
     int tag = (address * blockSize) / cacheSize;
 
@@ -58,7 +45,6 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction, boo
     {
         if (!entry.valid)
         {
-            // Found an empty slot
             entry.valid = true;
             entry.tag = tag;
             entry.isInstruction = isInstruction;
@@ -71,7 +57,7 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction, boo
     }
 
     if (!lru_bool)
-    { // Random
+    {
         int randomIndex = rand() % associativity;
         cache[setIndex][randomIndex].tag = tag;
         cache[setIndex][randomIndex].isInstruction = isInstruction;
@@ -81,7 +67,6 @@ void SharedCache::write_cache(int32_t address, int core, bool isInstruction, boo
     }
     else
     {
-        // LRU
         int lruIndex = 0;
         for (int i = 0; i < associativity; ++i)
         {
@@ -107,18 +92,6 @@ double SharedCache::calculate_miss_rate(int core)
     }
     else
     {
-        // if(core==1)
-        // {
-        // return static_cast<double>(misses1);
-        // }
-        // else if(core==2)
-        // {
-        // return static_cast<double>(misses2);
-        // }
-        // else
-        // {
-        //     return static_cast<double>(misses);
-        // }
         return static_cast<double>(misses1 + misses2) / accesses;
     }
 }

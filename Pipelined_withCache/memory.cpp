@@ -57,14 +57,11 @@ int32_t memory::read_memory_1(int32_t address, int core, bool lru_bool)
 
 void memory::write_memory_1(int32_t address, int32_t data, int core, bool lru_bool)
 {
-    // Write data to memory
     if (core == 1)
     {
         if (address < MEMORY_SIZE)
         {
             memory_1[address] = data;
-            //  cache.write_cache(address, core, false,lru_bool);
-            // cache.accesses--;
         }
         else
         {
@@ -76,8 +73,6 @@ void memory::write_memory_1(int32_t address, int32_t data, int core, bool lru_bo
         if (address < MEMORY_SIZE)
         {
             memory_2[address] = data;
-            // cache.write_cache(address, core, false,lru_bool);
-            // cache.accesses--;
         }
         else
         {
@@ -88,26 +83,6 @@ void memory::write_memory_1(int32_t address, int32_t data, int core, bool lru_bo
 
 std::vector<int> memory::read_instruction_1(int32_t address, int core, bool lru_bool)
 {
-    // Check cache for instruction
-    // if(instructions_1[address][1]==-101)
-    // {
-    //     std::vector<int> instruction(4, 0);
-    //     if(core==1)
-    //     {
-    //      instruction[1] = instructions_1[address][1];
-    //     }
-    //     return instruction;
-    // }
-    //     if(instructions_2[address][1]==-101)
-    // {
-    //     std::vector<int> instruction(4, 0);
-    //     if(core==1)
-    //     {
-    //      instruction[1] = instructions_2[address][1];
-    //     }
-    //     return instruction;
-    // }
-
     if (cache.read_cache(address, core, true))
     {
         std::vector<int> instruction(4, 0);
@@ -193,7 +168,6 @@ void memory::write_instruction_1(int32_t address, int encode[], int core, bool l
             {
                 instructions_2[address][i] = encode[i];
             }
-            //  cache.write_cache(address, core, true,lru_bool);
         }
         else
         {
