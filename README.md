@@ -39,7 +39,6 @@
 - For pipe-lined version with cache and GUI
 
     ```bash
-  cd pipelined_withcache
   python app.py
   Note: Click on the link to open the Webpage.
   - In the GUI before checking the register or memory or output values Update core 1 , update core 2 and compile simulator should be clicked.
